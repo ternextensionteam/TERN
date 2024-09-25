@@ -1,1 +1,2 @@
 Hello, GitLab!
+New content
