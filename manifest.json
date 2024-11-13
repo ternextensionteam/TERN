@@ -1,0 +1,13 @@
+{
+    "manifest_version": 3,
+    "name": "My Chrome Extension",
+    "version": "1.0",
+    "description": "A React Chrome Extension",
+    "action": {
+      "default_popup": "index.html"
+    },
+    "permissions": [],
+    "background": {
+      "service_worker": "background.js"
+    }
+}
