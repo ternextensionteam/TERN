@@ -1,10 +1,13 @@
 const path = require("path");
 
 module.exports = {
-  entry: "./src/index.js",
+  entry: {
+    popup: "./src/index.js", // React app entry point
+    background: "./src/background.js", // Background script entry point
+  },
   output: {
     path: path.resolve(__dirname, "dist"),
-    filename: "bundle.js",
+    filename: "[name].bundle.js", // Generates popup.bundle.js and background.bundle.js
   },
   module: {
     rules: [
