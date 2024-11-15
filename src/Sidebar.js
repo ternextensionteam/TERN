@@ -1,9 +1,10 @@
 import React from 'react';
+import TaskSection from './TaskSection';
 
 function Sidebar() {
   return (        
     <div className="sidebar container p-3">
-        <h1>Sidebar test</h1>
+        <TaskSection />
     </div>);
 }
 
