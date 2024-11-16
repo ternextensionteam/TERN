@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
-import { useTodoList } from './useTodoList';
-import TodoList from './TodoList';
-import InputBar from './InputBar';
+import { useTodoList } from '../../hooks/useTodoList/useTodoList';
+import TodoList from '../TodoList/TodoList';
+import InputBar from '../Inputbar/InputBar';
 
 function TaskSection() {
     const { tasks, addTask, deleteTask, saveTasks, loadTasks } = useTodoList();
