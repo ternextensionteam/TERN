@@ -1,0 +1,48 @@
+stages:
+  - install
+  - test
+  - build
+
+variables:
+  NODE_ENV: production
+
+# Define the job to install dependencies
+install_dependencies:
+  stage: install
+  image: node:16
+  script:
+    - npm install
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - node_modules/
+  artifacts:
+    paths:
+      - node_modules/
+
+# Define the job to run tests
+run_tests:
+  stage: test
+  image: node:16
+  script:
+    - npm install
+    - npm test
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - node_modules/
+
+# Define the job to build the project
+build_project:
+  stage: build
+  image: node:16
+  script:
+    - npm install
+    - npm run build
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - node_modules/
+  artifacts:
+    paths:
+      - dist/
