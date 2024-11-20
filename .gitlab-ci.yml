@@ -1,0 +1,42 @@
+stages:
+  - install
+  - test
+  - build
+
+variables:
+  NODE_ENV: production
+
+install_dependencies:
+  stage: install
+  image: node:18
+  script:
+    - npm install --include=dev
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - node_modules/
+
+run_tests:
+  stage: test
+  image: node:18
+  script:
+    - npm install --include=dev
+    - npm test
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - node_modules/
+
+build_project:
+  stage: build
+  image: node:18
+  script:
+    - npm install --include=dev
+    - npm run build
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - node_modules/
+  artifacts:
+    paths:
+      - dist/
