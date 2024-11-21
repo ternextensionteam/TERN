@@ -1,5 +1,5 @@
 import React from 'react';
-import TaskSection from './TaskSection';
+import TaskSection from '../TaskSection/TaskSection';
 
 function Sidebar() {
   return (        
