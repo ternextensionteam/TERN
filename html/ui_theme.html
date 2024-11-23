@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UI Themes</title>
+  <style>
+    body {
+      background-color: #f8f9fa;
+      font-family: 'Roboto', Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    .ui-themes-card {
+      background-color: #e0e0e0;
+      border-radius: 8px;
+      padding: 15px;
+      box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .ui-themes-card h4 {
+      font-weight: bold;
+      margin: 0 0 8px 0;
+    }
+
+    .theme-option {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 5px; /* Reduced margin between rows */
+    }
+
+    .theme-option span {
+      font-size: 14px;
+      font-weight: normal;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 34px;
+      height: 20px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: 0.4s;
+      border-radius: 34px;
+    }
+
+    .slider::before {
+      position: absolute;
+      content: "";
+      height: 14px;
+      width: 14px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: #ffa500;
+    }
+
+    input:checked + .slider::before {
+      transform: translateX(14px);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="ui-themes-card">
+      <h4>UI Themes</h4>
+      <div class="theme-option">
+        <span>Dark Mode</span>
+        <label class="switch">
+          <input type="checkbox">
+          <span class="slider round"></span>
+        </label>
+      </div>
+      <div class="theme-option">
+        <span>Use Current System Theme</span>
+        <label class="switch">
+          <input type="checkbox">
+          <span class="slider round"></span>
+        </label>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings</title>
+  <style>
+    body {
+      background-color: #f8f9fa;
+      font-family: 'Roboto', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 50px auto;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header h3 {
+      font-weight: bold;
+      margin: 0;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-icon {
+      width: 30px;
+      height: 30px;
+    }
+
+    .icon-buttons {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .icon-button {
+      border: none;
+      background: none;
+      padding-right: 5px;
+      cursor: pointer;
+    }
+
+    .icon-button img {
+      width: 25px;
+      display: block;
+      transition: transform 0.2s ease, filter 0.2s ease;
+    }
+
+    .icon-button img:hover {
+      transform: scale(1.1);
+      filter: drop-shadow(0 0 5px rgba(255, 165, 0, 1))
+      drop-shadow(0 0 5px rgba(255, 165, 0, 0.5));
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h3>
+        <img src="../vector_arts/settings_icon.png" alt="Settings Icon" class="header-icon">
+        Settings
+      </h3>
+      <div class="icon-buttons">
+        <button class="icon-button">
+          <img src="../vector_arts/full_screen_icon.png" alt="Full Screen Icon">
+        </button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

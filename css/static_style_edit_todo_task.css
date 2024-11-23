@@ -1,4 +1,3 @@
-/* Style for the page border */
 body {
     background-color: #f8f9fa;
     font-family: 'Roboto', Arial, sans-serif;
@@ -9,84 +8,77 @@ body {
 .page-border {
     width: 100%;
     height: 100vh;
-    padding: 10px; /* Reduced padding to decrease space above */
+    padding: 10px;
     box-sizing: border-box;
-    background-color: #ffffff; /* White background for the page */
+    background-color: #ffffff;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-/* Style for the task container */
 .task-container {
     width: 600px;
-    padding: 20px; /* Reduced padding for the container */
-    background-color: #ebebeb; /* Light gray container background */
-    border: 5px solid #ffb668; /* Orange border */
+    padding: 20px;
+    background-color: #ebebeb;
+    border: 5px solid #ffb668;
     border-radius: 8px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Smooth shadow */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Align heading to the left */
 .task-heading {
     text-align: left;
-    margin-top: 0; /* Remove top margin from the heading */
-    margin-bottom: 20px; /* Keep bottom margin for spacing */
-    color: #333333; /* Dark gray for the heading */
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #333333;
 }
 
-/* Inputs and text area styles */
 .task-input, .task-textarea {
     width: 100%;
     font-family: 'Roboto', Arial, sans-serif;
-    margin-bottom: 12px; /* Space between text fields and other elements */
-    padding: 12px 15px; /* Adjusted padding for better alignment */
-    background-color: #ffffff; /* Light gray background */
-    color: #717171; /* Dark gray text color */
-    border: 3px solid #ffffff; /* Subtle border for text boxes */
-    border-radius: 4px; /* Rounded corners for a modern look */
-    font-size: 19px; /* Consistent font size */
-    outline: none; /* Remove default outline */
-    box-sizing: border-box; /* Ensure padding doesn't affect width */
-    transition: border-color 0.3s ease; /* Smooth transition for focus */
+    margin-bottom: 12px;
+    padding: 12px 15px;
+    background-color: #ffffff;
+    color: #717171;
+    border: 3px solid #ffffff;
+    border-radius: 4px;
+    font-size: 19px;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
 }
 
-/* Turn border orange when typing (focused) */
 .task-input:focus, .task-textarea:focus {
-    border-color: #f78f1e; /* Orange border on focus */
-    box-shadow: 0 0 5px rgba(247, 143, 30, 0.5); /* Add subtle glow effect */
+    border-color: #f78f1e;
+    box-shadow: 0 0 5px rgba(247, 143, 30, 0.5);
 }
 
 .task-input::placeholder, 
 .task-textarea::placeholder {
-    color: #b0b0b0; /* Light gray for placeholder text *//* Optional: Make placeholder text italic */
-    font-size: 18px; /* Slightly smaller placeholder text */
+    color: #b0b0b0;
+    font-size: 18px;
 }
 
 .task-textarea {
-    height: 70px; /* Shortened height for descriptions */
-    resize: none; /* Disable resizing for better alignment */
+    height: 70px;
+    resize: none;
 }
 
-/* Preset dates section layout */
 .preset-dates {
-    display: flex; /* Flex layout to align title and buttons */
-    align-items: center; /* Align title and buttons vertically */
-    justify-content: space-between; /* Spread buttons evenly */
-    gap: 10px; /* Add spacing between buttons */
-    margin-bottom: 16px; /* Add spacing below the section */
-    flex-wrap: nowrap; /* Prevent buttons from wrapping to a new line */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 16px;
+    flex-wrap: nowrap;
 }
 
-/* Preset title styles */
 .preset-title {
-    margin: 0; /* Remove default margins */
-    font-weight: bold; /* Bold text for the title */
-    color: #333333; /* Dark gray for title */
-    white-space: nowrap; /* Prevent text wrapping */
+    margin: 0;
+    font-weight: bold;
+    color: #333333;
+    white-space: nowrap;
 }
 
-/* Preset date label styles */
 .preset-date-label {
     display: flex;
     align-items: center;
@@ -94,73 +86,70 @@ body {
 }
 
 .preset-date-input {
-    display: none; /* Hide the radio button */
+    display: none;
 }
 
 .preset-date-btn {
-    padding: 8px 20px; /* Reduced padding for shorter buttons */
-    background-color: #ffffff; /* White background */
-    color: #ffad54; /* Orange text */
-    border: 2px solid #ffad54; /* Orange border */
-    border-radius: 4px; /* Rounded corners */
+    padding: 8px 20px;
+    background-color: #ffffff;
+    color: #ffad54;
+    border: 2px solid #ffad54;
+    border-radius: 4px;
     cursor: pointer;
-    font-weight: bold; /* Bold text for the title */
-    font-size: 16px; /* Slightly smaller font size */
-    white-space: nowrap; /* Prevent text wrapping */
+    font-weight: bold;
+    font-size: 16px;
+    white-space: nowrap;
     transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
-    height: 27px; /* Ensure consistent height */
+    height: 27px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-/* Change color when selected */
 .preset-date-input:checked + .preset-date-btn {
-    background-color: #ff9d34; /* Orange background when selected */
-    color: #ffffff; /* White text when selected */
-    transform: scale(1.05); /* Slight grow on selection */
+    background-color: #ff9d34;
+    color: #ffffff;
+    transform: scale(1.05);
 }
 
-/* Manual select section layout */
 .manual-select-row {
-    display: flex; /* Enable flexbox */
-    justify-content: space-between; /* Spread buttons evenly */
-    align-items: center; /* Align buttons vertically */
-    gap: 10px; /* Add consistent spacing between buttons */
-    margin-top: 16px; /* Add space above the manual select row */
-    flex-wrap: nowrap; /* Prevent wrapping of buttons to the next line */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-top: 16px;
+    flex-wrap: nowrap;
 }
 
 .manual-select-row label {
-    flex: 1; /* Allow buttons to evenly distribute space */
-    display: flex; /* Ensure label behaves like a flex container */
+    flex: 1;
+    display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .manual-btn-input {
-    display: none; /* Hide the checkbox */
+    display: none;
 }
 
 .manual-btn {
-    flex: 1; /* Ensure all buttons have equal width */
-    padding: 12px 26px; /* Consistent padding */
-    background-color: #ffffff; /* White background */
-    color: #000000; /* Orange text */
-    border-radius: 4px; /* Rounded corners */
+    flex: 1;
+    padding: 12px 26px;
+    background-color: #ffffff;
+    color: #000000;
+    border-radius: 4px;
     cursor: pointer;
-    font-size: 16px; /* Consistent font size */
-    white-space: nowrap; /* Prevent text wrapping */
+    font-size: 16px;
+    white-space: nowrap;
     transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
-    text-align: center; /* Center text in the button */
+    text-align: center;
 }
 
-/* Change button style */
 .change-btn {
-    flex: 1; /* Ensure button size matches the others */
+    flex: 1;
     padding: 12px 40px;
-    background-color: #f78f1e; /* Orange background */
-    color: #ffffff; /* White text */
+    background-color: #f78f1e;
+    color: #ffffff;
     border: 2px solid #f78f1e;
     border-radius: 4px;
     cursor: pointer;
@@ -179,14 +168,14 @@ body {
 }
 
 .manual-btn-input:checked + .manual-btn {
-    background-color: #f78f1e; /* Orange background when selected */
-    color: #ffffff; /* White text when selected */
-    transform: scale(1.05); /* Slight grow on selection */
+    background-color: #f78f1e;
+    color: #ffffff;
+    transform: scale(1.05);
 }
 
 .btn-icon {
-    width: 20px; /* Set the width of the icon */
-    height: 20px; /* Set the height of the icon */
-    margin-right: 10px; /* Add spacing between the icon and the text */
-    vertical-align: middle; /* Align the icon vertically with the text */
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    vertical-align: middle;
 }
