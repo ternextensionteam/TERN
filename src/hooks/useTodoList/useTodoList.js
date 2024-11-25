@@ -29,6 +29,13 @@ export function useTodoList() {
         saveTasks();
     };
 
+    const toggleReminder = (taskId) => {
+        setTasks(tasks.map(task =>
+            task.id === taskId ? { ...task, reminder: !task.reminder } : task
+        ));
+        saveTasks();
+    };
+
     const saveTasks = () => {
         chrome.storage.local.set({ tasks });
     };
@@ -41,5 +48,5 @@ export function useTodoList() {
         });
     };
 
-    return { tasks, addTask, deleteTask, saveTasks, loadTasks };
+    return { tasks, addTask, deleteTask,toggleReminder, saveTasks, loadTasks };
 }
