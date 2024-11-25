@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add New To-Do List Task</title>
+  <link rel="stylesheet" href="../css/static_style_add_indexing.css">
+</head>
+<body>
+  <div class="container">
+    <div class="task-card">
+      <h4>Add New To-Do List Task</h4>
+      <div class="tab-group">
+        <button class="tab active" onclick="toggleActive(this)">
+          Sites
+        </button>
+        <button class="tab" onclick="toggleActive(this)">
+          URLs
+        </button>
+        <button class="tab" onclick="toggleActive(this)">
+          String Matches
+        </button>
+        <button class="tab" onclick="toggleActive(this)">
+          RegEx
+        </button>
+      </div>
+      <div class="input-group">
+        <input type="text" placeholder="Enter Rule Here">
+        <button class="add-rule-button">
+          <img src="../vector_arts/add.svg" alt="Add Icon">
+          Add Rule
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleActive(button) {
+      button.classList.toggle('active');
+    }
+  </script>
+</body>
+</html>

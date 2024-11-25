@@ -39,7 +39,7 @@ body {
 .icon-button {
     border: none;
     background: none;
-    padding-right: 5px;
+    padding-left: 100px;
     cursor: pointer;
 }
 
@@ -51,8 +51,7 @@ body {
 
 .icon-button img:hover {
     transform: scale(1.1);
-    filter: drop-shadow(0 0 5px rgba(255, 165, 0, 1))
-    drop-shadow(0 0 5px rgba(255, 165, 0, 0.5));
+    filter: drop-shadow(0 0 5px rgba(255, 165, 0, 1)) drop-shadow(0 0 5px rgba(255, 165, 0, 0.5));
 }
 
 .list-group-item {
@@ -113,7 +112,7 @@ body {
     display: block;
     width: 20px;
     height: 20px;
-    background-image: url('../vector_arts/tick.png');
+    background-image: url('vector_arts/tick.png');
     background-size: contain;
     background-repeat: no-repeat;
     position: absolute;
@@ -128,18 +127,78 @@ body {
 
 .task-actions label img:hover {
     transform: scale(1.1);
-    filter: drop-shadow(0 0 5px rgba(255, 165, 0, 1))
-    drop-shadow(0 0 5px rgba(255, 165, 0, 0.5));
+    filter: drop-shadow(0 0 5px rgba(255, 165, 0, 1)) drop-shadow(0 0 5px rgba(255, 165, 0, 0.5));
 }
 
 .bell-checkbox input:checked + img {
     content: url('../vector_arts/checked_bell.png');
 }
+
 .bin-checkbox input:checked + img {
     content: url('../vector_arts/checked_bin.png');
 }
+
 .edit-checkbox input:checked + img {
     content: url('../vector_arts/checked_edit.png');
+}
+
+.edit-checkbox img {
+    width: 26px;
+    height: 26px;
+    cursor: pointer;
+    transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.edit-checkbox img:hover {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 5px rgba(255, 165, 0, 1)) drop-shadow(0 0 5px rgba(255, 165, 0, 0.5));
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+    height: 35px;
+    border-radius: 5px;
+    border: 1px solid #FF8700;
+    background-color: #fff;
+    overflow: hidden;
+}
+
+.input-group .form-control {
+    border: none;
+    height: 35px;
+    padding: 0 10px;
+    box-shadow: none;
+}
+
+.input-group .form-control:focus {
+    box-shadow: 0 0 5px rgba(255, 135, 0, 0.5);
+    border: 1px solid #FF8700;
+}
+
+.input-group .btn {
+    border: 1px solid #FF8700;
+    border-left: none;
+    height: 30px;
+}
+
+.input-group .btn img {
+    width: 16px;
+    height: 16px;
+}
+
+.form-select-sm {
+    border-radius: 5px;
+    border: 1px solid #FF8700;
+    background-color: #fff;
+    height: 36px;
+    padding: 0 8px;
+    margin-right: 8px;
+}
+
+.form-select-sm:focus {
+    box-shadow: 0 0 5px rgba(255, 135, 0, 0.5);
+    border-color: #FF8700;
 }
 
 .d-flex {
