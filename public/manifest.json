@@ -14,7 +14,7 @@
       "sidePanel"
     ],
     "background": {
-      "service_worker": "dist/background.bundle.js"
+      "service_worker": "background.bundle.js"
     },
     "side_panel": {
       "default_path": "index.html"

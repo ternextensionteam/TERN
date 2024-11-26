@@ -128,8 +128,8 @@ function InputBar({ onAddTask }) {
                     <img
                     src={
                         isReminder
-                            ? `${process.env.PUBLIC_URL}/vector_arts/checked_bell.png`
-                            : `${process.env.PUBLIC_URL}/vector_arts/bell.png`
+                            ? `/vector_arts/checked_bell.png`
+                            : `/vector_arts/bell.png`
                     }
                     alt="Reminder"
                 />
@@ -137,7 +137,7 @@ function InputBar({ onAddTask }) {
 
                 {/* Add Task Button */}
                 <button className="change-btn" onClick={handleAdd}>
-                    <img src="/../../../vector_arts/add.svg" alt="Add Icon" className="btn-icon" />
+                    <img src="/vector_arts/add.svg" alt="Add Icon" className="btn-icon" />
                     Add Task
                 </button>
             </div>
