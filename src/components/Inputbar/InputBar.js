@@ -64,7 +64,9 @@ function InputBar({ onAddTask }) {
 
     const handlePresetClick = (event) => {
         if (event.detail !== 0 && inputRef.current) {
-          inputRef.current.focus();
+            setTimeout(() => {
+                inputRef.current.focus();
+            }, 0);
         }
     };
 
@@ -102,9 +104,8 @@ function InputBar({ onAddTask }) {
                     className="preset-date-input"
                     checked={selectedPreset === preset.value}
                     onChange={() => handlePresetChange(preset.value)}
-                    onClick={handlePresetClick}
                     />
-                    <span className="preset-date-btn">{preset.label}</span>
+                    <span className="preset-date-btn" onClick={handlePresetClick}>{preset.label}</span>
                 </label>
                 ))}
             </div>
@@ -119,28 +120,28 @@ function InputBar({ onAddTask }) {
                 value={dueTime}
                 onChange={(e) => setDueTime(e.target.value)}
             /> */}
-            {/* <textarea
+            {/* <textarea   
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Optional description"
             /> */}
             <div className="task-controls">
                 {/* Reminder Checkbox */}
-                <label className="bell-checkbox">
+                <label className="bell-checkbox" htmlFor='reminder-checkbox'>
                     <input
-                    type="checkbox"
-                    id="reminder-checkbox"
-                    checked={isReminder}
-                    onChange={(e) => setIsReminder(e.target.checked)}
+                        type="checkbox"
+                        id="reminder-checkbox"
+                        checked={isReminder}
+                        onChange={(e) => setIsReminder(e.target.checked)}
                     />
                     <img
-                    src={
-                        isReminder
-                            ? `/vector_arts/checked_bell.png`
-                            : `/vector_arts/bell.png`
-                    }
-                    alt="Reminder"
-                />
+                        src={
+                            isReminder
+                                ? `/vector_arts/checked_bell.png`
+                                : `/vector_arts/bell.png`
+                        }
+                        alt="Reminder"
+                    />
                 </label>
 
                 {/* Add Task Button */}
