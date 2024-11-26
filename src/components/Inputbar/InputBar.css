@@ -1,0 +1,225 @@
+body {
+    background-color: #f8f9fa;
+    font-family: 'Roboto', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.page-border {
+    width: 100%;
+    height: 100%;
+    padding: 0px; /* removed padding*/
+    box-sizing: border-box;
+    background-color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.task-container {
+    width: 100%; /* Full width of sidebar */
+    /*max-width: 300px;  Restrict max width to fit in a sidebar */
+    padding: 5px;
+    background-color: #ebebeb;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.task-heading {
+    font-size: 16px; /* Smaller font for sidebar */
+    text-align: left;
+    margin-top: 0;
+    margin-bottom: 10px; /* Compact spacing */
+    color: #333333;
+}
+
+.task-input, .task-textarea {
+    width: 100%;
+    font-family: 'Roboto', Arial, sans-serif;
+    margin-bottom: 8px;
+    padding: 8px 10px;
+    background-color: #ffffff;
+    color: #717171;
+    border: 3px solid #ffffff;
+    border-radius: 4px;
+    font-size: 19px;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+}
+
+.task-input:focus, .task-textarea:focus {
+    border-color: #f78f1e;
+    box-shadow: 0 0 5px rgba(247, 143, 30, 0.5);
+}
+
+.task-input::placeholder, 
+.task-textarea::placeholder {
+    color: #b0b0b0;
+    font-size: 18px;
+}
+
+.task-textarea {
+    height: 70px;
+    resize: none;
+}
+
+.preset-dates {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 5px;
+    margin-bottom: 12px;
+    flex-wrap: nowrap;
+}
+
+.preset-title {
+    margin: 0;
+    font-weight: bold;
+    color: #333333;
+    white-space: nowrap;
+}
+
+.preset-date-label {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.preset-date-input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.preset-date-btn {
+    padding: 8px 20px;
+    background-color: #ffffff;
+    color: #ffad54;
+    border: 2px solid #ffad54;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 16px;
+    white-space: nowrap;
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+    height: 27px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.preset-date-input:checked + .preset-date-btn {
+    background-color: #ff9d34;
+    color: #ffffff;
+    transform: scale(1.05);
+}
+
+.manual-select-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-top: 16px;
+    flex-wrap: nowrap;
+}
+
+.manual-select-row label {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.manual-btn-input {
+    display: none;
+}
+
+.manual-btn {
+    flex: 1;
+    padding: 12px 26px;
+    background-color: #ffffff;
+    color: #000000;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    white-space: nowrap;
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+    text-align: center;
+}
+
+.change-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #FF8700;
+    color: #fff;
+    padding: 10px 16px; /* Adjusted padding for compact size */
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    max-width: fit-content; /* Button width fits content */
+}
+
+.change-btn:hover {
+    background-color: #FF9A33;
+    transform: scale(1.05);
+}
+
+.change-btn .btn-icon {
+    margin-right: 8px;
+    width: 16px;
+    height: 16px;
+}
+
+.manual-btn-input:checked + .manual-btn {
+    background-color: #f78f1e;
+    color: #ffffff;
+    transform: scale(1.05);
+}
+
+.btn-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+.task-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 5px; /*reduced padding*/
+}
+
+.bell-checkbox {
+    display: flex;
+    align-items: center;
+    margin-right: auto;
+}
+
+.bell-checkbox img {
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.bell-checkbox img:hover {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 5px rgba(255, 165, 0, 1));
+}
+
+.bell-checkbox input {
+    display: none;
+}
+
+/* .bell-checkbox img.checked {
+    content: url('/vector_arts/checked_bell.png');
+} */
+
+

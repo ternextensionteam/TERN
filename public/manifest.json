@@ -1,6 +1,6 @@
 {
     "manifest_version": 3,
-    "name": "My Chrome Extension",
+    "name": "HAWK 2 - Page Indexer and Productivity tool",
     "version": "1.0",
     "description": "A React Chrome Extension",
     "permissions": [
@@ -14,7 +14,7 @@
       "sidePanel"
     ],
     "background": {
-      "service_worker": "dist/background.bundle.js"
+      "service_worker": "background.bundle.js"
     },
     "side_panel": {
       "default_path": "index.html"

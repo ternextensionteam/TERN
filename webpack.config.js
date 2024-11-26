@@ -1,4 +1,5 @@
 const path = require("path");
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   entry: {
@@ -18,8 +19,30 @@ module.exports = {
           loader: "babel-loader",
         },
       },
+      {
+        test: /\.css$/i,
+        use: ["style-loader", "css-loader"],
+      },
     ],
   },
+  plugins: [
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: 'public',
+          to: '',
+          // Only copy if the file is changed
+          noErrorOnMissing: true, // Optional, avoids errors if no files match
+          info: {
+            minimized: true, // Display fewer logs in Webpack output
+          },
+        },
+      ],
+      options: {
+        concurrency: 100, // Speeds up copying with parallel processing
+      },
+    }),
+  ],
   resolve: {
     extensions: [".js", ".jsx"],
   },
