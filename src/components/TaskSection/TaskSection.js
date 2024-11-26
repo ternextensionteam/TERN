@@ -7,9 +7,9 @@ function TaskSection() {
     const { tasks, addTask, deleteTask, toggleReminder, saveTasks, loadTasks } = useTodoList();
 
     // Load tasks from localStorage when the component mounts
-    useEffect(() => {
-        loadTasks();
-    }, []);
+    // useEffect(() => {
+    //     loadTasks();
+    // }, []);
 
     return (
         <div className="sidebar container p-3">
