@@ -62,18 +62,25 @@ function InputBar({ onAddTask }) {
         },
     ];
 
+    const handlePresetClick = (event) => {
+        if (event.detail !== 0 && inputRef.current) {
+          inputRef.current.focus();
+        }
+    };
+
     const handlePresetChange = (value) => {
         setSelectedPreset(value);
         setDueDate(value.split(" ")[0]);
         setDueTime(value.split(" ")[1]);
-        if (inputRef.current) {
-          inputRef.current.focus();
-        }
     };
 
     return (
         <div className='page-border'>
         <div className="input-bar task-container">
+        <form onSubmit={(e) => {
+            e.preventDefault(); // Prevent the default page reload
+            handleAdd(); // Custom submission logic
+            }}>
             <h2 className="task-heading">Add New To-Do List Task</h2>
             <input
                 type="text"
@@ -95,6 +102,7 @@ function InputBar({ onAddTask }) {
                     className="preset-date-input"
                     checked={selectedPreset === preset.value}
                     onChange={() => handlePresetChange(preset.value)}
+                    onClick={handlePresetClick}
                     />
                     <span className="preset-date-btn">{preset.label}</span>
                 </label>
@@ -136,11 +144,12 @@ function InputBar({ onAddTask }) {
                 </label>
 
                 {/* Add Task Button */}
-                <button className="change-btn" onClick={handleAdd}>
+                <button className="change-btn" type="submit" onClick={handleAdd}>
                     <img src="/vector_arts/add.svg" alt="Add Icon" className="btn-icon" />
                     Add Task
                 </button>
             </div>
+        </form>
         </div>
         </div>
         
