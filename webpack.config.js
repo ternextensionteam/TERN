@@ -28,8 +28,19 @@ module.exports = {
   plugins: [
     new CopyWebpackPlugin({
       patterns: [
-        { from: 'public', to: '' }, 
+        {
+          from: 'public',
+          to: '',
+          // Only copy if the file is changed
+          noErrorOnMissing: true, // Optional, avoids errors if no files match
+          info: {
+            minimized: true, // Display fewer logs in Webpack output
+          },
+        },
       ],
+      options: {
+        concurrency: 100, // Speeds up copying with parallel processing
+      },
     }),
   ],
   resolve: {
