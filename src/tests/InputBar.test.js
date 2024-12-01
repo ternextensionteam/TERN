@@ -34,7 +34,7 @@ beforeEach(async () => {
 afterEach(async () => {
     if (browser) {
         await browser.close();
-        browser = null; // Reset browser to ensure proper cleanup
+        browser = null;
     }
 });
 

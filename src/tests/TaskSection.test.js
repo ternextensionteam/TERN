@@ -29,7 +29,10 @@ beforeEach(async() => {
 
 
 afterEach(async () => {
-    await browser.close();
+    if (browser) {
+        await browser.close();
+        browser = null;
+    }
 });
 
 test('renders InputBar, TodoList, and Save Tasks button correctly', async () => {
