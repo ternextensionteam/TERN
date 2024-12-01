@@ -5,6 +5,8 @@ stages:
 
 variables:
   NODE_ENV: production
+  PUPPETEER_SKIP_DOWNLOAD: false
+  PUPPETEER_CACHE_DIR: "/root/.cache/puppeteer"
 
 install_dependencies:
   stage: install
