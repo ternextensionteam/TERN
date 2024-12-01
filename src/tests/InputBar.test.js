@@ -32,7 +32,10 @@ beforeEach(async () => {
 });
 
 afterEach(async () => {
-    await browser.close();
+    if (browser) {
+        await browser.close();
+        browser = null; // Reset browser to ensure proper cleanup
+    }
 });
 
 test("renders the InputBar component correctly", async () => {
