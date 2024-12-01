@@ -3,7 +3,8 @@ import { FaTrash, FaBell, FaEdit } from 'react-icons/fa';
 
 function TodoItem({ task, onDelete, onToggleReminder, onEdit }) {
     return (
-        <li className="todo-item list-group-item d-flex align-items-center justify-content-between shadow-sm rounded mb-2 p-3">
+        <li className="todo-item list-group-item d-flex align-items-center justify-content-between shadow-sm rounded mb-2 p-3"
+        data-key={task.id}>
             <div className="task-info d-flex flex-column">
                 <h5 className="task-text mb-1 d-flex align-items-center">
                     {task.text}

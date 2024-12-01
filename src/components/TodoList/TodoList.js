@@ -9,7 +9,7 @@ function TodoList({ tasks, onDeleteTask,onToggleReminder}) {
                     key={task.id}
                     task={task} 
                     onDelete={onDeleteTask}
-                    onEdit={(id) => console.log(`TODO impplement Edit task with ID: ${id}`)}
+                    onEdit={(id) => console.log(`TODO implement Edit task with ID: ${id}`)}
                     onToggleReminder={onToggleReminder}
                     
                 />
