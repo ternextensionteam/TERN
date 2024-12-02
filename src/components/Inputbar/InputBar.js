@@ -41,13 +41,13 @@ function InputBar({ onAddTask }) {
 
   const handleAdd = () => {
     if (taskText.trim() != "") {
-        onAddTask(taskText, dueDate, dueTime, description, isReminder);
-        setTaskText("");
-        setDescription("");
-        setIsReminder(true);
-        if (descriptionRef.current) {
-            descriptionRef.current.style.height = 'auto';
-        }
+      onAddTask(taskText, dueDate, dueTime, description, isReminder);
+      setTaskText("");
+      setDescription("");
+      setIsReminder(true);
+      if (descriptionRef.current) {
+        descriptionRef.current.style.height = "auto";
+      }
     }
   };
 
@@ -82,14 +82,13 @@ function InputBar({ onAddTask }) {
 
   return (
     <div className="page-border">
-      <div className="input-bar task-container">
+      <div className="input-bar task-container p-2">
         <form
           onSubmit={(e) => {
             e.preventDefault(); // Prevent the default page reload
             handleAdd();
           }}
         >
-          <h2 className="task-heading">Add New To-Do List Task</h2>
           <input
             type="text"
             value={taskText}
