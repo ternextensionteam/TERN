@@ -81,6 +81,7 @@ function TodoItem({ task, onDelete, onToggleReminder, onUpdateTask }) {
             <Form.Check
               type="checkbox"
               onChange={handleCheckboxChange}
+              onClick={(e) => e.stopPropagation()}
               checked={isChecked}
               className="custom-checkbox"
               style={{
