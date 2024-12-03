@@ -3,6 +3,7 @@ import { Container, Nav } from 'react-bootstrap';
 import { FaCog } from "react-icons/fa";
 
 import TaskSection from "../TaskSection/TaskSection";
+import IndexingSection from "../IndexingSection/IndexingSection";
 import "./Sidebar.css";
 
 function Sidebar() {
@@ -43,7 +44,7 @@ function Sidebar() {
 
       {/* Conditionally Render Sections */}
       {activeSection === "tasks" && <TaskSection />}
-      {activeSection === "indexing" && <div>Indexing</div>}
+      {activeSection === "indexing" && <div><IndexingSection /></div>}
       {activeSection === "settings" && <div>Settings</div>}
     </Container>
   );
