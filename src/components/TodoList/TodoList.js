@@ -1,9 +1,9 @@
 import React from 'react';
 import TodoItem from '../TodoItem/TodoItem';
-
-function TodoList({ tasks, onDeleteTask,onToggleReminder}) {
+import "./TodoList.css";
+function TodoList({ tasks, onDeleteTask,onToggleReminder, onUpdateTask }) {
     return (
-        <ul className="list-group todo-list">
+        <ul className="list-group todo-list scrollable">
             {tasks.map(task => (
                 <TodoItem 
                     key={task.id}
@@ -11,7 +11,7 @@ function TodoList({ tasks, onDeleteTask,onToggleReminder}) {
                     onDelete={onDeleteTask}
                     onEdit={(id) => console.log(`TODO impplement Edit task with ID: ${id}`)}
                     onToggleReminder={onToggleReminder}
-                    
+                    onUpdateTask={onUpdateTask}
                 />
             ))}
         </ul>
