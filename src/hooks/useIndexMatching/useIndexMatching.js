@@ -1,18 +1,18 @@
 import { useState, useEffect } from 'react';
 
 const useIndexMatching = () => {
-    const [sites, setSites] = useState([]);
-    const [regexs, setRegexs] = useState([]);
-    const [urls, setUrls] = useState([]);
-    const [stringMatches, setStringMatches] = useState([]);
+    const [allowedSites, setSites] = useState([]);
+    const [allowedRegex, setRegexs] = useState([]);
+    const [allowedURLs, setUrls] = useState([]);
+    const [allowedStringMatches, setStringMatches] = useState([]);
 
     useEffect(() => {
         // Load initial state from local storage
-        chrome.storage.local.get(['sites', 'regexs', 'urls', 'stringMatches'], (result) => {
-            if (result.sites) setSites(result.sites);
-            if (result.regexs) setRegexs(result.regexs);
-            if (result.urls) setUrls(result.urls);
-            if (result.stringMatches) setStringMatches(result.stringMatches);
+        chrome.storage.local.get(['allowedSites', 'allowedRegex', 'allowedURLs', 'allowedStringMatches'], (result) => {
+            if (result.allowedSites) setSites(result.allowedSites);
+            if (result.allowedRegex) setRegexs(result.allowedRegex);
+            if (result.allowedURLs) setUrls(result.allowedURLs);
+            if (result.allowedStringMatches) setStringMatches(result.allowedStringMatches);
         });
     }, []);
 
@@ -21,91 +21,91 @@ const useIndexMatching = () => {
     };
 
     const addSite = (site) => {
-        const newSites = [...sites, site];
+        const newSites = [...allowedSites, site];
         setSites(newSites);
-        saveStateToLocalStorage('sites', newSites);
+        saveStateToLocalStorage('allowedSites', newSites);
     };
 
     const removeSite = (site) => {
-        const newSites = sites.filter(s => s !== site);
+        const newSites = allowedSites.filter(s => s !== site);
         setSites(newSites);
-        saveStateToLocalStorage('sites', newSites);
+        saveStateToLocalStorage('allowedSites', newSites);
     };
 
     const updateSite = (oldSite, newSite) => {
-        const newSites = sites.map(s => s === oldSite ? newSite : s);
+        const newSites = allowedSites.map(s => s === oldSite ? newSite : s);
         setSites(newSites);
-        saveStateToLocalStorage('sites', newSites);
+        saveStateToLocalStorage('allowedSites', newSites);
     };
 
     const addRegex = (regex) => {
-        const newRegexs = [...regexs, regex];
+        const newRegexs = [...allowedRegex, regex];
         setRegexs(newRegexs);
-        saveStateToLocalStorage('regexs', newRegexs);
+        saveStateToLocalStorage('allowedRegex', newRegexs);
     };
 
     const removeRegex = (regex) => {
-        const newRegexs = regexs.filter(r => r !== regex);
+        const newRegexs = allowedRegex.filter(r => r !== regex);
         setRegexs(newRegexs);
-        saveStateToLocalStorage('regexs', newRegexs);
+        saveStateToLocalStorage('allowedRegex', newRegexs);
     };
 
     const updateRegex = (oldRegex, newRegex) => {
-        const newRegexs = regexs.map(r => r === oldRegex ? newRegex : r);
+        const newRegexs = allowedRegex.map(r => r === oldRegex ? newRegex : r);
         setRegexs(newRegexs);
-        saveStateToLocalStorage('regexs', newRegexs);
+        saveStateToLocalStorage('allowedRegex', newRegexs);
     };
 
     const addUrl = (url) => {
-        const newUrls = [...urls, url];
+        const newUrls = [...allowedURLs, url];
         setUrls(newUrls);
-        saveStateToLocalStorage('urls', newUrls);
+        saveStateToLocalStorage('allowedURLs', newUrls);
     };
 
     const removeUrl = (url) => {
-        const newUrls = urls.filter(u => u !== url);
+        const newUrls = allowedURLs.filter(u => u !== url);
         setUrls(newUrls);
-        saveStateToLocalStorage('urls', newUrls);
+        saveStateToLocalStorage('allowedURLs', newUrls);
     };
 
     const updateUrl = (oldUrl, newUrl) => {
-        const newUrls = urls.map(u => u === oldUrl ? newUrl : u);
+        const newUrls = allowedURLs.map(u => u === oldUrl ? newUrl : u);
         setUrls(newUrls);
-        saveStateToLocalStorage('urls', newUrls);
+        saveStateToLocalStorage('allowedURLs', newUrls);
     };
 
     const addStringMatch = (stringMatch) => {
-        const newStringMatches = [...stringMatches, stringMatch];
+        const newStringMatches = [...allowedStringMatches, stringMatch];
         setStringMatches(newStringMatches);
-        saveStateToLocalStorage('stringMatches', newStringMatches);
+        saveStateToLocalStorage('allowedStringMatches', newStringMatches);
     };
 
     const removeStringMatch = (stringMatch) => {
-        const newStringMatches = stringMatches.filter(sm => sm !== stringMatch);
+        const newStringMatches = allowedStringMatches.filter(sm => sm !== stringMatch);
         setStringMatches(newStringMatches);
-        saveStateToLocalStorage('stringMatches', newStringMatches);
+        saveStateToLocalStorage('allowedStringMatches', newStringMatches);
     };
 
     const updateStringMatch = (oldStringMatch, newStringMatch) => {
-        const newStringMatches = stringMatches.map(sm => sm === oldStringMatch ? newStringMatch : sm);
+        const newStringMatches = allowedStringMatches.map(sm => sm === oldStringMatch ? newStringMatch : sm);
         setStringMatches(newStringMatches);
-        saveStateToLocalStorage('stringMatches', newStringMatches);
+        saveStateToLocalStorage('allowedStringMatches', newStringMatches);
     };
 
     const checkMatch = (url) => {
-        const siteMatch = sites.some(site => url.includes(site));
-        const regexMatch = regexs.some(regex => new RegExp(regex).test(url));
-        const urlMatch = urls.includes(url);
-        const stringMatch = stringMatches.some(stringMatch => url.includes(stringMatch));
+        const siteMatch = allowedSites.some(site => url.includes(site));
+        const regexMatch = allowedRegex.some(regex => new RegExp(regex).test(url));
+        const urlMatch = allowedURLs.includes(url);
+        const stringMatch = allowedStringMatches.some(stringMatch => url.includes(stringMatch));
 
         return siteMatch || regexMatch || urlMatch || stringMatch;
     };
 
     return {
-        sites,
-        regexs,
-        urls,
-        stringMatches,
+        allowedSites,
+        allowedRegex,
+        allowedURLs,
+        allowedStringMatches,
         addSite,
         removeSite,
         updateSite,

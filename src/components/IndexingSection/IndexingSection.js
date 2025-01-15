@@ -6,12 +6,12 @@ import './IndexingSection.css';
 import useIndexMatching from '../../hooks/useIndexMatching/useIndexMatching';
 
 const IndexingSection = () => {
-  const [activeIndexSection, setActiveIndexSection] = useState("sites");
+  const [activeIndexSection, setActiveIndexSection] = useState("allowedSites");
   const {
-    sites,
-    regexs,
-    urls,
-    stringMatches,
+    allowedSites,
+    allowedRegex,
+    allowedURLs,
+    allowedStringMatches,
     addSite,
     removeSite,
     updateSite,
@@ -27,17 +27,17 @@ const IndexingSection = () => {
   } = useIndexMatching();
 
   const sectionFunctions = {
-    sites: { add: addSite, remove: removeSite, update: updateSite },
+    allowedSites: { add: addSite, remove: removeSite, update: updateSite },
     regex: { add: addRegex, remove: removeRegex, update: updateRegex },
-    urls: { add: addUrl, remove: removeUrl, update: updateUrl },
+    allowedURLs: { add: addUrl, remove: removeUrl, update: updateUrl },
     stringmatches: { add: addStringMatch, remove: removeStringMatch, update: updateStringMatch }
   };
 
   const sectionItems = {
-    sites:sites,
-    regex: regexs,
-    urls:urls,
-    stringmatches: stringMatches
+    allowedSites:allowedSites,
+    regex: allowedRegex,
+    allowedURLs:allowedURLs,
+    stringmatches: allowedStringMatches
   };
 
   const currentFunctions = sectionFunctions[activeIndexSection];
@@ -48,19 +48,19 @@ const IndexingSection = () => {
       <Nav variant="tabs" activeKey={activeIndexSection} onSelect={setActiveIndexSection}>
       <Nav.Item>
           <Nav.Link
-            eventKey="sites"
-            active={activeIndexSection === "sites"}
-            onClick={() => setActiveIndexSection("sites")}
+            eventKey="allowedSites"
+            active={activeIndexSection === "allowedSites"}
+            onClick={() => setActiveIndexSection("allowedSites")}
             className='subnav-link'
           >
-            sites
+            allowedSites
           </Nav.Link>
         </Nav.Item>
         <Nav.Item>
           <Nav.Link
-            eventKey="urls"
-            active={activeIndexSection === "urls"}
-            onClick={() => setActiveIndexSection("urls")}
+            eventKey="allowedURLs"
+            active={activeIndexSection === "allowedURLs"}
+            onClick={() => setActiveIndexSection("allowedURLs")}
             className='subnav-link'
           >
             URLs
@@ -89,8 +89,8 @@ const IndexingSection = () => {
       </Nav>
 
       {/* Conditionally Render Sections */}
-      {activeIndexSection === "sites" && <div>showing sites list</div>}
-      {activeIndexSection === "urls" && <div>showing urls list</div>}
+      {activeIndexSection === "allowedSites" && <div>showing allowedSites list</div>}
+      {activeIndexSection === "allowedURLs" && <div>showing allowedURLs list</div>}
       {activeIndexSection === "stringmatches" && <div>showing stringmatches list</div>}
       {activeIndexSection === "regex" && <div>showing regex list</div>}
 
