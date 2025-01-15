@@ -15,7 +15,7 @@ function TaskSection() {
         <div className="sidebar container p-3">
             <InputBar onAddTask={addTask} />
             <TodoList tasks={tasks} onDeleteTask={deleteTask} />
-            <button onClick={saveTasks}>Save Tasks</button>
+            <button onClick={saveTasks} id="save-tasks">Save Tasks</button>
         </div>
     );
 }

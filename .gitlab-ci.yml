@@ -23,6 +23,7 @@ run_tests:
   image: node:18
   script:
     - npm install --include=dev
+    - npx puppeteer browsers install chrome
     - npm test
   cache:
     key: ${CI_COMMIT_REF_SLUG}

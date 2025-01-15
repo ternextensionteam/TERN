@@ -7,7 +7,7 @@ let EXTENSION_ID;
 
 beforeEach(async () => {
     browser = await puppeteer.launch({
-        headless: false,
+        headless: true,
         args: [
             `--disable-extensions-except=${EXTENSION_PATH}`,
             `--load-extension=${EXTENSION_PATH}`,
