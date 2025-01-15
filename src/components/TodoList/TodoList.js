@@ -1,11 +1,18 @@
 import React from 'react';
 import TodoItem from '../TodoItem/TodoItem';
-
-function TodoList({ tasks, onDeleteTask }) {
+import "./TodoList.css";
+function TodoList({ tasks, onDeleteTask,onToggleReminder, onUpdateTask }) {
     return (
-        <ul className="todo-list">
+        <ul className="list-group todo-list scrollable">
             {tasks.map(task => (
-                <TodoItem key={task.id} task={task} onDelete={onDeleteTask} />
+                <TodoItem 
+                    key={task.id}
+                    task={task} 
+                    onDelete={onDeleteTask}
+                    onEdit={(id) => console.log(`TODO impplement Edit task with ID: ${id}`)}
+                    onToggleReminder={onToggleReminder}
+                    onUpdateTask={onUpdateTask}
+                />
             ))}
         </ul>
     );

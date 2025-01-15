@@ -1,0 +1,13 @@
+.nav-link {
+  color: rgb(86, 86, 86) !important;  
+}
+
+.nav-link.active {
+  color: #ffff !important;
+  font-weight: bold !important;
+  background-color: #ff9d34 !important;
+}
+
+.nav-tabs {
+  padding-top: 2px !important; 
+}
