@@ -1,57 +1,31 @@
-const puppeteer = require('puppeteer');
-const path = require('path');
-const EXTENSION_PATH = path.resolve(__dirname, '../../dist');let browser;
-let page;
-let EXTENSION_ID;
+import React from 'react';
+import { render, screen, waitFor } from '@testing-library/react';
+import Sidebar from '../components/Sidebar/Sidebar';
 
-beforeEach(async() => {
-    browser = await puppeteer.launch({
-        headless:true,
-        args: [
-            `--disable-extensions-except=${EXTENSION_PATH}`,
-            `--load-extension=${EXTENSION_PATH}`,
-          ],
-    });
-    page = await browser.newPage();
-    await page.goto('chrome://extensions');
-    EXTENSION_ID = await page.evaluate(() => {
-        const extensionsItemElement = document.querySelector('body > extensions-manager')
-        ?.shadowRoot.querySelector('#items-list')
-        ?.shadowRoot.querySelector('extensions-item');
+test('Sidebar renders TaskSection correctly', () => {
+    // Render the Sidebar component
+    render(<Sidebar />);
 
-    return extensionsItemElement ? extensionsItemElement.getAttribute('id') : null;
-    });
+    // Check if the Sidebar container is rendered
+    const sidebar = screen.getByRole('complementary', { name: /sidebar/i });
+    expect(sidebar).toBeInTheDocument();
 
-    const extensionURL = `chrome-extension://${EXTENSION_ID}/index.html`;
-    await page.goto(extensionURL);
+    const taskSection = screen.getByTestId('task-section');
+    expect(taskSection).toBeInTheDocument();
 });
 
+test('Sidebar renders TaskSection with key elements', () => {
+    render(<Sidebar />);
 
-afterEach(async () => {
-    if (browser) {
-        await browser.close();
-        browser = null;
-    }
+    // Check for input bar
+    const inputBar = screen.getByPlaceholderText(/task title/i); // Match placeholder text in the input
+    expect(inputBar).toBeInTheDocument();
+
+    // Check for todo list
+    const todoList = screen.getByRole('list', { name: /to-do list/i }); // Match role and accessible name
+    expect(todoList).toBeInTheDocument();
+
+    // Check for save tasks button
+    const saveTasksButton = screen.getByRole('button', { name: /save tasks/i }); // Match button text
+    expect(saveTasksButton).toBeInTheDocument();
 });
-
-test('Sidebar renders TaskSection correctly', async () => {
-    const sidebar = await page.$('.sidebar.container.p-3');
-    expect(sidebar).not.toBeNull();
-
-    const taskSection = await page.$('.sidebar.container.p-3 > div');
-    expect(taskSection).not.toBeNull();
-});
-
-test("Sidebar renders TaskSection with key elements", async () => {
-    await page.waitForSelector(".sidebar.container.p-3", { timeout: 5000 });
-  
-    const inputBar = await page.$(".input-bar");
-    expect(inputBar).not.toBeNull();
-  
-    const todoList = await page.$(".todo-list");
-    expect(todoList).not.toBeNull();
-  
-    const saveTasksButton = await page.$('button[id="save-tasks"]');
-    expect(saveTasksButton).not.toBeNull();   
-  });
-

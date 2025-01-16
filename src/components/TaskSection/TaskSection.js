@@ -12,10 +12,10 @@ function TaskSection() {
     }, []);
 
     return (
-        <div className="sidebar container p-3">
+        <div data-testid="task-section" className="sidebar container p-3">
             <InputBar onAddTask={addTask} />
             <TodoList tasks={tasks} onDeleteTask={deleteTask} />
-            <button onClick={saveTasks} id="save-tasks">Save Tasks</button>
+            <button onClick={saveTasks} aria-label="Save Tasks"id="save-tasks">Save Tasks</button>
         </div>
     );
 }
