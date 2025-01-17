@@ -1,119 +1,71 @@
-const puppeteer = require('puppeteer');
-const path = require('path');
+import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import InputBar from '../components/InputBar/InputBar';
 
-const EXTENSION_PATH = path.resolve(__dirname, '../../dist');
-let browser;
-let page;
-let EXTENSION_ID;
+let mockAddTask;
 
-beforeEach(async () => {
-    browser = await puppeteer.launch({
-        headless: true,
-        args: [
-            `--disable-extensions-except=${EXTENSION_PATH}`,
-            `--load-extension=${EXTENSION_PATH}`,
-        ],
-    });
-
-    page = await browser.newPage();
-    await page.goto('chrome://extensions');
-    
-
-    EXTENSION_ID = await page.evaluate(() => {
-        const extensionsItemElement = document.querySelector('body > extensions-manager')
-            ?.shadowRoot.querySelector('#items-list')
-            ?.shadowRoot.querySelector('extensions-item');
-
-        return extensionsItemElement ? extensionsItemElement.getAttribute('id') : null;
-    });
-
-    const extensionURL = `chrome-extension://${EXTENSION_ID}/index.html`;
-    await page.goto(extensionURL);
+beforeEach(() => {
+    mockAddTask = jest.fn();
+    render(<InputBar onAddTask={mockAddTask} />);
 });
 
-afterEach(async () => {
-    if (browser) {
-        await browser.close();
-        browser = null;
-    }
+test('renders the InputBar component correctly', () => {
+    expect(screen.getByPlaceholderText(/task title/i)).toBeInTheDocument();
+    expect(screen.getByText(/add new to-do list task/i)).toBeInTheDocument();
+
+    // Check for preset buttons
+    const presetButtons = screen.getAllByRole('radio');
+    expect(presetButtons.length).toBe(3);
+
+    expect(screen.getByRole('button', { name: /add task/i })).toBeInTheDocument();
 });
 
-test("renders the InputBar component correctly", async () => {
-    const taskInput = await page.$("input[placeholder='Task title']");
-    expect(taskInput).toBeTruthy();
-
-    const taskHeading = await page.$eval("h2.task-heading", (el) => el.textContent);
-    expect(taskHeading).toBe("Add New To-Do List Task");
-
-    const presetButtons = await page.$$eval(".preset-date-btn", (els) => els.length);
-    expect(presetButtons).toBe(3);
-
-    const addButton = await page.$("button.change-btn");
-    expect(addButton).toBeTruthy();
+test('allows user to input a task title', () => {
+    const taskInput = screen.getByPlaceholderText(/task title/i);
+    fireEvent.change(taskInput, { target: { value: 'Test Task' } });
+    expect(taskInput.value).toBe('Test Task');
 });
 
-test("allows user to input a task title", async () => {
-const taskInput = await page.$("input[placeholder='Task title']");
-await taskInput.type("Test Task");
+test('handles preset selection and updates due date and time', () => {
+    const todayPreset = screen.getByText(/today/i);
+    fireEvent.click(todayPreset);
 
-const inputValue = await page.$eval("input[placeholder='Task title']", (el) => el.value);
-expect(inputValue).toBe("Test Task");
+    // Check if a radio input is selected
+    const checkedRadio = screen.getAllByRole('radio').find(radio => radio.checked);
+    expect(checkedRadio).toBeDefined();
+    expect(checkedRadio.value).toContain('23:59');
 });
 
-test("handles preset selection and updates due date and time", async () => {
-const todayPreset = await page.$(".preset-date-btn");
-await todayPreset.click();
+test('toggles the reminder checkbox', () => {
+    const reminderCheckbox = screen.getByRole('checkbox');
+    expect(reminderCheckbox).toBeChecked();
 
-const checkedRadio = await page.$eval("input[type='radio']:checked", (el) => el.value);
-expect(checkedRadio).toContain("23:59"); 
+    fireEvent.click(reminderCheckbox);
+    expect(reminderCheckbox).not.toBeChecked();
+
+    fireEvent.click(reminderCheckbox);
+    expect(reminderCheckbox).toBeChecked();
 });
 
-test("toggles the reminder checkbox", async () => {
-const reminderCheckboxSelector = "input#reminder-checkbox";
-const reminderLabelSelector = ".bell-checkbox";
+test('submits a task with the correct values', () => {
+    const taskInput = screen.getByPlaceholderText(/task title/i);
+    const addButton = screen.getByRole('button', { name: /add task/i });
 
-const checkboxExists = await page.evaluate(() => !!document.querySelector("input#reminder-checkbox"));
-expect(checkboxExists).toBe(true);
+    fireEvent.change(taskInput, { target: { value: 'Test Task' } });
+    fireEvent.click(addButton);
 
-await page.waitForSelector(reminderLabelSelector);
-
-await page.click(reminderLabelSelector);
-const uncheckedState = await page.$eval(reminderCheckboxSelector, (el) => el.checked);
-expect(uncheckedState).toBe(false);
-
-await page.click(reminderLabelSelector);
-const checkedState = await page.$eval(reminderCheckboxSelector, (el) => el.checked);
-expect(checkedState).toBe(true);
+    expect(mockAddTask).toHaveBeenCalledWith('Test Task', expect.any(String), expect.any(String), '', true);
 });
 
+test('clears the form after submission', () => {
+    const taskInput = screen.getByPlaceholderText(/task title/i);
+    const addButton = screen.getByRole('button', { name: /add task/i });
+    const reminderCheckbox = screen.getByRole('checkbox');
 
-test("submits a task with the correct values", async () => {
-const taskInputSelector = "input[placeholder='Task title']";
-const addTaskButtonSelector = "button.change-btn";
+    fireEvent.change(taskInput, { target: { value: 'Another Test Task' } });
+    fireEvent.click(reminderCheckbox);
+    fireEvent.click(addButton);
 
-await page.waitForSelector(taskInputSelector);
-await page.type(taskInputSelector, "Test Task");
-await page.click(addTaskButtonSelector);
-
-const inputValue = await page.$eval(taskInputSelector, (el) => el.value);
-expect(inputValue).toBe("");
+    expect(taskInput.value).toBe('');
+    expect(reminderCheckbox).toBeChecked(); // Should reset to default (checked)
 });
-
-
-test("clears the form after submission", async () => {
-    const taskInputSelector = "input[placeholder='Task title']";
-    const reminderLabelSelector = ".bell-checkbox";
-    const reminderCheckboxSelector = "input#reminder-checkbox";
-    const addTaskButtonSelector = "button.change-btn";
-  
-    await page.waitForSelector(taskInputSelector);
-    await page.type(taskInputSelector, "Another Test Task");
-    await page.click(reminderLabelSelector);
-    await page.click(addTaskButtonSelector);
-  
-    const inputValue = await page.$eval(taskInputSelector, (el) => el.value);
-    expect(inputValue).toBe("");
-  
-    const reminderCheckboxState = await page.$eval(reminderCheckboxSelector, (el) => el.checked);
-    expect(reminderCheckboxState).toBe(true);
-  });
