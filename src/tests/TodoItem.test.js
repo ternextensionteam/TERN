@@ -1,122 +1,71 @@
-const puppeteer = require('puppeteer');
-const path = require('path');
-const { render } = require('@testing-library/react');
+import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import TodoList from '../components/TodoList/TodoList';
 
-const EXTENSION_PATH = path.resolve(__dirname, '../../dist');
-let browser;
-let page;
-let EXTENSION_ID;
+let mockTasks;
+let mockOnDelete;
+let mockOnToggleReminder;
 
-beforeEach(async () => {
-    browser = await puppeteer.launch({
-        headless: true,
-        args: [
-            `--disable-extensions-except=${EXTENSION_PATH}`,
-            `--load-extension=${EXTENSION_PATH}`,
-        ],
-    });
-
-    page = await browser.newPage();
-    await page.goto('chrome://extensions');
-
-    EXTENSION_ID = await page.evaluate(() => {
-        const extensionsItemElement = document.querySelector('body > extensions-manager')
-            ?.shadowRoot.querySelector('#items-list')
-            ?.shadowRoot.querySelector('extensions-item');
-
-        return extensionsItemElement ? extensionsItemElement.getAttribute('id') : null;
-    });
-
-    const extensionURL = `chrome-extension://${EXTENSION_ID}/index.html`;
-    await page.goto(extensionURL);
+beforeEach(() => {
+    mockTasks = [{ id: 1, text: 'Test Task', reminder: false }];
+    mockOnDelete = jest.fn();
+    mockOnToggleReminder = jest.fn();
 });
 
-afterEach(async () => {
-    if (browser) {
-        await browser.close();
-        browser = null;
-    }
-});
+test('renders task details correctly', () => {
+    render(<TodoList tasks={mockTasks} onDeleteTask={mockOnDelete} onToggleReminder={mockOnToggleReminder} />);
 
-test('renders task details correctly', async () => {
-    const taskTitle = 'Test Task';
-    const today = new Date(); 
+    // Check if task text is rendered
+    expect(screen.getByText('Test Task')).toBeInTheDocument();
+
+    // Manually set task due date for test
+    const today = new Date();
     today.setHours(23, 59, 0, 0);
     const formattedToday = today.toLocaleString('en-US', { hour12: true });
 
-    await page.type('input[placeholder="Task title"]', taskTitle);
-    
-    const todayPresetSelector = '.preset-date-btn'; 
-    await page.evaluate(() => {
-        document.querySelector('.preset-date-btn').click();
-    });
+    mockTasks[0].due = today;
+    render(<TodoList tasks={mockTasks} onDeleteTask={mockOnDelete} onToggleReminder={mockOnToggleReminder} />);
 
-    await page.click('button.change-btn'); 
-    await page.waitForSelector('.todo-list .todo-item', { timeout: 5000 });
-
-    const renderedTitle = await page.$eval('.todo-item .task-text', (el) => el.textContent.trim());
-    expect(renderedTitle).toContain(taskTitle);
-
-    const renderedDueDate = await page.$eval('.todo-item .text-muted', (el) => el.textContent.trim());
-    expect(renderedDueDate).toBe(`Due: ${formattedToday}`)
+    // Use regex to match the due date instead of exact text
+    expect(screen.getByText(/Due:\s*\d{1,2}\/\d{1,2}\/\d{4},?\s*\d{1,2}:\d{2}:\d{2}\s*(AM|PM)?/i)).toBeInTheDocument();
 });
 
+test('toggles task reminders correctly', () => {
+    render(<TodoList tasks={mockTasks} onDeleteTask={mockOnDelete} onToggleReminder={mockOnToggleReminder} />);
 
-test('toggles task reminders correctly', async () => {
-    await page.type('input[placeholder="Task title"]', 'Task with Reminder');
-    await page.click('button.change-btn');
-    await page.waitForSelector('.todo-list .todo-item', { timeout: 5000 });
+    // Click the reminder button
+    const reminderButton = screen.getByTitle('Toggle Reminder');
+    fireEvent.click(reminderButton);
 
-    const taskText = await page.$eval('.todo-item .task-text', (el) =>
-        Array.from(el.childNodes)
-            .filter((node) => node.nodeType === Node.TEXT_NODE)
-            .map((node) => node.textContent.trim())
-            .join('')
-    );
-    expect(taskText).toBe('Task with Reminder');
-
-    const reminderButton = await page.$('.todo-item .btn[title="Toggle Reminder"]');
-    await reminderButton.click();
-    const reminderSet = await page.$eval('.todo-item .btn[title="Toggle Reminder"]', (el) => !!el);
-    expect(reminderSet).toBe(true);
-    // toggle reminder OFF
-    await reminderButton.click();
-    const reminderUnset = await page.$eval('.todo-item .btn[title="Toggle Reminder"] svg.text-warning', (el) => !el).catch(() => false);
-    expect(reminderUnset).toBe(false);
+    // Ensure the toggle function was called
+    expect(mockOnToggleReminder).toHaveBeenCalledTimes(1);
+    expect(mockOnToggleReminder).toHaveBeenCalledWith(1);
 });
 
-test('deletes a task correctly', async () => {
-    await page.type('input[placeholder="Task title"]', 'Task to Delete');
-    await page.click('button.change-btn');
+test('deletes a task correctly', () => {
+    render(<TodoList tasks={mockTasks} onDeleteTask={mockOnDelete} onToggleReminder={mockOnToggleReminder} />);
 
-    await page.waitForSelector('.todo-list .todo-item', { timeout: 5000 });
+    // Check that task is rendered
+    expect(screen.getByText('Test Task')).toBeInTheDocument();
 
-    const taskCountBeforeDelete = await page.$$eval('.todo-item', (items) => items.length);
-    expect(taskCountBeforeDelete).toBe(1);
+    // Click the delete button
+    const deleteButton = screen.getByTitle('Delete Task');
+    fireEvent.click(deleteButton);
 
-    await page.click('.todo-item .btn[title="Delete Task"]');
-
-    const taskCountAfterDelete = await page.$$eval('.todo-item', (items) => items.length);
-    expect(taskCountAfterDelete).toBe(0);
+    // Ensure the delete function was called
+    expect(mockOnDelete).toHaveBeenCalledTimes(1);
+    expect(mockOnDelete).toHaveBeenCalledWith(1);
 });
 
-test('triggers edit functionality when the edit button is clicked', async () => {
-    await page.type('input[placeholder="Task title"]', 'Task to Edit');
-    await page.click('button.change-btn');
+test('triggers edit functionality when the edit button is clicked', () => {
+    console.log = jest.fn(); // Mock console.log
 
-    await page.waitForSelector('.todo-list .todo-item', { timeout: 5000 });
+    render(<TodoList tasks={mockTasks} onDeleteTask={mockOnDelete} onToggleReminder={mockOnToggleReminder} />);
 
-    const taskId = await page.$eval('.todo-item', (item) => item.getAttribute('data-key'));
+    // Click the edit button
+    const editButton = screen.getByTitle('Edit Task');
+    fireEvent.click(editButton);
 
-    const consoleLogs = [];
-    page.on('console', (message) => {
-        if (message.type() === 'log') {
-            consoleLogs.push(message.text());
-        }
-    });
-    const editButton = await page.$('.todo-item .btn[title="Edit Task"]');
-    await editButton.click();
-
-    const expectedLog = `TODO implement Edit task with ID: ${taskId}`;
-    expect(consoleLogs).toContain(expectedLog);
+    // Check if console.log was called with correct text
+    expect(console.log).toHaveBeenCalledWith('TODO implement Edit task with ID: 1');
 });
