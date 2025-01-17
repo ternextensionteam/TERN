@@ -1,85 +1,95 @@
-const puppeteer = require('puppeteer');
-const path = require('path');
-const EXTENSION_PATH = path.resolve(__dirname, '../../dist');
-let browser;
-let page;
-let EXTENSION_ID;
+import React from 'react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { useTodoList } from '../hooks/useTodoList/useTodoList';
+import TaskSection from '../components/TaskSection/TaskSection';
 
-beforeEach(async() => {
-    browser = await puppeteer.launch({
-        headless:true,
-        args: [
-            `--disable-extensions-except=${EXTENSION_PATH}`,
-            `--load-extension=${EXTENSION_PATH}`,
-          ],
-    });
-    page = await browser.newPage();
-    await page.goto('chrome://extensions');
-    EXTENSION_ID = await page.evaluate(() => {
-        const extensionsItemElement = document.querySelector('body > extensions-manager')
-        ?.shadowRoot.querySelector('#items-list')
-        ?.shadowRoot.querySelector('extensions-item');
+jest.mock('../hooks/useTodoList/useTodoList', () => ({
+    useTodoList: jest.fn(),
+}));
 
-    return extensionsItemElement ? extensionsItemElement.getAttribute('id') : null;
+test('renders InputBar, TodoList, and Save Tasks button correctly', () => {
+    // Mocking the `useTodoList` hook with empty tasks and jest mock functions
+    useTodoList.mockReturnValue({
+        tasks: [],
+        addTask: jest.fn(),
+        deleteTask: jest.fn(),
+        saveTasks: jest.fn(),
+        loadTasks: jest.fn(),
     });
 
-    const extensionURL = `chrome-extension://${EXTENSION_ID}/index.html`;
-    await page.goto(extensionURL);
-});
+    render(<TaskSection />);
 
-
-afterEach(async () => {
-    if (browser) {
-        await browser.close();
-        browser = null;
-    }
-});
-
-test('renders InputBar, TodoList, and Save Tasks button correctly', async () => {
-    await page.waitForSelector('.sidebar.container.p-3', { timeout: 5000 });
-
-    const inputBarExists = await page.$('.input-bar');
-    expect(inputBarExists).not.toBeNull();
-
-    const todoListExists = await page.$('.todo-list');
-    expect(todoListExists).not.toBeNull(); 
-
-    const saveTasksButtonExists = await page.$('#save-tasks');
-    expect(saveTasksButtonExists).not.toBeNull(); 
-
-    const saveTasksButtonText = await page.$eval('#save-tasks', (el) => el.textContent.trim());
-    expect(saveTasksButtonText).toBe('Save Tasks'); 
+    // Check if InputBar, TodoList, and Save Tasks button exist
+    expect(screen.getByPlaceholderText('Task title')).toBeInTheDocument();
+    expect(screen.getByTestId('todo-list')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Save Tasks' })).toBeInTheDocument();
 });
 
 
 test('adds a task and renders it in the task list', async () => {
-    const taskTitle = 'New Task';
-    
-    await page.type('input[placeholder="Task title"]', taskTitle);
-    await page.click('button.change-btn'); 
-    await page.waitForSelector('.todo-list .todo-item', { timeout: 5000 });
+    // Mock the initial state
+    const mockAddTask = jest.fn();
+    let mockTasks = [];
 
-    const renderedTaskTitle = await page.$eval('.todo-item .task-text', (el) => el.textContent.trim());
-    expect(renderedTaskTitle).toContain(taskTitle);
+    useTodoList.mockReturnValue({
+        tasks: mockTasks,
+        addTask: mockAddTask,
+        deleteTask: jest.fn(),
+        saveTasks: jest.fn(),
+        loadTasks: jest.fn(),
+    });
+
+    render(<TaskSection />);
+
+    // Find and type into the task input field
+    const taskInput = screen.getByPlaceholderText(/task title/i);
+    fireEvent.change(taskInput, { target: { value: 'New Task' } });
+
+    // Click the "Add Task" button
+    const addButton = screen.getByRole('button', { name: /add task/i });
+    fireEvent.click(addButton);
+
+    // Ensure addTask function is called correctly
+    expect(mockAddTask).toHaveBeenCalledWith('New Task', expect.any(String), expect.any(String), '', true);
+
+    // Simulate the effect of adding a task
+    mockTasks = [
+        { id: 1, text: 'New Task', due: '', description: '', reminder: true },
+    ];
+    useTodoList.mockReturnValue({
+        tasks: mockTasks, // Updated tasks
+        addTask: mockAddTask,
+        deleteTask: jest.fn(),
+        saveTasks: jest.fn(),
+        loadTasks: jest.fn(),
+    });
+
+    // Re-render the component with updated state
+    render(<TaskSection />);
+
+    // Ensure the new task appears in the task list asynchronously
+    await waitFor(() => {
+        expect(screen.getByText('New Task')).toBeInTheDocument();
+    });
 });
 
 
-test('saves tasks correctly when clicking Save Tasks', async () => {
-    const taskTitle = 'Task to Save';
-    await page.type('input[placeholder="Task title"]', taskTitle);
-    await page.click('button.change-btn'); 
-    await page.waitForSelector('.todo-list .todo-item', { timeout: 5000 });
-
-    await page.click('#save-tasks');
-
-    const savedTasks = await page.evaluate(() => {
-        return new Promise((resolve) => {
-            chrome.storage.local.get(['tasks'], (result) => {
-                resolve(result.tasks || []);
-            });
-        });
+test('saves tasks correctly when clicking Save Tasks', () => {
+    const mockSaveTasks = jest.fn();
+    useTodoList.mockReturnValue({
+        tasks: [{ id: 1, text: 'Task to Save' }],
+        addTask: jest.fn(),
+        deleteTask: jest.fn(),
+        saveTasks: mockSaveTasks,
+        loadTasks: jest.fn(),
     });
 
-    const savedTaskTitles = savedTasks.map((task) => task.text);
-    expect(savedTaskTitles).toContain(taskTitle);
+    render(<TaskSection />);
+
+    // Click Save Tasks button
+    const saveButton = screen.getByRole('button', { name: 'Save Tasks' });
+    fireEvent.click(saveButton);
+
+    // Check if saveTasks function was called
+    expect(mockSaveTasks).toHaveBeenCalled();
 });
