@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import InputBar from '../components/InputBar/InputBar';
+import InputBar from '../components/Inputbar/InputBar';
 
 let mockAddTask;
 
