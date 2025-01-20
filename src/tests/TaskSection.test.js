@@ -4,7 +4,7 @@ import TaskSection from '../components/TaskSection/TaskSection';
 import TodoItem from '../components/TodoItem/TodoItem';
 import { useTodoList } from '../hooks/useTodoList/useTodoList';
 
-// 🛠️ Mock `useTodoList` to isolate TaskSection
+// Mock `useTodoList` to isolate TaskSection
 jest.mock('../hooks/useTodoList/useTodoList');
 
 let mockTasks, mockAddTask, mockDeleteTask, mockToggleReminder, mockUpdateTask;
@@ -28,7 +28,7 @@ beforeEach(() => {
     });
 });
 
-// ✅ Test if TaskSection renders correctly
+// Test if TaskSection renders correctly
 test('renders TaskSection with InputBar and TodoList', () => {
     render(<TaskSection />);
     
@@ -37,7 +37,7 @@ test('renders TaskSection with InputBar and TodoList', () => {
     expect(screen.getByTestId('todo-list')).toBeInTheDocument();
 });
 
-// ✅ Test adding a task
+// Test adding a task
 test('adds a task and renders it in the task list', async () => {
     render(<TaskSection />);
 
@@ -61,7 +61,7 @@ test('adds a task and renders it in the task list', async () => {
     });
 });
 
-// ✅ Test toggling task reminder
+// Test toggling task reminder
 test('toggles task reminder correctly', async () => {
     render(<TodoItem task={mockTasks[0]} onToggleReminder={mockToggleReminder} />);
     
@@ -77,7 +77,7 @@ test('toggles task reminder correctly', async () => {
     expect(mockToggleReminder).toHaveBeenCalledTimes(2);
 });
 
-// ✅ Test deleting a task
+// Test deleting a task
 test('deletes a task correctly', async () => {
     render(<TaskSection />);
 
