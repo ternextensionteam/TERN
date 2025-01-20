@@ -1,95 +1,91 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { useTodoList } from '../hooks/useTodoList/useTodoList';
 import TaskSection from '../components/TaskSection/TaskSection';
+import TodoItem from '../components/TodoItem/TodoItem';
+import { useTodoList } from '../hooks/useTodoList/useTodoList';
 
-jest.mock('../hooks/useTodoList/useTodoList', () => ({
-    useTodoList: jest.fn(),
-}));
+// 🛠️ Mock `useTodoList` to isolate TaskSection
+jest.mock('../hooks/useTodoList/useTodoList');
 
-test('renders InputBar, TodoList, and Save Tasks button correctly', () => {
-    // Mocking the `useTodoList` hook with empty tasks and jest mock functions
-    useTodoList.mockReturnValue({
-        tasks: [],
-        addTask: jest.fn(),
-        deleteTask: jest.fn(),
-        saveTasks: jest.fn(),
-        loadTasks: jest.fn(),
-    });
+let mockTasks, mockAddTask, mockDeleteTask, mockToggleReminder, mockUpdateTask;
 
-    render(<TaskSection />);
-
-    // Check if InputBar, TodoList, and Save Tasks button exist
-    expect(screen.getByPlaceholderText('Task title')).toBeInTheDocument();
-    expect(screen.getByTestId('todo-list')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Save Tasks' })).toBeInTheDocument();
-});
-
-
-test('adds a task and renders it in the task list', async () => {
-    // Mock the initial state
-    const mockAddTask = jest.fn();
-    let mockTasks = [];
+beforeEach(() => {
+    // Mock the return values of `useTodoList`
+    mockTasks = [{ id: 1, text: 'Sample Task', reminder: false }];
+    mockAddTask = jest.fn();
+    mockDeleteTask = jest.fn();
+    mockToggleReminder = jest.fn();
+    mockUpdateTask = jest.fn();
 
     useTodoList.mockReturnValue({
         tasks: mockTasks,
         addTask: mockAddTask,
-        deleteTask: jest.fn(),
+        deleteTask: mockDeleteTask,
+        toggleReminder: mockToggleReminder,
+        updateTask: mockUpdateTask,
         saveTasks: jest.fn(),
         loadTasks: jest.fn(),
-    });
-
-    render(<TaskSection />);
-
-    // Find and type into the task input field
-    const taskInput = screen.getByPlaceholderText(/task title/i);
-    fireEvent.change(taskInput, { target: { value: 'New Task' } });
-
-    // Click the "Add Task" button
-    const addButton = screen.getByRole('button', { name: /add task/i });
-    fireEvent.click(addButton);
-
-    // Ensure addTask function is called correctly
-    expect(mockAddTask).toHaveBeenCalledWith('New Task', expect.any(String), expect.any(String), '', true);
-
-    // Simulate the effect of adding a task
-    mockTasks = [
-        { id: 1, text: 'New Task', due: '', description: '', reminder: true },
-    ];
-    useTodoList.mockReturnValue({
-        tasks: mockTasks, // Updated tasks
-        addTask: mockAddTask,
-        deleteTask: jest.fn(),
-        saveTasks: jest.fn(),
-        loadTasks: jest.fn(),
-    });
-
-    // Re-render the component with updated state
-    render(<TaskSection />);
-
-    // Ensure the new task appears in the task list asynchronously
-    await waitFor(() => {
-        expect(screen.getByText('New Task')).toBeInTheDocument();
     });
 });
 
+// ✅ Test if TaskSection renders correctly
+test('renders TaskSection with InputBar and TodoList', () => {
+    render(<TaskSection />);
+    
+    expect(screen.getByTestId('task-section')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/task title/i)).toBeInTheDocument();
+    expect(screen.getByTestId('todo-list')).toBeInTheDocument();
+});
 
-test('saves tasks correctly when clicking Save Tasks', () => {
-    const mockSaveTasks = jest.fn();
-    useTodoList.mockReturnValue({
-        tasks: [{ id: 1, text: 'Task to Save' }],
-        addTask: jest.fn(),
-        deleteTask: jest.fn(),
-        saveTasks: mockSaveTasks,
-        loadTasks: jest.fn(),
-    });
-
+// ✅ Test adding a task
+test('adds a task and renders it in the task list', async () => {
     render(<TaskSection />);
 
-    // Click Save Tasks button
-    const saveButton = screen.getByRole('button', { name: 'Save Tasks' });
-    fireEvent.click(saveButton);
+    // Type task title
+    const taskInput = screen.getByPlaceholderText(/task title/i);
+    fireEvent.change(taskInput, { target: { value: 'New Task' } });
 
-    // Check if saveTasks function was called
-    expect(mockSaveTasks).toHaveBeenCalled();
+    // Click Add Task button
+    const addButton = screen.getByRole('button', { name: /add task/i });
+    fireEvent.click(addButton);
+
+    // Ensure mockAddTask is called with all expected parameters
+    await waitFor(() => {
+        expect(mockAddTask).toHaveBeenCalledWith(
+            'New Task',
+            expect.any(String), // Due Date (e.g., "2025-01-20")
+            expect.any(String), // Due Time (e.g., "15:53")
+            expect.any(String), // Description ("" if empty)
+            expect.any(Boolean) // Reminder status (true/false)
+        );
+    });
+});
+
+// ✅ Test toggling task reminder
+test('toggles task reminder correctly', async () => {
+    render(<TodoItem task={mockTasks[0]} onToggleReminder={mockToggleReminder} />);
+    
+    // Find the button by accessible name
+    const reminderButton = screen.getByRole('button', { name: /toggle reminder/i });
+
+    // Click to turn reminder ON
+    fireEvent.click(reminderButton);
+    expect(mockToggleReminder).toHaveBeenCalledWith(mockTasks[0].id);
+
+    // Click again to turn reminder OFF
+    fireEvent.click(reminderButton);
+    expect(mockToggleReminder).toHaveBeenCalledTimes(2);
+});
+
+// ✅ Test deleting a task
+test('deletes a task correctly', async () => {
+    render(<TaskSection />);
+
+    // Find the delete button
+    const deleteButton = screen.getByRole('button', { name: /delete task/i });
+    fireEvent.click(deleteButton);
+
+    await waitFor(() => {
+        expect(mockDeleteTask).toHaveBeenCalledWith(1);
+    });
 });

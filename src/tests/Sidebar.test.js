@@ -1,31 +1,49 @@
-import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
-import Sidebar from '../components/Sidebar/Sidebar';
+import React from "react";
+import { render, screen, fireEvent } from "@testing-library/react";
+import Sidebar from "../components/Sidebar/Sidebar";
+import TaskSection from "../components/TaskSection/TaskSection";
+import IndexingSection from "../components/IndexingSection/IndexingSection";
+import "@testing-library/jest-dom";
 
-test('Sidebar renders TaskSection correctly', () => {
-    // Render the Sidebar component
+// Mock child components to isolate Sidebar testing
+jest.mock("../components/TaskSection/TaskSection", () => () => <div data-testid="task-section">Task Section</div>);
+jest.mock("../components/IndexingSection/IndexingSection", () => () => <div data-testid="indexing-section">Indexing Section</div>);
+
+test("renders Sidebar with default Tasks section", () => {
     render(<Sidebar />);
 
-    // Check if the Sidebar container is rendered
-    const sidebar = screen.getByRole('complementary', { name: /sidebar/i });
-    expect(sidebar).toBeInTheDocument();
-
-    const taskSection = screen.getByTestId('task-section');
-    expect(taskSection).toBeInTheDocument();
+    // ✅ "Task Section" should be visible by default
+    expect(screen.getByTestId("task-section")).toBeInTheDocument();
+    
+    // ✅ "Indexing" and "Settings" should NOT be visible initially
+    expect(screen.queryByTestId("indexing-section")).not.toBeInTheDocument();
+    expect(screen.queryByText("Settings")).not.toBeInTheDocument();
 });
 
-test('Sidebar renders TaskSection with key elements', () => {
+test("navigates to Indexing section when Indexing tab is clicked", () => {
     render(<Sidebar />);
+    
+    // 🔘 Click on "Indexing" tab (match text instead of role)
+    fireEvent.click(screen.getByText(/indexing/i));
 
-    // Check for input bar
-    const inputBar = screen.getByPlaceholderText(/task title/i); // Match placeholder text in the input
-    expect(inputBar).toBeInTheDocument();
+    // ✅ "Indexing Section" should now be visible
+    expect(screen.getByTestId("indexing-section")).toBeInTheDocument();
+    
+    // ✅ "Task Section" and "Settings" should NOT be visible
+    expect(screen.queryByTestId("task-section")).not.toBeInTheDocument();
+    expect(screen.queryByText("Settings")).not.toBeInTheDocument();
+});
 
-    // Check for todo list
-    const todoList = screen.getByRole('list', { name: /to-do list/i }); // Match role and accessible name
-    expect(todoList).toBeInTheDocument();
+test("navigates to Settings section when Settings tab is clicked", () => {
+    render(<Sidebar />);
+    
+    // 🔘 Click on the Settings icon (Gear Icon)
+    fireEvent.click(document.querySelector("[data-rr-ui-event-key='settings']"));
 
-    // Check for save tasks button
-    const saveTasksButton = screen.getByRole('button', { name: /save tasks/i }); // Match button text
-    expect(saveTasksButton).toBeInTheDocument();
+    // ✅ "Settings" section should now be visible
+    expect(screen.getByText("Settings")).toBeInTheDocument();
+    
+    // ✅ "Task" and "Indexing" sections should NOT be visible
+    expect(screen.queryByTestId("task-section")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("indexing-section")).not.toBeInTheDocument();
 });

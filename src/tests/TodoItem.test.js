@@ -1,71 +1,108 @@
-import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import TodoList from '../components/TodoList/TodoList';
+import React from "react";
+import { render, screen, fireEvent } from "@testing-library/react";
+import TodoItem from "../components/TodoItem/TodoItem";
+import "@testing-library/jest-dom"; // Provides matchers like toBeInTheDocument()
+import { FaTrashAlt } from "react-icons/fa";
 
-let mockTasks;
-let mockOnDelete;
-let mockOnToggleReminder;
+let mockTask, mockOnDelete, mockOnToggleReminder, mockOnUpdateTask;
 
 beforeEach(() => {
-    mockTasks = [{ id: 1, text: 'Test Task', reminder: false }];
-    mockOnDelete = jest.fn();
-    mockOnToggleReminder = jest.fn();
+  mockTask = {
+    id: 1,
+    text: "Sample Task",
+    due: "2025-01-17T11:59:00Z",
+    reminder: false,
+    description: "This is a sample task description.",
+  };
+  mockOnDelete = jest.fn();
+  mockOnToggleReminder = jest.fn();
+  mockOnUpdateTask = jest.fn();
 });
 
-test('renders task details correctly', () => {
-    render(<TodoList tasks={mockTasks} onDeleteTask={mockOnDelete} onToggleReminder={mockOnToggleReminder} />);
+test("renders the task correctly", () => {
+  render(
+    <TodoItem
+      task={mockTask}
+      onDelete={mockOnDelete}
+      onToggleReminder={mockOnToggleReminder}
+      onUpdateTask={mockOnUpdateTask}
+    />
+  );
 
-    // Check if task text is rendered
-    expect(screen.getByText('Test Task')).toBeInTheDocument();
-
-    // Manually set task due date for test
-    const today = new Date();
-    today.setHours(23, 59, 0, 0);
-    const formattedToday = today.toLocaleString('en-US', { hour12: true });
-
-    mockTasks[0].due = today;
-    render(<TodoList tasks={mockTasks} onDeleteTask={mockOnDelete} onToggleReminder={mockOnToggleReminder} />);
-
-    // Use regex to match the due date instead of exact text
-    expect(screen.getByText(/Due:\s*\d{1,2}\/\d{1,2}\/\d{4},?\s*\d{1,2}:\d{2}:\d{2}\s*(AM|PM)?/i)).toBeInTheDocument();
+  expect(screen.getByText("Sample Task")).toBeInTheDocument();
+  expect(screen.getByText("This is a sample task description.")).toBeInTheDocument();
+  expect(screen.getByText("17 Jan")).toBeInTheDocument(); // Due date formatted
 });
 
-test('toggles task reminders correctly', () => {
-    render(<TodoList tasks={mockTasks} onDeleteTask={mockOnDelete} onToggleReminder={mockOnToggleReminder} />);
+test("toggles checkbox correctly", () => {
+  render(
+    <TodoItem
+      task={mockTask}
+      onDelete={mockOnDelete}
+      onToggleReminder={mockOnToggleReminder}
+      onUpdateTask={mockOnUpdateTask}
+    />
+  );
 
-    // Click the reminder button
-    const reminderButton = screen.getByTitle('Toggle Reminder');
-    fireEvent.click(reminderButton);
+  const checkbox = screen.getByRole("checkbox");
+  expect(checkbox).not.toBeChecked();
 
-    // Ensure the toggle function was called
-    expect(mockOnToggleReminder).toHaveBeenCalledTimes(1);
-    expect(mockOnToggleReminder).toHaveBeenCalledWith(1);
+  fireEvent.click(checkbox);
+  expect(checkbox).toBeChecked();
+
+  fireEvent.click(checkbox);
+  expect(checkbox).not.toBeChecked();
 });
 
-test('deletes a task correctly', () => {
-    render(<TodoList tasks={mockTasks} onDeleteTask={mockOnDelete} onToggleReminder={mockOnToggleReminder} />);
+test("handles task edit on double-click", () => {
+  render(
+    <TodoItem
+      task={mockTask}
+      onDelete={mockOnDelete}
+      onToggleReminder={mockOnToggleReminder}
+      onUpdateTask={mockOnUpdateTask}
+    />
+  );
 
-    // Check that task is rendered
-    expect(screen.getByText('Test Task')).toBeInTheDocument();
+  const taskText = screen.getByText("Sample Task");
 
-    // Click the delete button
-    const deleteButton = screen.getByTitle('Delete Task');
-    fireEvent.click(deleteButton);
+  fireEvent.doubleClick(taskText);
+  const inputField = screen.getByDisplayValue("Sample Task");
 
-    // Ensure the delete function was called
-    expect(mockOnDelete).toHaveBeenCalledTimes(1);
-    expect(mockOnDelete).toHaveBeenCalledWith(1);
+  fireEvent.change(inputField, { target: { value: "Updated Task" } });
+  fireEvent.blur(inputField);
+
+  expect(mockOnUpdateTask).toHaveBeenCalledWith(1, "Updated Task");
 });
 
-test('triggers edit functionality when the edit button is clicked', () => {
-    console.log = jest.fn(); // Mock console.log
+test("toggles reminder when bell icon is clicked", () => {
+  render(
+    <TodoItem
+      task={mockTask}
+      onDelete={mockOnDelete}
+      onToggleReminder={mockOnToggleReminder}
+      onUpdateTask={mockOnUpdateTask}
+    />
+  );
 
-    render(<TodoList tasks={mockTasks} onDeleteTask={mockOnDelete} onToggleReminder={mockOnToggleReminder} />);
+  const reminderButton = screen.getByRole("button", { name: /reminder/i });
+  fireEvent.click(reminderButton);
 
-    // Click the edit button
-    const editButton = screen.getByTitle('Edit Task');
-    fireEvent.click(editButton);
+  expect(mockOnToggleReminder).toHaveBeenCalledWith(1);
+});
 
-    // Check if console.log was called with correct text
-    expect(console.log).toHaveBeenCalledWith('TODO implement Edit task with ID: 1');
+test("deletes task when delete button is clicked", () => {
+  render(
+    <TodoItem
+      task={mockTask}
+      onDelete={mockOnDelete}
+      onToggleReminder={mockOnToggleReminder}
+      onUpdateTask={mockOnUpdateTask}
+    />
+  );
+
+  const deleteButton = screen.getByRole("button", { name: /delete task/i });
+  fireEvent.click(deleteButton);
+
+  expect(mockOnDelete).toHaveBeenCalledWith(1);
 });
