@@ -7,7 +7,7 @@ function TaskSection() {
     const { tasks, addTask, deleteTask, toggleReminder, saveTasks, loadTasks, updateTask } = useTodoList();
 
     return (
-        <div>
+        <div data-testid="task-section">
             <InputBar onAddTask={addTask} />
             <TodoList tasks={tasks} onDeleteTask={deleteTask} onToggleReminder={toggleReminder} onUpdateTask={updateTask}/>
             {/* <button onClick={saveTasks}>Save Tasks</button> */}

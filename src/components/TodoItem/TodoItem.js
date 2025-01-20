@@ -150,6 +150,7 @@ function TodoItem({ task, onDelete, onToggleReminder, onUpdateTask }) {
                 onToggleReminder(task.id);
               }}
               style={{ padding: 0 }}
+              aria-label="Toggle Reminder"
             >
               <img
                 src={
