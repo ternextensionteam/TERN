@@ -29,6 +29,7 @@ run_tests:
 build_project:
   stage: build
   script:
+    - npm install --legacy-peer-deps webpack webpack-cli # Ensure webpack is available
     - npm run build
   dependencies:
     - install_dependencies
