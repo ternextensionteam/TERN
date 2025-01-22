@@ -18,7 +18,6 @@ install_dependencies:
   stage: install
   script:
     - npm install --legacy-peer-deps
-    - npm ci
 
 run_tests:
   stage: test
