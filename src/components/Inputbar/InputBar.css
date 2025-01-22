@@ -8,11 +8,7 @@ body {
 .page-border {
     width: 100%;
     height: 100%;
-<<<<<<< HEAD
     padding: 0px;
-=======
-    padding: 0px; /* removed padding*/
->>>>>>> feature/update-todo-styling
     box-sizing: border-box;
     background-color: #ffffff;
     display: flex;
@@ -21,32 +17,15 @@ body {
 }
 
 .task-container {
-<<<<<<< HEAD
     width: 100%;
-=======
-    width: 100%; /* Full width of sidebar */
-    /*max-width: 300px;  Restrict max width to fit in a sidebar */
->>>>>>> feature/update-todo-styling
     padding: 5px;
     background-color: #ebebeb;
     border-radius: 8px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-<<<<<<< HEAD
 .task-input,
 .task-textarea {
-=======
-.task-heading {
-    font-size: 16px; /* Smaller font for sidebar */
-    text-align: left;
-    margin-top: 0;
-    margin-bottom: 10px; /* Compact spacing */
-    color: #333333;
-}
-
-.task-input, .task-textarea {
->>>>>>> feature/update-todo-styling
     width: 100%;
     font-family: 'Roboto', Arial, sans-serif;
     margin-bottom: 8px;
@@ -61,12 +40,8 @@ body {
     transition: border-color 0.3s ease;
 }
 
-<<<<<<< HEAD
 .task-input:focus,
 .task-textarea:focus {
-=======
-.task-input:focus, .task-textarea:focus {
->>>>>>> feature/update-todo-styling
     border-color: #f78f1e;
     box-shadow: 0 0 5px rgba(247, 143, 30, 0.5);
 }
@@ -77,7 +52,6 @@ body {
 }
 
 .task-textarea {
-<<<<<<< HEAD
     font-size: 16px;
     resize: none;
     overflow: hidden;
@@ -92,40 +66,12 @@ body {
     color: #b0b0b0;
     font-size: 16px;
 }
-=======
-    width: 100%;
-    font-family: 'Roboto', Arial, sans-serif;
-    margin-bottom: 8px;
-    padding: 8px 10px;
-    background-color: #ffffff;
-    color: #717171; /* Same color as task title input */
-    border: 3px solid #ffffff;
-    border-radius: 4px;
-    font-size: 16px; /* Smaller font size */
-    outline: none;
-    box-sizing: border-box;
-    transition: border-color 0.3s ease;
-    resize: none;
-    overflow: hidden;
-  }
-  
-  .task-textarea:focus {
-    border-color: #f78f1e;
-    box-shadow: 0 0 5px rgba(247, 143, 30, 0.5);
-  }
-  
-  .task-textarea::placeholder {
-    color: #b0b0b0;
-    font-size: 16px; /* Smaller font size */
-  }
->>>>>>> feature/update-todo-styling
 
 .preset-dates {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 5px;
-<<<<<<< HEAD
     margin-top: 3px;
     margin-bottom: 10px;
     flex-wrap: nowrap;
@@ -133,34 +79,6 @@ body {
 
 .preset-date-btn {
     padding: 12px 8px;
-=======
-    margin-bottom: 12px;
-    flex-wrap: nowrap;
-}
-
-.preset-title {
-    margin: 0;
-    font-weight: bold;
-    color: #333333;
-    white-space: nowrap;
-}
-
-.preset-date-label {
-    display: flex;
-    align-items: center;
-    position: relative;
-}
-
-.preset-date-input {
-    position: absolute;
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.preset-date-btn {
-    padding: 8px 12px;
->>>>>>> feature/update-todo-styling
     background-color: #ffffff;
     color: #ffad54;
     border: 2px solid #ffad54;
@@ -168,17 +86,11 @@ body {
     cursor: pointer;
     font-weight: bold;
     font-size: 16px;
-<<<<<<< HEAD
     transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-=======
-    white-space: nowrap;
-    transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
->>>>>>> feature/update-todo-styling
     height: 27px;
     display: flex;
     align-items: center;
     justify-content: center;
-<<<<<<< HEAD
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
 }
 
@@ -196,8 +108,6 @@ body {
     position: absolute;
     opacity: 0;
     pointer-events: none;
-=======
->>>>>>> feature/update-todo-styling
 }
 
 .preset-date-input:checked + .preset-date-btn {
@@ -212,7 +122,6 @@ body {
     align-items: center;
     gap: 10px;
     margin-top: 16px;
-<<<<<<< HEAD
 }
 
 .manual-btn-input:checked + .manual-btn {
@@ -229,63 +138,19 @@ body {
     background-color: #ff9d34;
     color: #fff;
     padding: 8px 16px;
-=======
-    flex-wrap: nowrap;
-}
-
-.manual-select-row label {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.manual-btn-input {
-    display: none;
-}
-
-.manual-btn {
-    flex: 1;
-    padding: 12px 26px;
-    background-color: #ffffff;
-    color: #000000;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    white-space: nowrap;
-    transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
-    text-align: center;
-}
-
-.change-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #FF8700;
-    color: #fff;
-    padding: 10px 16px; /* Adjusted padding for compact size */
->>>>>>> feature/update-todo-styling
     border: none;
     border-radius: 4px;
     cursor: pointer;
     font-size: 16px;
     font-weight: bold;
-<<<<<<< HEAD
     transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-=======
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    max-width: fit-content; /* Button width fits content */
->>>>>>> feature/update-todo-styling
 }
 
 .change-btn:hover {
     background-color: #FF9A33;
     transform: scale(1.05);
-<<<<<<< HEAD
     box-shadow: 0 4px 8px rgba(255, 137, 0, 0.6);
-=======
->>>>>>> feature/update-todo-styling
 }
 
 .change-btn .btn-icon {
@@ -294,7 +159,6 @@ body {
     height: 16px;
 }
 
-<<<<<<< HEAD
 .task-controls {
     display: flex;
     padding-left: 5px;
@@ -344,66 +208,10 @@ body {
 }
 
 .btn-icon {
-=======
-.manual-btn-input:checked + .manual-btn {
-    background-color: #f78f1e;
-    color: #ffffff;
-    transform: scale(1.05);
-}
-
-.btn-icon {
-    width: 20px;
-    height: 20px;
->>>>>>> feature/update-todo-styling
     margin-right: 10px;
     vertical-align: middle;
 }
 
-<<<<<<< HEAD
 .input-glow {
     border-color: #f78f1e !important;
   }
-=======
-.task-controls {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 5px; /*reduced padding*/
-}
-
-.bell-checkbox {
-    display: flex;
-    align-items: center;
-    margin-right: auto;
-}
-
-.bell-checkbox img {
-    width: 30px;
-    height: 30px;
-    cursor: pointer;
-    transition: transform 0.2s ease, filter 0.2s ease;
-}
-
-.bell-checkbox img:hover {
-    transform: scale(1.1);
-    filter: drop-shadow(0 0 5px rgba(255, 165, 0, 1));
-}
-
-.bell-checkbox input:focus + img {
-    transform: scale(1.1);
-    filter: drop-shadow(0 0 5px rgba(255, 165, 0, 1));
-}
-
-.bell-checkbox input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-    position: absolute;
-}
-
-/* .bell-checkbox img.checked {
-    content: url('/vector_arts/checked_bell.png');
-} */
-
-
->>>>>>> feature/update-todo-styling
