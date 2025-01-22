@@ -1,7 +1,14 @@
+<<<<<<< HEAD
 import React, { useState } from "react";
 import { Card, Row, Col, Form, Collapse, Button } from "react-bootstrap";
 import { FaTrashAlt, FaBell, FaBellSlash } from "react-icons/fa";
 import "./TodoItem.css";
+=======
+import React, { useState, useRef, useEffect } from "react";
+import { Card, Row, Col, Form, Collapse, Button } from "react-bootstrap";
+import "./TodoItem.css";
+import { FaTrashAlt } from "react-icons/fa";
+>>>>>>> feature/update-todo-styling
 
 const isOverdue = (dueDate) => new Date(dueDate) < new Date();
 
@@ -24,6 +31,7 @@ const formatDate = (date) => {
 
 function TodoItem({ task, onDelete, onToggleReminder, onUpdateTask }) {
   const [isDescriptionVisible, setIsDescriptionVisible] = useState(false);
+<<<<<<< HEAD
   const [isHovering, setIsHovering] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isEditingDescription, setIsEditingDescription] = useState(false);
@@ -31,11 +39,26 @@ function TodoItem({ task, onDelete, onToggleReminder, onUpdateTask }) {
   const [newDescription, setNewDescription] = useState(task.description || "");
   const [isChecked, setIsChecked] = useState(false);
   const [isReminderOn, setIsReminderOn] = useState(task.reminder ?? true);
+=======
+  const [isEditing, setIsEditing] = useState(false);
+  const [newText, setNewText] = useState(task.text);
+  const [isChecked, setIsChecked] = useState(false);
+
+  const cardRef = useRef(null);
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+>>>>>>> feature/update-todo-styling
 
   const handleDoubleClick = () => {
     setIsEditing(true);
   };
 
+<<<<<<< HEAD
   const handleDescriptionDoubleClick = () => {
     setIsDescriptionVisible(true);
     setIsEditingDescription(true);
@@ -72,12 +95,32 @@ function TodoItem({ task, onDelete, onToggleReminder, onUpdateTask }) {
     if (e.key === "Enter") {
       saveDescription();
     }
+=======
+  const handleChange = (e) => {
+    setNewText(e.target.value);
+  };
+
+  const handleBlur = () => {
+    setIsEditing(false);
+    onUpdateTask(task.id, newText);
+  };
+
+  const handleClickOutside = (event) => {
+    if (cardRef.current && !cardRef.current.contains(event.target)) {
+      setIsDescriptionVisible(false);
+    }
+  };
+
+  const handleDescriptionToggle = () => {
+    setIsDescriptionVisible(true);
+>>>>>>> feature/update-todo-styling
   };
 
   const handleCheckboxChange = () => {
     setIsChecked(!isChecked);
   };
 
+<<<<<<< HEAD
   const handleReminderToggle = (e) => {
     e.stopPropagation();
     setIsReminderOn(!isReminderOn);
@@ -119,6 +162,22 @@ function TodoItem({ task, onDelete, onToggleReminder, onUpdateTask }) {
         <Row className="align-items-center">
           {/* Checkbox */}
           <Col xs="auto" className="d-flex align-items-start">
+=======
+  return (
+    <Card
+      ref={cardRef}
+      className={`mt-2 ${
+        isDescriptionVisible ? "highlighted-border" : "default-border"
+      }`}
+      onClick={handleDescriptionToggle}
+      style={{
+        cursor: "pointer",
+      }}
+    >
+      <Card.Body style={{ paddingTop: "0.5rem", paddingBottom: "0.5rem" }}>
+        <Row>
+          <Col xs="auto" className="d-flex align-items-center">
+>>>>>>> feature/update-todo-styling
             <Form.Check
               type="checkbox"
               onChange={handleCheckboxChange}
@@ -127,6 +186,7 @@ function TodoItem({ task, onDelete, onToggleReminder, onUpdateTask }) {
               className="custom-checkbox"
               style={{
                 transform: "scale(1.5)",
+<<<<<<< HEAD
                 marginRight: "7px",
               }}
             />
@@ -191,17 +251,110 @@ function TodoItem({ task, onDelete, onToggleReminder, onUpdateTask }) {
                 onDelete(task.id);
               }}
               className="delete-btn"
+=======
+                cursor: "pointer",
+              }}
+            />
+          </Col>
+          <Col>
+            <Row>
+              <Col
+                xs
+                className="d-flex align-items-center"
+                style={{ wordBreak: "break-word" }}
+              >
+                {isEditing ? (
+                  <input
+                    type="text"
+                    value={newText}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    autoFocus
+                    style={{
+                      border: "none",
+                      background: "none",
+                      width: "100%",
+                      padding: 0,
+                      margin: 0,
+                      outline: "none",
+                      boxShadow: "none",
+                    }}
+                  />
+                ) : (
+                  <div
+                    onDoubleClick={handleDoubleClick}
+                    style={{
+                      textDecoration: isChecked ? "line-through" : "none",
+                    }}
+                  >
+                    {task.text}
+                  </div>
+                )}
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                {task.due && (
+                  <div
+                    className={`due-date ${
+                      isOverdue(task.due) ? "overdue" : ""
+                    }`}
+                  >
+                    {formatDate(new Date(task.due))}
+                  </div>
+                )}
+              </Col>
+            </Row>
+          </Col>
+
+          {/* Bell Icon */}
+          <Col xs="auto" className="d-flex align-items-center">
+            <Button
+              variant="link"
+              onClick={(e) => {
+                e.stopPropagation(); // Prevent description toggle
+                onToggleReminder(task.id);
+              }}
+              style={{ padding: 0 }}
+            >
+              <img
+                src={
+                  task.reminder
+                    ? `/vector_arts/checked_bell.png`
+                    : `/vector_arts/bell.png`
+                }
+                alt="Reminder"
+                style={{ width: "20px", height: "20px" }}
+              />
+            </Button>
+          </Col>
+          <Col xs="auto" className="d-flex align-items-center">
+            <Button
+              variant="link"
+              onClick={(e) => {
+                e.stopPropagation(); // Prevent description toggle
+                onDelete(task.id);
+              }}
+              style={{ padding: 0 }}
+>>>>>>> feature/update-todo-styling
             >
               <FaTrashAlt
                 style={{
                   width: "20px",
                   height: "20px",
+<<<<<<< HEAD
                 }}
                 className="fa-trash-alt"
+=======
+                  color: "#dc3545",
+                }}
+                aria-label="Delete Task"
+>>>>>>> feature/update-todo-styling
               />
             </Button>
           </Col>
         </Row>
+<<<<<<< HEAD
 
         {/* Task Description */}
         {task.description && (
@@ -224,6 +377,15 @@ function TodoItem({ task, onDelete, onToggleReminder, onUpdateTask }) {
                   {newDescription}
                 </Card.Text>
               )}
+=======
+        {/* Collapsible Description */}
+        {task.description && (
+          <Collapse in={isDescriptionVisible}>
+            <div className="mt-2">
+              <Card.Text style={{ fontSize: "0.9rem", color: "#6c757d" }}>
+                {task.description}
+              </Card.Text>
+>>>>>>> feature/update-todo-styling
             </div>
           </Collapse>
         )}
