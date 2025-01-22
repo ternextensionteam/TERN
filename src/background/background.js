@@ -23,6 +23,13 @@ chrome.omnibox.onInputChanged.addListener((text, suggest) => {
   ]);
 });
 
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.action === "indexPage") {
+    console.log("Received page data:", request);
+    // Do something with the page data
+  }
+});
+
 const defaultRegexList = [
   '^https://[^/]+\.amazon\.com/.*$',
   '^https://atoz\.amazon\.work/.*$',
