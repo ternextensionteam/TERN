@@ -9,15 +9,28 @@ const useIndexMatching = () => {
     useEffect(() => {
         // Load initial state from local storage
         chrome.storage.local.get(['allowedSites', 'allowedRegex', 'allowedURLs', 'allowedStringMatches'], (result) => {
-            if (result.allowedSites) setSites(result.allowedSites);
-            if (result.allowedRegex) setRegexs(result.allowedRegex);
-            if (result.allowedURLs) setUrls(result.allowedURLs);
-            if (result.allowedStringMatches) setStringMatches(result.allowedStringMatches);
+            if (result.allowedSites) {
+            setSites(result.allowedSites);
+            console.log('Loaded allowedSites from local storage:', result.allowedSites);
+            }
+            if (result.allowedRegex) {
+            setRegexs(result.allowedRegex);
+            console.log('Loaded allowedRegex from local storage:', result.allowedRegex);
+            }
+            if (result.allowedURLs) {
+            setUrls(result.allowedURLs);
+            console.log('Loaded allowedURLs from local storage:', result.allowedURLs);
+            }
+            if (result.allowedStringMatches) {
+            setStringMatches(result.allowedStringMatches);
+            console.log('Loaded allowedStringMatches from local storage:', result.allowedStringMatches);
+            }
         });
     }, []);
 
     const saveStateToLocalStorage = (key, value) => {
         chrome.storage.local.set({ [key]: value });
+        console.log(`Saved ${key} to local storage: ${value}`);
     };
 
     const addSite = (site) => {
