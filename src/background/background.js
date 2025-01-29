@@ -1,4 +1,5 @@
 import MiniSearch from "minisearch";
+import { encode } from "he";
 
 const indexDescriptor = {
   fields: ["title", "content"], // Fields to index
@@ -38,7 +39,7 @@ chrome.runtime.onInstalled.addListener(() => {
 
   chrome.storage.local.set({ allLastTitles: {} }, () => {});
 
-  chrome.storage.local.set({ pageIndex: JSON.stringify(miniSearch) }, () => {});
+  // chrome.storage.local.set({ pageIndex: JSON.stringify(miniSearch) }, () => {});
 
 });
 
@@ -70,7 +71,7 @@ chrome.omnibox.onInputChanged.addListener((text, suggest) => {
   // Format results for omnibox suggestions
   let suggestions = results.map((result) => ({
     content: result.id,
-    description: result.title,
+    description: encode(result.title),
   }));
 
   // If no matches, provide a fallback message
@@ -108,3 +109,4 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     sendResponse({ success: true });
   }
 });
+
