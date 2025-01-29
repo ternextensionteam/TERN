@@ -10,7 +10,7 @@ let cachedWhitelist = {
 };
 
 // Debounce delay (in milliseconds)
-const DEBOUNCE_DELAY = 1000;
+const DEBOUNCE_DELAY = 10000;
 
 // Debounce utility to limit frequent calls
 function debounce(func, delay) {
