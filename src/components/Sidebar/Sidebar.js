@@ -8,7 +8,7 @@ import TaskSection from "../TaskSection/TaskSection";
 import IndexingSection from "../IndexingSection/IndexingSection";
 import "../tooltip";
 import "../base.css";
-import "./SideBar.css";
+import "./Sidebar.css";
 
 function Sidebar() {
   const [activeSection, setActiveSection] = useState("tasks");
