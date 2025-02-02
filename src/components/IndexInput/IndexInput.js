@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-
+import './IndexInput.css'; 
 const IndexInput = ({ add }) => {
   const [inputValue, setInputValue] = useState('');
 
@@ -11,14 +11,17 @@ const IndexInput = ({ add }) => {
   };
 
   return (
-    <div>
+    <div className="index-input-container">
       <input
         type="text"
+        className="index-input-field"
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
         placeholder="Enter value"
       />
-      <button onClick={handleAdd}>Add</button>
+      <button className="index-input-button" onClick={handleAdd}>
+        Add
+      </button>
     </div>
   );
 };
