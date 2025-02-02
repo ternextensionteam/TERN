@@ -7,7 +7,7 @@
 }
 
 .highlighted-border {
-  border-left: 4px solid #ffad54 !important;
+  border-left: 4px solid var(--primary-color) !important;
 }
 
 .default-border {
@@ -15,27 +15,30 @@
 }
 
 .custom-checkbox input[type="checkbox"] {
-  accent-color: #ffad54;
+  accent-color: var(--primary-color);
   transition: all 0.2s ease-in-out;
   background-color: transparent;
   border-color: #ccc;
+  border-radius: 2px;
 }
 
 .custom-checkbox input[type="checkbox"]:hover {
   cursor: pointer;
-  background-color: rgba(255, 173, 84, 0.5);
-  border-color: #ffad54;
-  box-shadow: 0 0 0 0.25rem rgba(255, 173, 84, 0.5);
+  background-color: var(--transparent-blue);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.25rem var(--transparent-blue);
   transition: all 0.2s ease-in-out;
 }
 
 .custom-checkbox input[type="checkbox"]:focus {
   outline: none;
+  border-radius: 2px;
 }
 
 .custom-checkbox input[type="checkbox"]:checked {
-  background-color: #ffad54;
-  border-color: #ffad54;
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  border-radius: 2px;
 }
 
 .custom-checkbox input[type="checkbox"]:focus:not(:hover) {
@@ -71,16 +74,8 @@
 .reminder-icon {
   width: 22px !important;
   height: 22px !important;
-  color: #ffad54;
+  color: var(--primary-color);
   vertical-align: middle; 
-  transition: filter 0.2s ease-in-out, brightness 0.2s ease-in-out, transform 0.2s ease-in-out;
-}
-
-.reminder-icon:hover {
-  filter: 
-    drop-shadow(0 0 3px rgb(255, 255, 255, 1)) 
-    drop-shadow(0 0 5px rgba(255, 173, 84, 0.9));
-  transform: scale(1.1);
 }
 
 .reminder-off {
@@ -90,28 +85,11 @@
   margin-right: -2px;
 }
 
-.reminder-off:hover {
-  color: #ffbb72 !important;
-  filter: 
-    drop-shadow(0 0 3px rgb(255, 255, 255, 1)) 
-    drop-shadow(0 0 5px rgba(255, 170, 79, 0.9));
-  transform: scale(1.1);
-}
-
 .fa-trash-alt {
   width: 22px !important;
   height: 22px !important;
   vertical-align: middle; 
-  color: #dc3545;
-  transition: color 0.2s ease-in-out, filter 0.2s ease-in-out;
-}
-
-.fa-trash-alt:hover {
-  color: #ff0000;
-  transform: scale(1.1);
-  filter: drop-shadow(0 0 3px rgb(255, 255, 255)) 
-          drop-shadow(0 0 5px rgba(255, 0, 0, 0.8));
-  cursor: pointer;
+  color: var(--primary-color);
 }
 
 .description-text {
@@ -126,31 +104,35 @@
 }
 
 .edit-input {
-  border: 2px solid #ffad54;
+  border: none;
+  border-bottom: 3px solid var(--primary-color); 
+  border-radius: 2px;
   padding: 4px;
-  border-radius: 4px;
   width: 100%;
   font-size: 1.2rem;
   outline: none;
 }
 
 .edit-input:focus {
-  border-color: #ffad54;
+  border-color: var(--primary-color);
 }
 
 .edit-description {
   width: 100%;
-  border: 2px solid #ffad54;
-  padding: 4px;
-  border-radius: 4px;
+  padding: 2px 4px; 
+  border: none;
+  border-bottom: 3px solid var(--primary-color);
+  border-radius: 2px;
   font-size: 0.9rem;
+  line-height: 1.4; 
   outline: none;
   resize: none;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .edit-description:focus {
-  border-color: #ffad54;
-  box-shadow: 0 0 4px rgba(255, 173, 84, 0.8);
+  border-color: var(--primary-color);
 }
 
 .edit-icon {
@@ -161,7 +143,7 @@
 }
 
 .edit-icon:hover {
-  color: #ffad54;
+  color: var(--primary-color);
 }
 
 .task-card {
@@ -175,4 +157,8 @@
 .description-text {
   font-size: 0.9rem;
   color: #6c757d;
+}
+
+.mt-2 {
+  margin-top: 0; 
 }

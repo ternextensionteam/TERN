@@ -1,31 +1,32 @@
 import React, { useState, useRef } from "react";
+import "../tooltip";
+import "../base.css";
 import "./InputBar.css";
 import { FaBell, FaBellSlash } from "react-icons/fa";
 
 function InputBar({ onAddTask }) {
-  const getCurrentDate = () => {
-    return getFormattedDate(new Date());
-  };
-  const getCurrentTime = () => {
-    return getFormattedTime(new Date());
-  };
+  // Helper functions for date and time formatting
+  const getCurrentDate = () => getFormattedDate(new Date());
+  const getCurrentTime = () => getFormattedTime(new Date());
 
+  // Formats time to HH:MM format
   const getFormattedTime = (date) => {
     const hours = date.getHours().toString().padStart(2, "0");
     const minutes = date.getMinutes().toString().padStart(2, "0");
     return `${hours}:${minutes}`;
   };
 
-  const getFormattedDate = (date) => {
-    return date.toISOString().split("T")[0];
-  };
+  // Formats date to YYYY-MM-DD format
+  const getFormattedDate = (date) => date.toISOString().split("T")[0];
 
+  // Returns a future date by adding days to the current date
   const getFutureDate = (daysAhead) => {
     const date = new Date();
     date.setDate(date.getDate() + daysAhead);
     return getFormattedDate(date);
   };
 
+  // Determines the last date of the current week (Sunday)
   const getEndOfWeekDate = () => {
     const today = new Date();
     const daysToSunday = 7 - today.getDay();
@@ -33,6 +34,7 @@ function InputBar({ onAddTask }) {
     return getFormattedDate(endOfWeek);
   };
 
+  // State variables for managing task input and settings
   const [taskText, setTaskText] = useState("");
   const [dueDate, setDueDate] = useState(getCurrentDate);
   const [dueTime, setDueTime] = useState(getCurrentTime);
@@ -40,9 +42,11 @@ function InputBar({ onAddTask }) {
   const [isReminder, setIsReminder] = useState(true);
   const [selectedPreset, setSelectedPreset] = useState("Later Today");
 
+  // Refs for input fields
   const inputRef = useRef(null);
   const descriptionRef = useRef(null);
 
+  // Handles adding a new task
   const handleAdd = () => {
     if (taskText.trim() !== "") {
       onAddTask(taskText, dueDate, dueTime, description, isReminder);
@@ -50,34 +54,26 @@ function InputBar({ onAddTask }) {
       setDescription("");
       setIsReminder(true);
       if (descriptionRef.current) {
-        descriptionRef.current.style.height = "auto";
+        descriptionRef.current.style.height = "auto"; // Reset textarea height
       }
     }
   };
 
+  // Preset date options for quick selection
   const presets = [
-    {
-      label: "Later Today",
-      value: `${getFutureDate(0)} 17:00`,
-    },
-    {
-      label: "Tomorrow",
-      value: `${getFutureDate(1)} 17:00`,
-    },
-    {
-      label: "This Week",
-      value: `${getEndOfWeekDate()} 17:00`,
-    },
+    { label: "Later Today", value: `${getFutureDate(0)} 17:00` },
+    { label: "Tomorrow", value: `${getFutureDate(1)} 17:00` },
+    { label: "This Week", value: `${getEndOfWeekDate()} 17:00` },
   ];
 
+  // Focuses the text input when clicking the add button
   const focusTextInput = (event) => {
     if (event.detail !== 0 && inputRef.current) {
-      setTimeout(() => {
-        inputRef.current.focus();
-      }, 0);
+      setTimeout(() => inputRef.current.focus(), 0);
     }
   };
 
+  // Handles preset date selection and updates the due date/time
   const handlePresetChange = (value) => {
     setDueDate(value.split(" ")[0]);
     setDueTime(value.split(" ")[1]);
@@ -92,40 +88,17 @@ function InputBar({ onAddTask }) {
             handleAdd();
           }}
         >
+          {/* Task Title Input */}
           <input
             type="text"
             value={taskText}
             onChange={(e) => setTaskText(e.target.value)}
-            placeholder="Task title"
+            placeholder="Add a Task"
             className="task-input"
             ref={inputRef}
           />
-
-          <div className="preset-dates">
-            {presets.map((preset, index) => (
-              <label key={index} className="preset-date-label">
-                <input
-                  type="radio"
-                  name="preset-due-date"
-                  value={preset.value}
-                  className="preset-date-input"
-                  checked={selectedPreset === preset.label}
-                  onChange={() => {
-                    setSelectedPreset(preset.label);
-                    handlePresetChange(preset.value);
-                  }}
-                />
-                <span
-                  className="preset-date-btn"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                  }}
-                >
-                  {preset.label}
-                </span>
-              </label>
-            ))}
-          </div>
+          
+          {/* Task Description Input */}
           <textarea
             className="task-textarea"
             ref={descriptionRef}
@@ -138,9 +111,10 @@ function InputBar({ onAddTask }) {
               e.target.style.height = `${e.target.scrollHeight}px`;
             }}
           />
+
           <div className="task-controls">
-            {/* Bell Icon for Reminder */}
-            <label className="bell-checkbox">
+            {/* Reminder Toggle */}
+            <label className="bell-checkbox" data-tooltip="Remind Me" data-tooltip-position="bottom">
               <input
                 type="checkbox"
                 id="reminder-checkbox"
@@ -149,34 +123,15 @@ function InputBar({ onAddTask }) {
                 style={{ display: "none" }}
               />
               {isReminder ? (
-                <FaBell
-                  style={{
-                    width: "27px",
-                    height: "27px",
-                  }}
-                  className="input-reminder-icon"
-                />
+                <FaBell className="input-reminder-icon" style={{ width: "27px", height: "27px" }} />
               ) : (
-                <FaBellSlash
-                  style={{
-                    width: "32px",
-                    height: "32px",
-                  }}
-                  className="input-reminder-off"
-                />
+                <FaBellSlash className="input-reminder-off" style={{ width: "32px", height: "32px" }} />
               )}
             </label>
 
-            <button
-              className="change-btn"
-              type="submit"
-              onClick={focusTextInput}
-            >
-              <img
-                src="/vector_arts/add.svg"
-                alt="Add Icon"
-                className="btn-icon"
-              />
+            {/* Submit Button */}
+            <button className="change-btn" type="submit" onClick={focusTextInput}>
+              <img src="/vector_arts/add.svg" alt="Add Icon" className="btn-icon" />
               Add Task
             </button>
           </div>

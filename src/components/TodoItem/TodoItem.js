@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Card, Row, Col, Form, Collapse, Button } from "react-bootstrap";
 import { FaTrashAlt, FaBell, FaBellSlash } from "react-icons/fa";
+import "../tooltip";
+import "../base.css";
 import "./TodoItem.css";
 
 const isOverdue = (dueDate) => new Date(dueDate) < new Date();
@@ -46,7 +48,10 @@ function TodoItem({ task, onDelete, onToggleReminder, onUpdateTask }) {
   };
 
   const handleDescriptionChange = (e) => {
+    const textarea = e.target;
     setNewDescription(e.target.value);
+    textarea.style.height = "auto";
+    textarea.style.height = `${textarea.scrollHeight + 2}px`;
   };
 
   const saveTitle = () => {
@@ -54,12 +59,13 @@ function TodoItem({ task, onDelete, onToggleReminder, onUpdateTask }) {
     if (newText.trim() === "") {
       setNewText(task.text);
     }
-    onUpdateTask(task.id, newText.trim());
+    onUpdateTask(task.id, newText.trim(), newDescription); // Preserve description
   };
 
   const saveDescription = () => {
     setIsEditingDescription(false);
-    onUpdateTask(task.id, null, newDescription.trim());
+    const trimmedDescription = newDescription.trim();
+    onUpdateTask(task.id, newText, trimmedDescription); // Preserve title
   };
 
   const handleKeyDown = (e) => {
@@ -165,10 +171,14 @@ function TodoItem({ task, onDelete, onToggleReminder, onUpdateTask }) {
               variant="link"
               onClick={handleReminderToggle}
               className="reminder-btn"
+              data-tooltip="Remind Me" 
+              data-tooltip-position="bottom"
             >
               {isReminderOn ? (
                 <FaBell
                   className="reminder-icon reminder-on"
+                  data-tooltip="Remind Me" 
+                  data-tooltip-position="bottom"
                   style={{
                     width: "24px",
                     height: "24px",
@@ -191,6 +201,8 @@ function TodoItem({ task, onDelete, onToggleReminder, onUpdateTask }) {
                 onDelete(task.id);
               }}
               className="delete-btn"
+              data-tooltip="Delete task" 
+              data-tooltip-position="bottom"
             >
               <FaTrashAlt
                 style={{
