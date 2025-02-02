@@ -1,5 +1,5 @@
 import React from 'react';
-import './Indexlist.css'; 
+import './IndexList.css'; 
 
 const IndexList = ({ items }) => {
   return (
