@@ -4,7 +4,7 @@ stages:
   - build
 
 variables:
-  NODE_ENV: development # Ensure devDependencies are installed during the pipeline
+  NODE_ENV: development # Ensures devDependencies are installed during the pipeline
 
 default:
   image: node:18
