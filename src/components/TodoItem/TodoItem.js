@@ -4,22 +4,24 @@ import { FaTrashAlt, FaBell, FaBellSlash } from "react-icons/fa";
 import "../tooltip";
 import "../base.css";
 import "./TodoItem.css";
-
-const isOverdue = (dueDate) => new Date(dueDate) < new Date();
+import ReminderOverlay from "../ReminderOverlay";
 
 const formatDate = (date) => {
   const now = new Date();
   const isToday = date.toDateString() === now.toDateString();
 
   if (isToday) {
-    return date.toLocaleTimeString([], {
+    return `Today ${date.toLocaleTimeString([], {
       hour: "2-digit",
       minute: "2-digit",
-    });
+      hour12: true,
+    })}`;
   } else {
-    return date.toLocaleDateString("en-GB", {
-      day: "numeric",
-      month: "short",
+    return date.toLocaleString("en-US", {
+      weekday: "short",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
     });
   }
 };
@@ -32,114 +34,124 @@ function TodoItem({ task, onDelete, onToggleReminder, onUpdateTask }) {
   const [newText, setNewText] = useState(task.text || "");
   const [newDescription, setNewDescription] = useState(task.description || "");
   const [isChecked, setIsChecked] = useState(false);
-  const [isReminderOn, setIsReminderOn] = useState(task.reminder ?? true);
+  const [reminderTime, setReminderTime] = useState(task.due || null);
+  const [showOverlay, setShowOverlay] = useState(false);
+  const [overlayPosition, setOverlayPosition] = useState({ top: 0, left: 0 });
 
-  const handleDoubleClick = () => {
-    setIsEditing(true);
+  // Open/Close Reminder Overlay and Calculate Position
+  const handleReminderClick = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setOverlayPosition({
+      top: rect.bottom + window.scrollY, // Position below the button
+      left: rect.left + window.scrollX, // Align with the button
+    });
+    setShowOverlay(!showOverlay);
   };
 
-  const handleDescriptionDoubleClick = () => {
-    setIsDescriptionVisible(true);
-    setIsEditingDescription(true);
+  // Handle Reminder Selection
+  const handlePresetSelect = (preset) => {
+    const newReminderTime = preset.time ? new Date(preset.time).toISOString() : null;
+    setReminderTime(newReminderTime);
+    setShowOverlay(false);
+    onUpdateTask(task.id, newText, newDescription, newReminderTime);
   };
 
-  const handleTitleChange = (e) => {
-    setNewText(e.target.value);
+  // Render Reminder Bell
+  const renderReminderIcon = () => {
+    if (!reminderTime) {
+      return (
+        <FaBellSlash
+          className="reminder-icon reminder-off"
+          data-tooltip="No Reminder"
+          data-tooltip-position="top"
+          style={{ width: "24px", height: "24px" }}
+        />
+      );
+    }
+
+    let formattedTime = "Reminder";
+    try {
+      const date = new Date(reminderTime);
+      if (!isNaN(date)) {
+        formattedTime = formatDate(date);
+      } else {
+        formattedTime = "Invalid Time";
+      }
+    } catch (error) {
+      formattedTime = "Invalid Time";
+    }
+
+    return (
+      <FaBell
+        className="reminder-icon reminder-on"
+        data-tooltip={formattedTime}
+        data-tooltip-position="top"
+        style={{ width: "24px", height: "24px" }}
+      />
+    );
   };
 
-  const handleDescriptionChange = (e) => {
-    const textarea = e.target;
-    setNewDescription(e.target.value);
-    textarea.style.height = "auto";
-    textarea.style.height = `${textarea.scrollHeight + 2}px`;
-  };
-
+  // Title Editing Handlers
+  const handleDoubleClick = () => setIsEditing(true);
+  const handleTitleChange = (e) => setNewText(e.target.value);
   const saveTitle = () => {
     setIsEditing(false);
     if (newText.trim() === "") {
       setNewText(task.text);
     }
-    onUpdateTask(task.id, newText.trim(), newDescription); // Preserve description
+    onUpdateTask(task.id, newText.trim(), newDescription, reminderTime);
   };
+  const handleKeyDown = (e) => e.key === "Enter" && saveTitle();
 
+  // Description Editing Handlers
+  const handleDescriptionDoubleClick = () => {
+    setIsDescriptionVisible(true);
+    setIsEditingDescription(true);
+  };
+  const handleDescriptionChange = (e) => setNewDescription(e.target.value);
   const saveDescription = () => {
     setIsEditingDescription(false);
-    const trimmedDescription = newDescription.trim();
-    onUpdateTask(task.id, newText, trimmedDescription); // Preserve title
+    onUpdateTask(task.id, newText, newDescription.trim(), reminderTime);
   };
+  const handleDescriptionKeyDown = (e) => e.key === "Enter" && saveDescription();
 
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
-      saveTitle();
-    }
-  };
+  // Hover Effect
+  const handleMouseEnter = () => setIsHovering(true);
+  const handleMouseLeave = () => setIsHovering(false);
 
-  const handleDescriptionKeyDown = (e) => {
-    if (e.key === "Enter") {
-      saveDescription();
-    }
-  };
-
-  const handleCheckboxChange = () => {
-    setIsChecked(!isChecked);
-  };
-
-  const handleReminderToggle = (e) => {
+  // Handle Task Deletion
+  const handleDelete = (e) => {
     e.stopPropagation();
-    setIsReminderOn(!isReminderOn);
-    onToggleReminder(task.id);
+    e.currentTarget.dispatchEvent(new MouseEvent("mouseleave", { bubbles: true }));
+    setTimeout(() => {
+      onDelete(task.id);
+    }, 100);
   };
-
-  const handleMouseEnter = () => {
-    if (!isDescriptionVisible) {
-      setIsHovering(true);
-    }
-  };
-
-  const handleMouseLeave = () => {
-    if (!isDescriptionVisible) {
-      setIsHovering(false);
-    }
-  };
-
-  const handleDescriptionToggle = (e) => {
-    if (
-      e.target.tagName === "INPUT" || 
-      e.target.tagName === "BUTTON" || 
-      e.target.closest(".custom-checkbox")
-    ) {
-      return;
-    }
-    e.stopPropagation();
-    setIsDescriptionVisible(!isDescriptionVisible);
-  };
+  
+  
 
   return (
     <Card
-      className={`task-card ${isDescriptionVisible ? "highlighted-border" : "default-border"}`}
+      className={`task-card ${isDescriptionVisible || isHovering ? "highlighted-border" : "default-border"}`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      onClick={handleDescriptionToggle}
+      onClick={() => setIsDescriptionVisible(!isDescriptionVisible)}
     >
       <Card.Body>
         <Row className="align-items-center">
           {/* Checkbox */}
-          <Col xs="auto" className="d-flex align-items-start">
+          <Col xs="auto">
             <Form.Check
               type="checkbox"
-              onChange={handleCheckboxChange}
-              onClick={(e) => e.stopPropagation()}
+              onChange={() => setIsChecked(!isChecked)}
               checked={isChecked}
               className="custom-checkbox"
-              style={{
-                transform: "scale(1.5)",
-                marginRight: "7px",
-              }}
+              style={{ transform: "scale(1.5)", marginRight: "7px" }}
             />
           </Col>
 
-          {/* Task Title and Due Date */}
-          <Col className="task-content">
+          {/* Task Title */}
+          <Col>
             {isEditing ? (
               <input
                 type="text"
@@ -158,87 +170,56 @@ function TodoItem({ task, onDelete, onToggleReminder, onUpdateTask }) {
                 {newText}
               </div>
             )}
-            {task.due && (
-              <div className={`due-date ${isOverdue(task.due) ? "overdue" : ""}`}>
-                {formatDate(new Date(task.due))}
-              </div>
-            )}
           </Col>
 
           {/* Reminder and Delete Icons */}
           <Col xs="auto" className="task-icons">
-            <Button
-              variant="link"
-              onClick={handleReminderToggle}
-              className="reminder-btn"
-              data-tooltip="Remind Me" 
-              data-tooltip-position="bottom"
-            >
-              {isReminderOn ? (
-                <FaBell
-                  className="reminder-icon reminder-on"
-                  data-tooltip="Remind Me" 
-                  data-tooltip-position="bottom"
-                  style={{
-                    width: "24px",
-                    height: "24px",
-                  }}
-                />
-              ) : (
-                <FaBellSlash
-                  className="reminder-icon reminder-off"
-                  style={{
-                    width: "24px",
-                    height: "24px",
-                  }}
+            <div className="reminder-wrapper" style={{ position: "relative" }}>
+              <Button variant="link" onClick={handleReminderClick} className="reminder-btn">
+                {renderReminderIcon()}
+              </Button>
+              {showOverlay && (
+                <ReminderOverlay
+                  onSelectPreset={handlePresetSelect}
+                  targetPosition={overlayPosition}
+                  onClose={() => setShowOverlay(false)}
                 />
               )}
-            </Button>
+            </div>
             <Button
               variant="link"
-              onClick={(e) => {
-                e.stopPropagation();
-                onDelete(task.id);
-              }}
+              onClick={handleDelete} // Use updated handleDelete
               className="delete-btn"
-              data-tooltip="Delete task" 
-              data-tooltip-position="bottom"
+              data-tooltip="Delete task"
+              data-tooltip-position="top"
             >
-              <FaTrashAlt
-                style={{
-                  width: "20px",
-                  height: "20px",
-                }}
-                className="fa-trash-alt"
-              />
+              <FaTrashAlt style={{ width: "20px", height: "20px" }} />
             </Button>
           </Col>
         </Row>
 
         {/* Task Description */}
-        {task.description && (
-          <Collapse in={isDescriptionVisible || isHovering}>
-            <div className="mt-2">
-              {isEditingDescription ? (
-                <textarea
-                  value={newDescription}
-                  onChange={handleDescriptionChange}
-                  onBlur={saveDescription}
-                  onKeyDown={handleDescriptionKeyDown}
-                  autoFocus
-                  className="edit-description"
-                />
-              ) : (
-                <Card.Text
-                  className="description-text"
-                  onDoubleClick={handleDescriptionDoubleClick}
-                >
-                  {newDescription}
-                </Card.Text>
-              )}
-            </div>
-          </Collapse>
-        )}
+        <Collapse in={isDescriptionVisible || isHovering}>
+          <div className="mt-2">
+            {isEditingDescription ? (
+              <textarea
+                value={newDescription}
+                onChange={handleDescriptionChange}
+                onBlur={saveDescription}
+                onKeyDown={handleDescriptionKeyDown}
+                autoFocus
+                className="edit-description"
+              />
+            ) : (
+              <Card.Text
+                className="description-text"
+                onDoubleClick={handleDescriptionDoubleClick}
+              >
+                {newDescription || "No description"}
+              </Card.Text>
+            )}
+          </div>
+        </Collapse>
       </Card.Body>
     </Card>
   );

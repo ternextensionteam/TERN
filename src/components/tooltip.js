@@ -9,28 +9,33 @@ document.addEventListener("DOMContentLoaded", function () {
   let showTimeout;
   let hideTimeout;
 
-  // Show the tooltip when hovering over elements with the "data-tooltip" attribute
-  document.addEventListener("mouseover", function (event) {
-    const target = event.target.closest("[data-tooltip]");
-    if (target) {
-      const tooltipText = target.getAttribute("data-tooltip");
-      const position = target.getAttribute("data-tooltip-position") || "top"; // Default to "top"
+  // Function to position tooltip correctly after it knows its size
+  const positionTooltip = (target) => {
+    const tooltipText = target.getAttribute("data-tooltip");
+    const position = target.getAttribute("data-tooltip-position") || "top"; // Default to "top"
 
-      console.log("Tooltip detected for element:", target);
-      console.log("Tooltip text:", tooltipText);
+    console.log("Tooltip detected for element:", target);
+    console.log("Tooltip text:", tooltipText);
 
-      // Set the tooltip text
-      tooltip.textContent = tooltipText;
+    // Set tooltip text but keep it invisible off-screen first
+    tooltip.textContent = tooltipText;
+    tooltip.style.opacity = "0"; // Hide initially
+    tooltip.style.top = "-9999px"; // Place off-screen initially
+    tooltip.style.left = "-9999px";
 
-      // Calculate the tooltip position
+    // Use setTimeout(0) to let the browser update the tooltip's dimensions
+    setTimeout(() => {
       const rect = target.getBoundingClientRect();
       let tooltipTop;
       let tooltipLeft = rect.left + rect.width / 2 - tooltip.offsetWidth / 2;
 
+      // ✅ Ensure 5px spacing between tooltip and element
+      const spacing = 2;
+
       if (position === "bottom") {
-        tooltipTop = rect.bottom + 5;
+        tooltipTop = rect.bottom + spacing;
       } else {
-        tooltipTop = rect.top - tooltip.offsetHeight - 5; 
+        tooltipTop = rect.top - tooltip.offsetHeight - spacing;
       }
 
       // Prevent tooltip from being too close to the edges
@@ -45,14 +50,24 @@ document.addEventListener("DOMContentLoaded", function () {
       if (tooltipTop < minTop) tooltipTop = minTop;
       if (tooltipTop > maxTop) tooltipTop = maxTop;
 
-      // Apply positions to the tooltip
+      // Apply correct positions
       tooltip.style.top = `${tooltipTop}px`;
       tooltip.style.left = `${tooltipLeft}px`;
 
-      clearTimeout(hideTimeout); 
+      // Fade in smoothly
+      tooltip.style.opacity = "1";
+      tooltip.classList.add("show");
+    }, 10); // Small delay ensures dimensions are known before positioning
+  };
+
+  // Show the tooltip when hovering over elements with "data-tooltip"
+  document.addEventListener("mouseover", function (event) {
+    const target = event.target.closest("[data-tooltip]");
+    if (target) {
+      clearTimeout(hideTimeout);
       showTimeout = setTimeout(() => {
-        tooltip.classList.add("show");
-      }, 300); 
+        positionTooltip(target);
+      }, 150); // Delay prevents flickering
     }
   });
 
@@ -60,12 +75,11 @@ document.addEventListener("DOMContentLoaded", function () {
   document.addEventListener("mouseout", function (event) {
     const target = event.target.closest("[data-tooltip]");
     if (target) {
-      console.log("Mouse out from element:", target);
-
       clearTimeout(showTimeout);
       hideTimeout = setTimeout(() => {
         tooltip.classList.remove("show");
-      }, 200); 
+        tooltip.style.opacity = "0"; // Hide smoothly
+      }, 100);
     }
   });
 });

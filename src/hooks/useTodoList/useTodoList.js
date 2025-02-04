@@ -1,87 +1,105 @@
-import { useState, useEffect} from 'react';
+import { useState, useEffect } from "react";
 
 export function useTodoList() {
-    const [tasks, setTasks] = useState([]);
-    const [tasksLoaded, setTasksLoaded] = useState(false);
-    useEffect(() => {
-        if (tasksLoaded) {
-            console.log("the tasks have updated, Tasks updated:", tasks);
-            saveTasks(); // Save tasks whenever `tasks` updates 
-        }    
-    }, [tasks,tasksLoaded]);
-    
-    useEffect(() => {
-        loadTasks();
-    }, []);
+  const [tasks, setTasks] = useState([]);
+  const [tasksLoaded, setTasksLoaded] = useState(false);
 
-    const addTask = (taskText, dueDate='', dueTime='', description = '',reminder=false) => {
-        if (taskText.trim() === '') return;
+  // Save tasks to Chrome storage whenever they are updated
+  useEffect(() => {
+    if (tasksLoaded) {
+      saveTasks();
+    }
+  }, [tasks, tasksLoaded]);
 
-        let due = null;
-        if (dueDate && dueTime) {
-            // Combine dueDate and dueTime into a Date object
-            due = new Date(`${dueDate}T${dueTime}`);
-        }
-        // description += "This is a long ish test description that should be able to be seen when the user clicks on the task"
-        const newTask = {
-            id: Date.now(),
-            text: taskText,
-            due: due,
-            description:description,
-            reminder:reminder
-        }
-        //console.log(due.toString())
-        setTasks([...tasks, newTask]);
+  // Load tasks when the component mounts
+  useEffect(() => {
+    loadTasks();
+  }, []);
+
+  // Add a new task
+  const addTask = (taskText, reminderLabel = "No Reminder", reminderTime = null, description = "") => {
+    if (taskText.trim() === "") return;
+
+    let due = null;
+    if (reminderTime) {
+      const parsedDate = new Date(reminderTime);
+      if (!isNaN(parsedDate.getTime())) {
+        due = parsedDate.toISOString(); // Store as a valid ISO date
+      } else {
+        console.error("Invalid reminder time:", reminderTime);
+      }
+    }
+
+    const newTask = {
+      id: Date.now(),
+      text: taskText,
+      due: due,
+      description: description,
+      reminder: due !== null, // Reminder is active if `due` is set
     };
 
-    const deleteTask = (taskId) => {
-        setTasks(tasks.filter(task => task.id !== taskId));
-    };
+    setTasks((prevTasks) => [...prevTasks, newTask]);
+  };
 
-    const toggleReminder = (taskId) => {
-        setTasks(tasks.map(task =>
-            task.id === taskId ? { ...task, reminder: !task.reminder } : task
-        ));
-    };
+  // Delete a task
+  const deleteTask = (taskId) => {
+    setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
+  };
 
-    const updateTask = (taskId, newText) => {
-        setTasks(tasks.map(task =>
-          task.id === taskId ? { ...task, text: newText } : task
-        ));
-      };
+  // Toggle a task's reminder
+  const toggleReminder = (taskId) => {
+    setTasks((prevTasks) =>
+      prevTasks.map((task) =>
+        task.id === taskId ? { ...task, reminder: !task.reminder } : task
+      )
+    );
+  };
 
-    const saveTasks = () => {
-        console.log("saving tasks to chrome local storage")
-        const serializedTasks = tasks.map(task => {
-            // console.log("Saving task:", task); // Log each task before serialization
-            return {
-                ...task,
-                due: task.due ? task.due.toISOString() : null, // Convert Date object to ISO string
-            };
-        });
-        // console.log("Serialized tasks to save:", serializedTasks); // Log the serialized tasks
-        chrome.storage.local.set({ tasks: serializedTasks });
-    };
+  // Update a task's text or description
+  const updateTask = (taskId, newText, newDescription) => {
+    setTasks((prevTasks) =>
+      prevTasks.map((task) =>
+        task.id === taskId
+          ? { ...task, text: newText, description: newDescription }
+          : task
+      )
+    );
+  };
 
-    const loadTasks = () => {
-        
-        chrome.storage.local.get(['tasks'], (result) => {
-            // console.log("Loaded raw tasks from storage:", result.tasks); // Log raw loaded tasks
-            if (result.tasks) {
-                const deserializedTasks = result.tasks.map(task => {
-                    console.log("Deserializing task:", task); // Log each task before deserialization
-                    return {
-                        ...task,
-                        due: task.due ? new Date(task.due) : null, // Convert string back to Date
-                    };
-                });
-                // console.log("Deserialized tasks:", deserializedTasks); // Log the deserialized tasks
-                setTasks(deserializedTasks);
+  // Save tasks to Chrome local storage
+  const saveTasks = () => {
+    try {
+      const serializedTasks = tasks.map((task) => ({
+        ...task,
+        due: task.due ? task.due : null, // Store as ISO string
+      }));
+      chrome.storage.local.set({ tasks: serializedTasks });
+    } catch (error) {
+      console.error("Error saving tasks to Chrome storage:", error);
+    }
+  };
+
+  // Load tasks from Chrome storage
+  const loadTasks = () => {
+    try {
+      chrome.storage.local.get(["tasks"], (result) => {
+        if (result.tasks) {
+          const deserializedTasks = result.tasks.map((task) => {
+            let parsedDue = task.due ? new Date(task.due) : null;
+            if (parsedDue && isNaN(parsedDue.getTime())) {
+              console.error("Invalid due date in loaded task:", task.due);
+              parsedDue = null; // Reset invalid date
             }
-            setTasksLoaded(true);
-        });
-        
-    };
+            return { ...task, due: parsedDue };
+          });
+          setTasks(deserializedTasks);
+        }
+        setTasksLoaded(true);
+      });
+    } catch (error) {
+      console.error("Error loading tasks from Chrome storage:", error);
+    }
+  };
 
-    return { tasks, addTask, deleteTask,toggleReminder, saveTasks, loadTasks, updateTask };
+  return { tasks, addTask, deleteTask, toggleReminder, saveTasks, loadTasks, updateTask };
 }

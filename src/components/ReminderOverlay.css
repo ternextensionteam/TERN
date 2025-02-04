@@ -1,0 +1,69 @@
+.overlay-popup {
+    position: absolute;
+    background: var(--white-color);
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    width: 260px;
+    padding: 10px;
+    font-family: var(--font-family);
+    box-sizing: border-box;
+}
+
+
+/* Increase default position further to the right */
+.reminder-popup {
+    right: -80px;
+}
+
+/* Prevents overlay from going outside the card */
+.reminder-overlay.adjust-left {
+    left: auto;
+    right: 0;
+    transform: translateX(0);
+}
+
+.overlay-options {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.preset-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 10px;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--text-color);
+    background-color: var(--white-color);
+    border-radius: 4px;
+}
+
+.preset-option:hover {
+    background-color: var(--hover-color) !important;
+}
+
+.option-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.icon {
+    font-size: 20px !important;
+    color: #9a9a9a !important;
+}
+
+.label {
+    font-size: 14px;
+    color: var(--text-color);
+}
+
+.time {
+    font-size: 13px;
+    color: var(--text-color);
+    white-space: nowrap;
+}

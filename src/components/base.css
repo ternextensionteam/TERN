@@ -5,6 +5,7 @@
   --light-gray-color: #F3F2F1;
   --text-color: #323130;
   --transparent-blue: rgba(0, 120, 212, 0.5);
+  --hover-color: #e3f3ff;
 
   --font-family: 'Segoe UI', 'Segoe UI Web (West European)', -apple-system, BlinkMacSystemFont, Roboto, 'Helvetica Neue', sans-serif;
   --font-size: 10px;
@@ -74,6 +75,7 @@ button:hover {
   display: none;
   pointer-events: none;
   opacity: 0;
+  transform: translateY(-5px);
   transition: opacity 0.2s ease-in-out, transform 0.15s ease-in-out;
   z-index: 1000;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);

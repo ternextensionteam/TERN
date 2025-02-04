@@ -20,14 +20,19 @@
   transition: background-color 0.3s, color 0.3s, border-bottom 0.3s;
 }
 
-.nav-link:hover {
+.nav-link:hover,
+.nav-link.active:hover {
   text-decoration: none;
-  background-color: #cce9ff !important;
+  background-color: var(--hover-color) !important; /* Apply hover effect even if active */
 }
 
 .nav-link.active {
-  font-weight: bold;
-  border-bottom: 3px solid #007bff !important; 
+  border-bottom: 3px solid var(--primary-color) !important; 
   color: var(--primary-color) !important;
   background-color: transparent !important; 
+}
+
+.nav-link .icon {
+  color: var(--primary-color) !important;
+  transition: color 0.3s ease;
 }

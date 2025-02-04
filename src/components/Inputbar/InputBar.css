@@ -7,27 +7,31 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-bottom: 7px;
 }
 
 /* Task Container Styles */
 .task-container {
     width: 100%;
+    max-width: 600px;
     background-color: #fff;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+    padding: 16px;
+    border-radius: 8px;
+    box-sizing: border-box;
 }
 
 /* Input and Textarea Styles */
 .task-input {
     width: 100%;
     font-family: var(--font-family);
-    margin-bottom: 8px;
-    padding: 8px 10px;
+    margin-bottom: 12px;
+    padding: 7px 12px;
     background-color: var(--white-color);
     color: var(--text-color);
     border: none;
     border-bottom: 3px solid var(--primary-color); 
-    border-radius: 2px;
-    font-size: 19px;
+    font-size: 22px;
     outline: none;
     box-sizing: border-box;
     transition: border-color 0.3s ease;
@@ -36,14 +40,12 @@
 .task-textarea {
     width: 100%;
     font-family: var(--font-family);
-    margin-bottom: 8px;
-    padding: 8px 10px;
+    padding: 12px 14px;
     background-color: var(--white-color);
     color: var(--text-color);
     border: none;
     border-bottom: 3px solid #d2d2d2; 
-    border-radius: 2px;
-    font-size: 19px;
+    font-size: 18px;
     outline: none;
     box-sizing: border-box;
     transition: border-color 0.3s ease;
@@ -70,21 +72,18 @@
     overflow: hidden;
 }
 
-
 /* Add Task Button Styles */
 .change-btn {
-    margin-top: -3px;
-    margin-bottom: 3px;
     display: flex;
     align-items: center;
     justify-content: center;
     background-color: var(--primary-color);
     color: var(--white-color);
-    padding: 8px 16px;
+    padding: 8px 12px;
     border: none;
-    border-radius: 2px;
+    border-radius: 4px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: bold;
     transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
     box-shadow: 0 3px 6px rgba(0, 120, 212, 0.3);
@@ -95,48 +94,145 @@
 }
 
 .change-btn .btn-icon {
-    margin-right: 8px;
-    width: 16px;
-    height: 16px;
+    margin-right: 6px;
+    width: 14px;
+    height: 14px;
 }
 
 /* Task Controls */
 .task-controls {
     display: flex;
-    padding-left: 5px;
     align-items: center;
     justify-content: space-between;
-    margin-top: -1px;
+    margin-top: 8px;
 }
 
-/* Bell Checkbox (Reminder Toggle) */
-.bell-checkbox {
-    display: inline-block;
-    position: relative;
-    width: 30px;
-    height: 30px;
-    margin-top: -2px;
+/* Reminder Display Button */
+.reminder-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    color: inherit;
+    font-size: inherit;
+    transition: none;
 }
 
-.bell-checkbox input[type="checkbox"] {
-    display: none;
+.reminder-display:hover,
+.reminder-display:focus {
+    background-color: transparent;
+    outline: none; 
 }
 
-.input-reminder-icon {
-    color: var(--primary-color);
-    vertical-align: middle;
+/* Bell Icon Styles */
+.bell-icon {
+    font-size: 24px;
+    transition: color 0.3s ease, box-shadow 0.3s ease;
+    margin-right: 10px;
     margin-left: 5px;
-    transition: filter 0.2s ease-in-out, brightness 0.2s ease-in-out, transform 0.2s ease-in-out;
+    margin-top: 13px;
+    margin-bottom: 10px;
 }
 
-.input-reminder-off {
+/* Bell Outline */
+.bell-icon.outline {
     color: var(--primary-color);
-    margin-left: 3px;
-    margin-top: -3px;
 }
 
+/* Active Solid Bell */
+.bell-icon.active {
+    color: var(--primary-color); 
+    filter: none;
+    margin-right: 10px;
+}
+
+/* No Reminder Bell Slash */
+.bell-icon.no-reminder {
+    color: #bbb; 
+    transform: scale(1.2);
+    margin-left: 5px;
+    margin-right: 10px;
+}
 
 /* Glow Effect for Input Focus */
 .input-glow {
     border-color: var(--primary-color) !important;
+}
+
+/* Overlay Popup Styles */
+.overlay-popup {
+    position: absolute;
+    top: 45px;
+    left: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    width: 260px; /* Fixed width for consistent layout */
+    padding: 10px;
+    font-family: var(--font-family);
+    box-sizing: border-box;
+}
+
+/* Options Container */
+.overlay-options {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.preset-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--text-color); 
+    background-color: transparent;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.preset-option:hover {
+    background-color: transparent;
+}
+
+.option-left {
+    display: flex;
+    align-items: center;
+    gap: 8px; 
+}
+
+.icon {
+    font-size: 25px; 
+    color: var(--primary-color);
+}
+
+.label {
+    font-size: 14px;
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+.time {
+    font-size: 13px; 
+    color: var(--text-color);
+    white-space: nowrap;
+}
+
+/* Selected Option Style */
+.preset-option.selected {
+    background-color: transparent;
+    color: var(--text-color);
+}
+
+.preset-option.selected .icon {
+    color: var(--primary-color);
 }
