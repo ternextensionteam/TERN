@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { Container, Nav } from 'react-bootstrap';
-import IndexInput from '../IndexInput/IndexInput';
-import IndexList from '../IndexList/IndexList';
-import './IndexingSection.css';
-import useIndexMatching from '../../hooks/useIndexMatching/useIndexMatching';
+import React, { useState } from "react";
+import { Container, Nav } from "react-bootstrap";
+import IndexInput from "../IndexInput/IndexInput";
+import IndexList from "../IndexList/IndexList";
+import "./IndexingSection.css";
+import useIndexMatching from "../../hooks/useIndexMatching/useIndexMatching";
 
 const IndexingSection = () => {
   const [activeIndexSection, setActiveIndexSection] = useState("allowedSites");
@@ -23,8 +23,15 @@ const IndexingSection = () => {
     updateUrl,
     addStringMatch,
     removeStringMatch,
-    updateStringMatch
+    updateStringMatch,
   } = useIndexMatching();
+
+  const sections = [
+    { key: "allowedSites", label: "Sites" },
+    { key: "allowedUrls", label: "URLs" },
+    { key: "stringmatches", label: "String Matches" },
+    { key: "regex", label: "RegEx" },
+  ];
 
   const sectionFunctions = {
     allowedSites: { add: addSite, remove: removeSite, update: updateSite },
@@ -40,65 +47,31 @@ const IndexingSection = () => {
     stringmatches: allowedStringMatches
   };
 
-  const currentFunctions = sectionFunctions[activeIndexSection];
-  const currentItems = sectionItems[activeIndexSection];
-
   return (
-    <Container>
+    <Container className="indexing-section">
       <Nav variant="tabs" activeKey={activeIndexSection} onSelect={setActiveIndexSection}>
-      <Nav.Item>
-          <Nav.Link
-            eventKey="allowedSites"
-            active={activeIndexSection === "allowedSites"}
-            onClick={() => setActiveIndexSection("allowedSites")}
-            className='subnav-link'
-          >
-            allowedSites
-          </Nav.Link>
-        </Nav.Item>
-        <Nav.Item>
-          <Nav.Link
-            eventKey="allowedURLs"
-            active={activeIndexSection === "allowedURLs"}
-            onClick={() => setActiveIndexSection("allowedURLs")}
-            className='subnav-link'
-          >
-            URLs
-          </Nav.Link>
-        </Nav.Item>
-        <Nav.Item>
-          <Nav.Link
-            eventKey="stringmatches"
-            active={activeIndexSection === "stringmatches"}
-            onClick={() => setActiveIndexSection("stringmatches")}
-            className='subnav-link'
-          >
-            String matches
-          </Nav.Link>
-        </Nav.Item>
-        <Nav.Item>
-          <Nav.Link
-            eventKey="regex"
-            active={activeIndexSection === "regex"}
-            onClick={() => setActiveIndexSection("regex")}
-            className='subnav-link'
-          >
-            RegEx
-          </Nav.Link>
-        </Nav.Item>
+        {sections.map((section) => (
+          <Nav.Item key={section.key}>
+            <Nav.Link
+              eventKey={section.key}
+              className={`subnav-link ${activeIndexSection === section.key ? "active" : ""}`}
+            >
+              {section.label}
+            </Nav.Link>
+          </Nav.Item>
+        ))}
       </Nav>
 
-      {/* Conditionally Render Sections */}
-      {activeIndexSection === "allowedSites" && <div>showing allowedSites list</div>}
-      {activeIndexSection === "allowedURLs" && <div>showing allowedURLs list</div>}
-      {activeIndexSection === "stringmatches" && <div>showing stringmatches list</div>}
-      {activeIndexSection === "regex" && <div>showing regex list</div>}
+ 
+      <div className="indexing-box">
+        <h2 className="section-title">
+          Showing {sections.find(s => s.key === activeIndexSection)?.label} List
+        </h2>
 
-      {/* Pass the functions to IndexInput */}
-      <IndexInput {...currentFunctions} />
+        <IndexInput {...sectionFunctions[activeIndexSection]} />
+      </div>
 
-      {/* Pass the items to IndexList */}
-      <IndexList items={currentItems} />
+      <IndexList items={sectionItems[activeIndexSection]} />
     </Container>
   );
 };
