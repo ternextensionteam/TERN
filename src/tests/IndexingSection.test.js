@@ -43,17 +43,17 @@ beforeEach(() => {
 test("renders IndexingSection component correctly", () => {
     render(<IndexingSection />);
     
-    expect(screen.getByText(/showing sites list/i)).toBeInTheDocument();
+    expect(screen.getByText(/Showing Sites List/i)).toBeInTheDocument();
 });
 
 test("switches tabs and updates displayed content", () => {
     render(<IndexingSection />);
     
     fireEvent.click(screen.getByText(/urls/i));
-    expect(screen.getByText(/showing urls list/i)).toBeInTheDocument();
+    expect(screen.getByText(/Showing URLs List/i)).toBeInTheDocument();
 
     fireEvent.click(screen.getByText(/regex/i));
-    expect(screen.getByText(/showing regex list/i)).toBeInTheDocument();
+    expect(screen.getByText(/Showing RegEx List/i)).toBeInTheDocument();
 });
 
 test("renders IndexInput and IndexList components", () => {

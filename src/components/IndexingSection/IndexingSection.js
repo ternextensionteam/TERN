@@ -6,12 +6,12 @@ import "./IndexingSection.css";
 import useIndexMatching from "../../hooks/useIndexMatching/useIndexMatching";
 
 const IndexingSection = () => {
-  const [activeIndexSection, setActiveIndexSection] = useState("sites");
+  const [activeIndexSection, setActiveIndexSection] = useState("allowedSites");
   const {
-    sites,
-    regexs,
-    urls,
-    stringMatches,
+    allowedSites,
+    allowedRegex,
+    allowedURLs,
+    allowedStringMatches,
     addSite,
     removeSite,
     updateSite,
@@ -27,24 +27,24 @@ const IndexingSection = () => {
   } = useIndexMatching();
 
   const sections = [
-    { key: "sites", label: "Sites" },
-    { key: "urls", label: "URLs" },
+    { key: "allowedSites", label: "Sites" },
+    { key: "allowedUrls", label: "URLs" },
     { key: "stringmatches", label: "String Matches" },
     { key: "regex", label: "RegEx" },
   ];
 
   const sectionFunctions = {
-    sites: { add: addSite, remove: removeSite, update: updateSite },
+    allowedSites: { add: addSite, remove: removeSite, update: updateSite },
     regex: { add: addRegex, remove: removeRegex, update: updateRegex },
-    urls: { add: addUrl, remove: removeUrl, update: updateUrl },
-    stringmatches: { add: addStringMatch, remove: removeStringMatch, update: updateStringMatch },
+    allowedURLs: { add: addUrl, remove: removeUrl, update: updateUrl },
+    stringmatches: { add: addStringMatch, remove: removeStringMatch, update: updateStringMatch }
   };
 
   const sectionItems = {
-    sites,
-    regex: regexs,
-    urls,
-    stringmatches: stringMatches,
+    allowedSites:allowedSites,
+    regex: allowedRegex,
+    allowedURLs:allowedURLs,
+    stringmatches: allowedStringMatches
   };
 
   return (

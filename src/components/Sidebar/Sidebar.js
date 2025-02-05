@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Nav } from 'react-bootstrap';
 import { FaCog } from "react-icons/fa";
-
+import { checkWhitelist } from "../../utils/WhitelistChecker";
 import TaskSection from "../TaskSection/TaskSection";
 import IndexingSection from "../IndexingSection/IndexingSection";
+import WhitelistIndicator from "../WhitelistIndicator/WhitelistIndicator";
 import "./Sidebar.css";
 
 function Sidebar() {
@@ -28,7 +29,8 @@ function Sidebar() {
             active={activeSection === "indexing"}
             onClick={() => setActiveSection("indexing")}
           >
-            Indexing
+            Indexing{" "}
+            <WhitelistIndicator />
           </Nav.Link>
         </Nav.Item>
         <Nav.Item className="ms-auto">
