@@ -10,7 +10,19 @@ jest.mock('../hooks/useTodoList/useTodoList');
 let mockTasks, mockAddTask, mockDeleteTask, mockToggleReminder, mockUpdateTask;
 
 beforeEach(() => {
-    // Mock the return values of `useTodoList`
+    global.chrome = {
+        storage: {
+            onChanged: {
+                addListener: jest.fn(),
+                removeListener: jest.fn(),
+            },
+            sync: {
+                get: jest.fn().mockImplementation((keys, callback) => callback({})),
+                set: jest.fn(),
+            },
+        },
+    };
+
     mockTasks = [{ id: 1, text: 'Sample Task', reminder: false }];
     mockAddTask = jest.fn();
     mockDeleteTask = jest.fn();
