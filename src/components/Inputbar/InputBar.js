@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "./InputBar.css";
 import { FaTrash, FaBell, FaEdit } from "react-icons/fa";
 
@@ -38,6 +38,29 @@ function InputBar({ onAddTask }) {
 
   const inputRef = useRef(null);
   const descriptionRef = useRef(null);
+
+ 
+  useEffect(() => {
+    chrome.storage.local.get(['selectedText'], (result) => {
+      if (result.selectedText) {
+        setTaskText(result.selectedText);
+        chrome.storage.local.remove('selectedText');
+      }
+    });
+
+    const handleStorageChange = (changes, area) => {
+      if (area === 'local' && changes.selectedText?.newValue) {
+        setTaskText(changes.selectedText.newValue);
+        chrome.storage.local.remove('selectedText');
+      }
+    };
+
+    chrome.storage.onChanged.addListener(handleStorageChange);
+
+    return () => {
+      chrome.storage.onChanged.removeListener(handleStorageChange);
+    };
+  }, []);
 
   const handleAdd = () => {
     if (taskText.trim() != "") {

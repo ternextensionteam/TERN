@@ -11,7 +11,8 @@
       "notifications",
       "alarms",
       "tabs",
-      "sidePanel"
+      "sidePanel",
+      "contextMenus"
     ],
     "background": {
       "service_worker": "background.bundle.js"
