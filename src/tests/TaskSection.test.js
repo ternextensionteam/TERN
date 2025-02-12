@@ -10,7 +10,6 @@ jest.mock('../hooks/useTodoList/useTodoList');
 let mockTasks, mockAddTask, mockDeleteTask, mockToggleReminder, mockUpdateTask;
 
 beforeEach(() => {
-    // Mock the return values of `useTodoList`
     mockTasks = [{ id: 1, text: 'Sample Task', reminder: false }];
     mockAddTask = jest.fn();
     mockDeleteTask = jest.fn();
