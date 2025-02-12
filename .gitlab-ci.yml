@@ -4,26 +4,21 @@ stages:
   - build
 
 variables:
-  NODE_ENV: development # Ensures devDependencies are installed during the pipeline
+  NODE_ENV: development
 
 default:
   image: node:18
-  cache:
-    key: ${CI_COMMIT_REF_SLUG}
-    paths:
-      - node_modules/
-    policy: pull-push
 
 install_dependencies:
   stage: install
   script:
-    - npm install --legacy-peer-deps
+    - npm ci --legacy-peer-deps
+  cache:
+    paths:
+      - node_modules/
 
 run_tests:
   stage: test
-  image: node:18
-  variables:
-    NODE_ENV: test
   script:
     - npm test
   dependencies:
@@ -32,7 +27,7 @@ run_tests:
 build_project:
   stage: build
   script:
-    - npm install --legacy-peer-deps webpack webpack-cli # Ensure webpack is available
+    - npm ci --legacy-peer-deps
     - npm run build
   dependencies:
     - install_dependencies
