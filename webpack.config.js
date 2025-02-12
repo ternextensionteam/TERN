@@ -4,7 +4,8 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 module.exports = {
   entry: {
     popup: "./src/index.js", // React app entry point
-    background: "./src/background.js", // Background script entry point
+    background: "./src/background/background.js", // Background script entry point
+    content: "./src/content/content.js", // Content script entry point
   },
   output: {
     path: path.resolve(__dirname, "dist"),

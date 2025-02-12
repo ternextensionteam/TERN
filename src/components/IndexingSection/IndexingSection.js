@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
-import { Container, Nav } from 'react-bootstrap';
-import IndexInput from '../IndexInput/IndexInput';
-import IndexList from '../IndexList/IndexList';
-import './IndexingSection.css';
-import useIndexMatching from '../../hooks/useIndexMatching/useIndexMatching';
+import React, { useState } from "react";
+import { Container, Nav } from "react-bootstrap";
+import IndexInput from "../IndexInput/IndexInput";
+import IndexList from "../IndexList/IndexList";
+import "./IndexingSection.css";
+import useIndexMatching from "../../hooks/useIndexMatching/useIndexMatching";
 
 const IndexingSection = () => {
-  const [activeIndexSection, setActiveIndexSection] = useState("sites");
+  const [activeIndexSection, setActiveIndexSection] = useState("allowedSites");
   const {
-    sites,
-    regexs,
-    urls,
-    stringMatches,
+    allowedSites,
+    allowedRegex,
+    allowedURLs,
+    allowedStringMatches,
     addSite,
     removeSite,
     updateSite,
@@ -23,6 +23,7 @@ const IndexingSection = () => {
     updateUrl,
     addStringMatch,
     removeStringMatch,
+<<<<<<< HEAD
     updateStringMatch
   } = useIndexMatching();
 
@@ -30,10 +31,27 @@ const IndexingSection = () => {
     sites: { add: addSite, remove: removeSite, update: updateSite },
     regex: { add: addRegex, remove: removeRegex, update: updateRegex },
     urls: { add: addUrl, remove: removeUrl, update: updateUrl },
+=======
+    updateStringMatch,
+  } = useIndexMatching();
+
+  const sections = [
+    { key: "allowedSites", label: "Sites" },
+    { key: "allowedUrls", label: "URLs" },
+    { key: "stringmatches", label: "String Matches" },
+    { key: "regex", label: "RegEx" },
+  ];
+
+  const sectionFunctions = {
+    allowedSites: { add: addSite, remove: removeSite, update: updateSite },
+    regex: { add: addRegex, remove: removeRegex, update: updateRegex },
+    allowedURLs: { add: addUrl, remove: removeUrl, update: updateUrl },
+>>>>>>> origin/main
     stringmatches: { add: addStringMatch, remove: removeStringMatch, update: updateStringMatch }
   };
 
   const sectionItems = {
+<<<<<<< HEAD
     sites:sites,
     regex: regexs,
     urls:urls,
@@ -99,8 +117,45 @@ const IndexingSection = () => {
 
       {/* Pass the items to IndexList */}
       <IndexList items={currentItems} />
+=======
+    allowedSites:allowedSites,
+    regex: allowedRegex,
+    allowedURLs:allowedURLs,
+    stringmatches: allowedStringMatches
+  };
+
+  return (
+    <Container className="indexing-section">
+      <Nav variant="tabs" activeKey={activeIndexSection} onSelect={setActiveIndexSection}>
+        {sections.map((section) => (
+          <Nav.Item key={section.key}>
+            <Nav.Link
+              eventKey={section.key}
+              className={`subnav-link ${activeIndexSection === section.key ? "active" : ""}`}
+            >
+              {section.label}
+            </Nav.Link>
+          </Nav.Item>
+        ))}
+      </Nav>
+
+ 
+      <div className="indexing-box">
+        <h2 className="section-title">
+          Showing {sections.find(s => s.key === activeIndexSection)?.label} List
+        </h2>
+
+        <IndexInput {...sectionFunctions[activeIndexSection]} />
+      </div>
+
+      <IndexList items={sectionItems[activeIndexSection]} />
+>>>>>>> origin/main
     </Container>
   );
 };
 
+<<<<<<< HEAD
 export default IndexingSection;
+=======
+export default IndexingSection;
+>>>>>>> origin/main

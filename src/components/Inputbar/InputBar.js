@@ -19,6 +19,29 @@ function InputBar({ onAddTask }) {
   const bellButtonRef = useRef(null);
   const calendarButtonRef = useRef(null);
 
+ 
+  useEffect(() => {
+    chrome.storage.local.get(['selectedText'], (result) => {
+      if (result.selectedText) {
+        setTaskText(result.selectedText);
+        chrome.storage.local.remove('selectedText');
+      }
+    });
+
+    const handleStorageChange = (changes, area) => {
+      if (area === 'local' && changes.selectedText?.newValue) {
+        setTaskText(changes.selectedText.newValue);
+        chrome.storage.local.remove('selectedText');
+      }
+    };
+
+    chrome.storage.onChanged.addListener(handleStorageChange);
+
+    return () => {
+      chrome.storage.onChanged.removeListener(handleStorageChange);
+    };
+  }, []);
+
   const handleAdd = () => {
     if (taskText.trim() !== "") {
       try {
@@ -227,7 +250,7 @@ function InputBar({ onAddTask }) {
   
   return (
     <div className="page-border">
-      <div className="input-bar task-container">
+      <div className="input-bar task-container p-2">
         <form
           onSubmit={(e) => {
             e.preventDefault();

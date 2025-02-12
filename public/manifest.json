@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "HAWK 2 - Page Indexer and Productivity tool",
+  "version": "1.0",
+  "description": "A React Chrome Extension",
+  "omnibox": { "keyword": "@i\t" },
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "storage",
+    "unlimitedStorage",
+    "notifications",
+    "alarms",
+    "tabs",
+    "sidePanel",
+    "contextMenus"
+  ],
+  "background": {
+    "service_worker": "background.bundle.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.bundle.js"]
+    }
+  ],
+  "side_panel": {
+    "default_path": "index.html"
+  },
+  "action": {
+    "default_title": "Open Side Panel"
+  }
+}
