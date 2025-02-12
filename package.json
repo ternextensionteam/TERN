@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Running placeholder tests...\" && jest",
-    "build": "webpack",
+    "test": "jest --passWithNoTests",
+    "build": "webpack --mode production",
     "watch": "webpack --watch"
   },
   "keywords": [],
@@ -23,10 +23,12 @@
     "react-time-picker": "^7.0.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.26.0",
     "@babel/preset-env": "^7.26.0",
     "@babel/preset-react": "^7.25.9",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",
+    "babel-jest": "^29.7.0",
     "babel-loader": "^9.2.1",
     "copy-webpack-plugin": "^12.0.2",
     "css-loader": "^7.1.2",
@@ -37,5 +39,11 @@
     "style-loader": "^4.0.0",
     "webpack": "^5.96.1",
     "webpack-cli": "^5.1.4"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "moduleNameMapper": {
+      "\\.(css|less|scss|sass)$": "identity-obj-proxy"
+    }
   }
 }
