@@ -1,11 +1,11 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { FaBell, FaBellSlash, FaCalendarAlt } from "react-icons/fa";
 import "../tooltip";
 import "../base.css";
 import "./InputBar.css";
-import { formatDueDate } from "../FormatTime"; // Ensure correct path
+import { formatDueDate } from "../FormatTime";
 import ReminderOverlay from "../ReminderOverlay";
-import DueOverlay from "../DueOverlay"; // Import the new DueOverlay component
+import DueOverlay from "../DueOverlay";
 import 'react-datetime-picker/dist/DateTimePicker.css';
 
 function InputBar({ onAddTask }) {
