@@ -8,6 +8,10 @@ import "@testing-library/jest-dom";
 // Mock child components to isolate Sidebar testing
 jest.mock("../components/TaskSection/TaskSection", () => () => <div data-testid="task-section">Task Section</div>);
 jest.mock("../components/IndexingSection/IndexingSection", () => () => <div data-testid="indexing-section">Indexing Section</div>);
+jest.mock("../components/WhitelistIndicator/WhitelistIndicator", () => () => (
+    <span role="status">Mocked Indicator</span>
+  ));
+
 
 test("renders Sidebar with default Tasks section", () => {
     render(<Sidebar />);
