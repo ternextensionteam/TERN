@@ -4,18 +4,24 @@ stages:
   - build
 
 variables:
-  NODE_ENV: development
+  NODE_ENV: development # Ensures devDependencies are installed during the pipeline
 
 default:
   image: node:18
+  cache:
+    paths:
+      - node_modules/
 
 install_dependencies:
   stage: install
   script:
     - npm ci --legacy-peer-deps
   cache:
+    key: ${CI_COMMIT_REF_SLUG}
     paths:
       - node_modules/
+  tags:
+    - shell 
 
 run_tests:
   stage: test
@@ -23,11 +29,12 @@ run_tests:
     - npm test
   dependencies:
     - install_dependencies
+  tags:
+    - shell 
 
 build_project:
   stage: build
   script:
-    - npm ci --legacy-peer-deps
     - npm run build
   dependencies:
     - install_dependencies
@@ -35,3 +42,5 @@ build_project:
     paths:
       - dist/
     expire_in: 1 week
+  tags:
+    - shell   
