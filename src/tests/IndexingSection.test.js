@@ -3,7 +3,6 @@ import useIndexMatching from "../hooks/useIndexMatching/useIndexMatching";
 import { render, screen, fireEvent } from "@testing-library/react";
 import IndexingSection from "../components/IndexingSection/IndexingSection";
 
-// ✅ Correct way to mock a **default export**
 jest.mock("../hooks/useIndexMatching/useIndexMatching", () => jest.fn());
 
 let mockSites, mockUrls, mockRegexs, mockStringMatches, mockAddSite, mockRemoveSite, mockUpdateSite;
