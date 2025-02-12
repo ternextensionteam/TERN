@@ -170,7 +170,6 @@ function TodoItem({ task, onDelete, onUpdateTask }) {
             />
           </Col>
           <Col>
-<<<<<<< HEAD
             {isEditing ? (
               <input
                 type="text"
@@ -180,77 +179,6 @@ function TodoItem({ task, onDelete, onUpdateTask }) {
                 onKeyDown={(e) => handleKeyPress(e, saveTitle)}
                 autoFocus
                 className="edit-input"
-=======
-            <Row>
-              <Col
-                xs
-                className="d-flex align-items-center"
-                style={{ wordBreak: "break-word" }}
-              >
-                {isEditing ? (
-                  <input
-                    type="text"
-                    value={newText}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    autoFocus
-                    style={{
-                      border: "none",
-                      background: "none",
-                      width: "100%",
-                      padding: 0,
-                      margin: 0,
-                      outline: "none",
-                      boxShadow: "none",
-                    }}
-                  />
-                ) : (
-                  <div
-                    onDoubleClick={handleDoubleClick}
-                    style={{
-                      textDecoration: isChecked ? "line-through" : "none",
-                    }}
-                  >
-                    {task.text}
-                  </div>
-                )}
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                {task.due && (
-                  <div
-                    className={`due-date ${
-                      isOverdue(task.due) ? "overdue" : ""
-                    }`}
-                  >
-                    {formatDate(new Date(task.due))}
-                  </div>
-                )}
-              </Col>
-            </Row>
-          </Col>
-
-          {/* Bell Icon */}
-          <Col xs="auto" className="d-flex align-items-center">
-            <Button
-              variant="link"
-              onClick={(e) => {
-                e.stopPropagation(); // Prevent description toggle
-                onToggleReminder(task.id);
-              }}
-              style={{ padding: 0 }}
-              aria-label="Toggle Reminder"
-            >
-              <img
-                src={
-                  task.reminder
-                    ? `/vector_arts/checked_bell.png`
-                    : `/vector_arts/bell.png`
-                }
-                alt="Reminder"
-                style={{ width: "20px", height: "20px" }}
->>>>>>> origin/main
               />
             ) : (
               <div className={`task-name ${isChecked ? "line-through" : ""}`} onDoubleClick={() => setIsEditing(true)}>
