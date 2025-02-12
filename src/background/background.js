@@ -108,5 +108,17 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
     sendResponse({ success: true });
   }
-});
 
+  // Implementing Notifications
+  if (request.action === "addTask") {
+    chrome.storage.local.get("tasks", (data) => {
+      let tasks = data.tasks || {};
+      tasks[request.task.id] = request.task;
+      chrome.storage.local.set({ tasks }, () => {
+        chrome.alarms.create(request.task.id, { when: request.task.dueDate }); // Create alarm for task reminder
+        sendResponse({ success: true });
+      });
+    });
+    return true;
+  }
+});
