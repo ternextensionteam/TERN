@@ -122,3 +122,19 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true;
   }
 });
+
+// Notify the user when a task is due
+chrome.alarms.onAlarm.addListener((alarm) => {
+  chrome.storage.local.get("tasks", (data) => {
+    let tasks = data.tasks || {};
+    let task = tasks[alarm.name];
+    if (task && !task.recentlyDeleted) {
+      chrome.notifications.create(alarm.name, {
+        type: "basic",
+        iconUrl: chrome.runtime.getURL("/vector_arts/bell.png"),
+        title: `Task Reminder: ${task.title}`,
+        message: task.description,
+      });
+    }
+  });
+});
