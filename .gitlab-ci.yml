@@ -3,19 +3,24 @@ stages:
   - test
   - build
 
+# Global Variables
 variables:
-  NODE_ENV: development # Ensures devDependencies are installed during the pipeline
+  NODE_ENV: development  # Ensures devDependencies are installed during the pipeline
+  GIT_DEPTH: 0 
 
+# Default settings for all jobs
 default:
   image: node:18
   cache:
+    key: ${CI_COMMIT_REF_SLUG}
     paths:
       - node_modules/
 
+# Install dependencies
 install_dependencies:
   stage: install
   script:
-    - npm ci --legacy-peer-deps
+    - npm ci --legacy-peer-deps || npm ci --legacy-peer-deps  # Retry if first fails
   cache:
     key: ${CI_COMMIT_REF_SLUG}
     paths:
@@ -23,6 +28,7 @@ install_dependencies:
   tags:
     - shell 
 
+# Run Tests
 run_tests:
   stage: test
   script:
@@ -32,6 +38,7 @@ run_tests:
   tags:
     - shell 
 
+# Build Project
 build_project:
   stage: build
   script:
@@ -43,4 +50,4 @@ build_project:
       - dist/
     expire_in: 1 week
   tags:
-    - shell   
+    - shell    
