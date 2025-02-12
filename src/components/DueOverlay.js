@@ -5,21 +5,19 @@ import { FaRegClock, FaBellSlash, FaRegCalendarAlt } from "react-icons/fa";
 import "./ReminderOverlay.css";
 import "./CalendarOverlay.css";
 
-function ReminderOverlay({ onSelectPreset, targetPosition, onClose, bellButtonRef }) {
+function DueOverlay({ onSelectDate, targetPosition, onClose, calendarButtonRef }) {
   const overlayRef = useRef(null);
   const [adjustedPosition, setAdjustedPosition] = useState(null);
   const [isCalendarVisible, setIsCalendarVisible] = useState(false);
   const [selectedDateTime, setSelectedDateTime] = useState(new Date());
-  const [selectedTime, setSelectedTime] = useState("12:00 PM");
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State for custom dropdown
 
-  // Handle closing the overlay when clicking outside or clicking the bell button
+  // Handle closing the overlay when clicking outside or clicking the calendar button
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
         overlayRef.current &&
         !overlayRef.current.contains(event.target) &&
-        !(bellButtonRef?.current && bellButtonRef.current.contains(event.target))
+        !(calendarButtonRef?.current && calendarButtonRef.current.contains(event.target))
       ) {
         onClose();
       }
@@ -29,7 +27,7 @@ function ReminderOverlay({ onSelectPreset, targetPosition, onClose, bellButtonRe
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [onClose, bellButtonRef]);
+  }, [onClose, calendarButtonRef]);
 
   // Adjust position to prevent overlay overflow
   useEffect(() => {
@@ -67,14 +65,8 @@ function ReminderOverlay({ onSelectPreset, targetPosition, onClose, bellButtonRe
   }, [targetPosition]);
 
   const handleDateSave = () => {
-    const [time, period] = selectedTime.split(" ");
-    const [hours, minutes] = time.split(":").map(Number);
-    const adjustedHours = period === "PM" && hours !== 12 ? hours + 12 : period === "AM" && hours === 12 ? 0 : hours;
-
     const savedDate = new Date(selectedDateTime);
-    savedDate.setHours(adjustedHours, minutes, 0, 0);
-
-    onSelectPreset({ label: "Custom", time: savedDate.toISOString() });
+    onSelectDate(savedDate); // Pass the selected date back to the parent
     setIsCalendarVisible(false);
     onClose();
   };
@@ -82,45 +74,6 @@ function ReminderOverlay({ onSelectPreset, targetPosition, onClose, bellButtonRe
   const handleDateChange = (date) => {
     setSelectedDateTime(date);
   };
-
-  const generateTimeOptions = () => {
-  const times = [];
-  for (let hour = 0; hour < 24; hour++) {
-    for (let min of [0, 30]) {
-      const formattedTime = new Date(0, 0, 0, hour, min).toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: true,
-      });
-      times.push(formattedTime);
-    }
-  }
-
-  // Get the current time
-  const now = new Date();
-  const currentHour = now.getHours();
-  const currentMinutes = now.getMinutes();
-
-  // Find the closest future time interval
-  const nextIntervalIndex = times.findIndex((time) => {
-    const [hour, minute] = time.split(/:| /);
-    const amPm = time.split(" ")[1];
-    const hour24 = amPm === "PM" && hour !== "12" ? +hour + 12 : amPm === "AM" && hour === "12" ? 0 : +hour;
-
-    return (
-      hour24 > currentHour || (hour24 === currentHour && +minute > currentMinutes)
-    );
-  });
-
-  // Ensure the list starts from the next future time
-  const startIndex = nextIntervalIndex === -1 ? 0 : nextIntervalIndex;
-  const reorderedTimes = [
-    ...times.slice(startIndex),
-    ...times.slice(0, startIndex),
-  ];
-
-  return reorderedTimes;
-};
 
   // Prevent rendering until adjustedPosition is set
   if (!adjustedPosition) return null;
@@ -165,33 +118,6 @@ function ReminderOverlay({ onSelectPreset, targetPosition, onClose, bellButtonRe
             }}
           />
 
-          {/* Custom Time Dropdown */}
-          <div className="dropdown-wrapper">
-  <div
-    className="dropdown-header"
-    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-  >
-    <span className={isDropdownOpen ? "" : "selected-time"}>{selectedTime}</span> {/* Add class for selected time */}
-  </div>
-  {isDropdownOpen && (
-    <ul className="dropdown-options">
-      {generateTimeOptions().map((time) => (
-        <li
-          key={time}
-          onClick={() => {
-            setSelectedTime(time);
-            setIsDropdownOpen(false);
-          }}
-          className={selectedTime === time ? "selected" : ""}
-        >
-          {time}
-        </li>
-      ))}
-    </ul>
-  )}
-</div>
-
-
           <div className="action-buttons">
             <button className="back-btn" onClick={() => setIsCalendarVisible(false)}>
               Back
@@ -208,7 +134,7 @@ function ReminderOverlay({ onSelectPreset, targetPosition, onClose, bellButtonRe
             { label: "Tomorrow", time: new Date(new Date().setDate(new Date().getDate() + 1)).setHours(9, 0, 0, 0), icon: <FaRegClock /> },
             { label: "Next week", time: new Date(new Date().setDate(new Date().getDate() + 7 - new Date().getDay())).setHours(9, 0, 0, 0), icon: <FaRegClock /> },
             { label: "Pick a date & time", time: "", icon: <FaRegCalendarAlt /> },
-            { label: "No Reminder", time: null, icon: <FaBellSlash /> },
+            { label: "No Due", time: null, icon: <FaBellSlash /> },
           ].map((preset) => (
             <div
               key={preset.label}
@@ -217,7 +143,7 @@ function ReminderOverlay({ onSelectPreset, targetPosition, onClose, bellButtonRe
                 if (preset.label === "Pick a date & time") {
                   setIsCalendarVisible(true);
                 } else {
-                  onSelectPreset({ label: preset.label, time: preset.time });
+                  onSelectDate(preset.time); // Pass the selected date back to the parent
                   onClose();
                 }
               }}
@@ -238,4 +164,4 @@ function ReminderOverlay({ onSelectPreset, targetPosition, onClose, bellButtonRe
   );
 }
 
-export default ReminderOverlay;
+export default DueOverlay;

@@ -17,7 +17,7 @@
     background-color: #fff;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
     padding: 16px;
-    border-radius: 8px;
+    border-radius: 4px;
     box-sizing: border-box;
 }
 
@@ -46,6 +46,7 @@
     border: none;
     border-bottom: 3px solid #d2d2d2; 
     font-size: 18px;
+    margin-bottom: 8px;
     outline: none;
     box-sizing: border-box;
     transition: border-color 0.3s ease;
@@ -72,23 +73,6 @@
     overflow: hidden;
 }
 
-/* Add Task Button Styles */
-.change-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: var(--primary-color);
-    color: var(--white-color);
-    padding: 8px 12px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: bold;
-    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-    box-shadow: 0 3px 6px rgba(0, 120, 212, 0.3);
-}
-
 .change-btn:hover {
     background-color: var(--secondary-color);
 }
@@ -102,10 +86,11 @@
 /* Task Controls */
 .task-controls {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 8px;
+    flex-direction: column; /* Stack rows when needed */
+    gap: 8px;
+    width: 100%;
 }
+
 
 /* Reminder Display Button */
 .reminder-display {
@@ -133,7 +118,7 @@
 .bell-icon {
     font-size: 24px;
     transition: color 0.3s ease, box-shadow 0.3s ease;
-    margin-right: 10px;
+    margin-right: 100px;
     margin-left: 5px;
     margin-top: 13px;
     margin-bottom: 10px;
@@ -236,3 +221,91 @@
 .preset-option.selected .icon {
     color: var(--primary-color);
 }
+
+.task-controls.stacked {
+    flex-direction: column; /* Stacks elements in a column when needed */
+    align-items: flex-start; /* Aligns items to the left */
+  }
+
+  .due-date-wrapper,
+  .reminder-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  .task-controls-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Space between icons and button */
+    width: 100%;
+    gap: 12px;
+}
+
+  .due-date-display {
+    border-radius: 6px; /* Rounded edges */
+    padding: 6px 10px; /* Spacing */
+    cursor: pointer;
+    display: flex;
+    background-color: var(--white-color);
+    align-items: center;
+    justify-content: center;
+  }
+
+  .due-date-display:hover,
+.due-date-display:focus {
+  background-color: var(--white-color); /* Light gray on hover */
+
+}
+
+.calendar-icon {
+    color: var(--primary-color) !important; /* Change icon color to blue */
+    font-size: 1.4em !important; /* Increase icon size slightly */
+    padding-top: 3px;
+    transform: scale(1.2);
+    margin-left: -5px;
+  }
+
+  /* Default styling for the due date text (hidden until selected) */
+.due-date {
+    color: var(--text-color); /* Default text color */
+    margin-left: 12px; /* Space between the icon and text */
+    font-weight: normal;
+  }
+
+  .task-controls-left {
+    display: flex;
+    align-items: center;
+    gap: 12px; /* Space between calendar and bell */
+}
+
+.due-date-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: auto;
+}
+
+.full-width {
+    width: 100%; /* Take full width when on a new row */
+}
+
+.change-btn {
+    margin-left: auto; /* Pushes the button to the far right */
+    background-color: var(--primary-color);
+    color: var(--white-color);
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.3s ease;
+}
+
+.no-due-date-icon {
+    color: var(--light-text-color) !important;
+    margin-right: 5px;
+  }
