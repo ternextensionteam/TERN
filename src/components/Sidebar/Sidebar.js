@@ -3,6 +3,7 @@ import { Container, Nav } from "react-bootstrap";
 import { FaCog } from "react-icons/fa";
 import { LuListTodo } from "react-icons/lu";
 import { AiOutlineNodeIndex } from "react-icons/ai";
+import WhitelistIndicator from "../WhitelistIndicator/WhitelistIndicator";
 
 import TaskSection from "../TaskSection/TaskSection";
 import IndexingSection from "../IndexingSection/IndexingSection";
@@ -35,6 +36,7 @@ function Sidebar() {
             >
               <AiOutlineNodeIndex className="icon" size={25} />
               <span style={{ marginLeft: "8px" }}>Indexing</span>
+              <WhitelistIndicator />
             </Nav.Link>
           </label>
         </Nav.Item>
