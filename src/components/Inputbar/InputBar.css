@@ -13,43 +13,50 @@
 /* Task Container Styles */
 .task-container {
     width: 100%;
-    max-width: 600px;
+    max-width: 700px;
     background-color: #fff;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
-    padding: 16px;
+    padding: 24px;
     border-radius: 4px;
     box-sizing: border-box;
 }
 
 /* Input and Textarea Styles */
 .task-input {
-    width: 100%;
+    width: 95%;
     font-family: var(--font-family);
     margin-bottom: 12px;
-    padding: 7px 12px;
+    margin: 0 auto 12px;
+    height: 50px;
+    padding: 12px 14px;
+    display: block;
     background-color: var(--white-color);
     color: var(--text-color);
     border: none;
     border-bottom: 3px solid var(--primary-color); 
     font-size: 22px;
     outline: none;
+    text-align: left;
     box-sizing: border-box;
     transition: border-color 0.3s ease;
 }
-
 .task-textarea {
-    width: 100%;
+    width: 95%;
     font-family: var(--font-family);
+    margin: 0 auto 12px;
+    height: 50px;
     padding: 12px 14px;
+    display: block;
     background-color: var(--white-color);
     color: var(--text-color);
     border: none;
-    border-bottom: 3px solid #d2d2d2; 
-    font-size: 18px;
-    margin-bottom: 8px;
+    border-bottom: 3px solid var(--light-text-color); 
+    font-size: 22px;
     outline: none;
+    text-align: left;
     box-sizing: border-box;
     transition: border-color 0.3s ease;
+    margin-bottom: 17px;
 }
 
 .task-input:focus,
@@ -73,22 +80,13 @@
     overflow: hidden;
 }
 
-.change-btn:hover {
-    background-color: var(--secondary-color);
-}
-
-.change-btn .btn-icon {
-    margin-right: 6px;
-    width: 14px;
-    height: 14px;
-}
-
 /* Task Controls */
 .task-controls {
     display: flex;
-    flex-direction: column; /* Stack rows when needed */
+    flex-direction: column; 
     gap: 8px;
     width: 100%;
+    padding-left: 5px;
 }
 
 
@@ -266,7 +264,7 @@
     margin-left: -5px;
   }
 
-  /* Default styling for the due date text (hidden until selected) */
+/* Default styling for the due date text (hidden until selected) */
 .due-date {
     color: var(--text-color); /* Default text color */
     margin-left: 12px; /* Space between the icon and text */
@@ -287,11 +285,12 @@
 }
 
 .full-width {
-    width: 100%; /* Take full width when on a new row */
+    width: 100%;
 }
 
 .change-btn {
     margin-left: auto; /* Pushes the button to the far right */
+    margin-right: 5px;
     background-color: var(--primary-color);
     color: var(--white-color);
     padding: 8px 16px;
@@ -309,3 +308,7 @@
     color: var(--light-text-color) !important;
     margin-right: 5px;
   }
+
+  .task-container {
+    padding: 32px; /* Increased padding for better spacing */
+}

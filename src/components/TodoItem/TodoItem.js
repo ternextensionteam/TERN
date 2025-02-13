@@ -24,6 +24,7 @@ function TodoItem({ task, onDelete, onUpdateTask }) {
 
   const bellButtonRef = useRef(null);
   const dueDateRef = useRef(null);
+  const longPressTimer = useRef(null); // Timer for long press detection
 
   useEffect(() => {
     setReminder(task.reminder || { label: "No Reminder", time: null });
@@ -57,15 +58,59 @@ function TodoItem({ task, onDelete, onUpdateTask }) {
     onUpdateTask(task.id, newText, newDescription, reminder, dueDate, newCheckedState);
   };
 
-  const handleReminderClick = (e) => {
+  const handleReminderMouseDown = (e) => {
     e.stopPropagation();
-    if (bellButtonRef.current) {
-      const rect = bellButtonRef.current.getBoundingClientRect();
-      setOverlayPosition({
-        top: rect.bottom + window.scrollY,
-        left: rect.left + window.scrollX,
-      });
-      setShowReminderOverlay((prev) => !prev); // Toggle the reminder overlay
+    longPressTimer.current = setTimeout(() => {
+      // Long press action: close the overlay
+      setShowReminderOverlay(false);
+      setShowDueOverlay(false);
+    }, 500); // 500ms for long press
+  };
+
+  const handleReminderMouseUp = (e) => {
+    e.stopPropagation();
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current); // Clear the long press timer
+      longPressTimer.current = null;
+
+      // Regular click action: toggle the overlay
+      if (bellButtonRef.current) {
+        const rect = bellButtonRef.current.getBoundingClientRect();
+        setOverlayPosition({
+          top: rect.bottom + window.scrollY,
+          left: rect.left + window.scrollX,
+        });
+        setShowReminderOverlay((prev) => !prev); // Toggle the reminder overlay
+        setShowDueOverlay(false); // Ensure the due date overlay is closed
+      }
+    }
+  };
+
+  const handleDueDateMouseDown = (e) => {
+    e.stopPropagation();
+    longPressTimer.current = setTimeout(() => {
+      // Long press action: close the overlay
+      setShowDueOverlay(false);
+      setShowReminderOverlay(false);
+    }, 500); // 500ms for long press
+  };
+
+  const handleDueDateMouseUp = (e) => {
+    e.stopPropagation();
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current); // Clear the long press timer
+      longPressTimer.current = null;
+
+      // Regular click action: toggle the overlay
+      if (dueDateRef.current) {
+        const rect = dueDateRef.current.getBoundingClientRect();
+        setOverlayPosition({
+          top: rect.bottom + window.scrollY,
+          left: rect.left + window.scrollX,
+        });
+        setShowDueOverlay((prev) => !prev); // Toggle the due date overlay
+        setShowReminderOverlay(false); // Ensure the reminder overlay is closed
+      }
     }
   };
 
@@ -77,18 +122,6 @@ function TodoItem({ task, onDelete, onUpdateTask }) {
     setReminder(newReminder);
     setShowReminderOverlay(false); // Close the overlay after selecting a preset
     onUpdateTask(task.id, newText, newDescription, newReminder, dueDate, isChecked);
-  };
-
-  const handleDueDateClick = (e) => {
-    e.stopPropagation();
-    if (dueDateRef.current) {
-      const rect = dueDateRef.current.getBoundingClientRect();
-      setOverlayPosition({
-        top: rect.bottom + window.scrollY,
-        left: rect.left + window.scrollX,
-      });
-      setShowDueOverlay((prev) => !prev); // Toggle the due date overlay
-    }
   };
 
   const handleDueDateSelect = (date) => {
@@ -134,7 +167,8 @@ function TodoItem({ task, onDelete, onUpdateTask }) {
       <div
         ref={dueDateRef}
         className={`due-date-text ${isNoDueDate ? "no-due-date" : "due-date-set"}`}
-        onClick={handleDueDateClick} // Single click to toggle the overlay
+        onMouseDown={handleDueDateMouseDown}
+        onMouseUp={handleDueDateMouseUp}
         data-tooltip="Due Date"
         data-tooltip-position="top"
       >
@@ -188,7 +222,13 @@ function TodoItem({ task, onDelete, onUpdateTask }) {
             {renderDueDate()}
           </Col>
           <Col xs="auto" className="task-icons">
-            <Button ref={bellButtonRef} variant="link" onClick={handleReminderClick} className="reminder-btn">
+            <Button
+              ref={bellButtonRef}
+              variant="link"
+              onMouseDown={handleReminderMouseDown}
+              onMouseUp={handleReminderMouseUp}
+              className="reminder-btn"
+            >
               {renderReminderIcon()}
             </Button>
             {showReminderOverlay && (

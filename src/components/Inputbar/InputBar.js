@@ -159,7 +159,8 @@ function InputBar({ onAddTask }) {
     return (
       <div className="due-date-wrapper">
         {/* Always show the calendar icon */}
-        <FaCalendarAlt className={`calendar-icon ${isNoDueDate ? "no-due-date-icon" : ""}`} />
+        <FaCalendarAlt data-tooltip="Due date"
+              data-tooltip-position="top" className={`calendar-icon ${isNoDueDate ? "no-due-date-icon" : ""}`} />
   
         {/* Show text only if a due date is selected, including "No Due Date" */}
         {selectedDueDate && (
