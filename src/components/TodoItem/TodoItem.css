@@ -1,37 +1,287 @@
-.due-date {
-    font-size: 0.8rem;
-    color: #6c757d; /* Default gray */
-  }
-  
-.due-date.overdue {
-color: red;
+/* Due Date Styling */
+.due-date-text {
+  color: var(--primary-color);
+
 }
-  
+
+.due-date-text.overdue {
+  color: red;
+}
+
+/* Card Border Styling */
 .highlighted-border {
-    border-left: 4px solid #ffad54 !important; /* Highlighted border color */
+  border-left: 4px solid var(--primary-color) !important;
 }
 
 .default-border {
-    border-left: 4px solid #ccc !important; /* Default card border color */
-  }
+  border-left: 4px solid var(--light-text-color) !important;
+}
 
-  /* Change the border color and checked state color */
+/* Checkbox Styling */
 .custom-checkbox input[type="checkbox"] {
-    accent-color: #ffad54; /* Modern browsers support */
-  }
-  
-  .custom-checkbox input[type="checkbox"]:focus {
-    box-shadow: 0 0 0 0.25rem rgba(255, 173, 84, 0.5); /* Add a focus ring in your custom color */
-  }
-  
-  .custom-checkbox input[type="checkbox"]:checked {
-    background-color: #ffad54;
-    border-color: #ffad54;
-  }
-  
-  /* Optional: Add custom hover effects */
-  .custom-checkbox input[type="checkbox"]:hover {
-    cursor: pointer;
-    filter: brightness(0.9);
-  }
-  
+  accent-color: var(--primary-color);
+  transition: all 0.2s ease-in-out;
+  background-color: transparent;
+  border-color: var(--light-text-color);
+  border-radius: 2px;
+}
+
+.custom-checkbox input[type="checkbox"]:hover {
+  cursor: pointer;
+  background-color: var(--transparent-blue);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.25rem var(--transparent-blue);
+  transition: all 0.2s ease-in-out;
+}
+
+.custom-checkbox input[type="checkbox"]:focus {
+  outline: none;
+  border-radius: 2px;
+}
+
+.custom-checkbox input[type="checkbox"]:checked {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  border-radius: 2px;
+}
+
+.custom-checkbox input[type="checkbox"]:focus:not(:hover) {
+  box-shadow: none;
+}
+
+/* Task Name Styling */
+.task-name {
+  font-size: 1.2rem;
+  color: var(--black-color);
+}
+
+.task-content {
+  flex: auto;
+  margin-left: -10px;
+  word-break: break-word;
+}
+
+.task-title {
+  margin-bottom: 4px;
+}
+
+/* Task Icons Styling */
+.task-icons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.reminder-btn {
+  margin-right: -12px;
+}
+
+.reminder-icon {
+  width: 22px !important;
+  height: 22px !important;
+  color: var(--primary-color);
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.reminder-off {
+  width: 27px !important;
+  height: 27px !important;
+  color: var(--light-text-color) !important;
+  margin-right: -2px;
+}
+
+.fa-trash-alt {
+  width: 22px !important;
+  height: 22px !important;
+  vertical-align: middle;
+  color: var(--primary-color);
+}
+
+/* Description Styling */
+.description-text {
+  font-size: 0.9rem;
+  color: var(--light-text-color);
+  word-break: break-word;
+}
+
+.task-description {
+  font-size: 0.9rem;
+  margin-top: 8px;
+}
+
+/* Edit Input Styling */
+.edit-input {
+  border: none;
+  border-bottom: 3px solid var(--primary-color);
+  border-radius: 2px;
+  padding: 4px;
+  width: 100%;
+  font-size: 1.2rem;
+  outline: none;
+}
+
+.edit-input:focus {
+  border-color: var(--primary-color);
+}
+
+.edit-description {
+  width: 100%;
+  padding: 2px 4px;
+  border: none;
+  border-bottom: 3px solid var(--primary-color);
+  border-radius: 2px;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  outline: none;
+  resize: none;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.edit-description:focus {
+  border-color: var(--primary-color);
+}
+
+/* Edit Icon Styling */
+.edit-icon {
+  color: var(--light-text-color);
+  margin-left: 8px;
+  cursor: pointer;
+  transition: color 0.2s ease-in-out;
+}
+
+.edit-icon:hover {
+  color: var(--primary-color);
+}
+
+/* Task Card Styling */
+.task-card {
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid var(--light-gray-color);
+  border-radius: 8px;
+}
+
+.task-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+/* Additional Styling */
+.task-name {
+  font-size: 1.2rem;
+}
+
+.description-text {
+  font-size: 0.9rem;
+  color: var(--text-color);
+}
+
+.mt-2 {
+  margin-top: 0;
+}
+
+/* Reminder Overlay Styling */
+.reminder-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.reminder-overlay {
+  position: absolute;
+  top: 40px;
+  left: 70%; /* Moves the overlay further right */
+  transform: translateX(-30%); /* Adjust centering */
+  background: var(--white-color);
+  border: 1px solid var(--light-text-color);
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+  min-width: 200px;
+  max-width: 300px;
+  white-space: nowrap;
+}
+
+/* Prevents overlay from going outside the card */
+.reminder-overlay.adjust-left {
+  left: auto;
+  right: 0;
+  transform: translateX(0);
+}
+
+/* Close button inside the overlay */
+.reminder-overlay .close-btn {
+  display: block;
+  text-align: right;
+  font-size: 14px;
+  color: var(--text-color);
+  cursor: pointer;
+  margin-bottom: 5px;
+}
+
+/* Styles for Reminder Overlay Buttons */
+.reminder-overlay button {
+  display: block;
+  width: 100%;
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.reminder-overlay button:hover {
+  background: var(--white-color);
+}
+
+/* Highlight selected reminder */
+.reminder-overlay .selected {
+  background: var(--white-color);
+  font-weight: bold;
+}
+
+.reminder-overlay-container {
+  top: 100%;
+  left: -500px !important; /* Adjust this value to move it more to the right */
+}
+
+/* Delete Button Styling */
+.delete-btn {
+  color: var(--primary-color) !important;
+}
+
+.no-due-date {
+  color: var(--slight-light-text-color) !important;
+}
+
+.edit-icon {
+  margin-left: 6px;
+  cursor: pointer;
+  color: var(--light-text-color);
+  font-size: 12px;
+  width: 12px;
+  height: 12px;
+}
+
+.edit-icon:hover{
+  color: var(--light-gray-color);
+}
+.title-container {
+  display: flex;
+  align-items: center;
+  gap: 6px; /* Space between text and icon */
+}
+
+.due-date-container {
+  display: flex;
+  align-items: center;
+  gap: 6px; /* Space between due date and icon */
+}

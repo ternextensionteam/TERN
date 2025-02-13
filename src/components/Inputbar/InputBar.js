@@ -1,43 +1,23 @@
 import React, { useState, useRef, useEffect } from "react";
+import { FaBell, FaBellSlash, FaCalendarAlt } from "react-icons/fa";
+import "../tooltip";
+import "../base.css";
 import "./InputBar.css";
-import { FaTrash, FaBell, FaEdit } from "react-icons/fa";
+import { formatDueDate } from "../FormatTime";
+import ReminderOverlay from "../ReminderOverlay";
+import DueOverlay from "../DueOverlay";
+import 'react-datetime-picker/dist/DateTimePicker.css';
 
 function InputBar({ onAddTask }) {
-  const getCurrentDate = () => {
-    return getFormattedDate(new Date());
-  };
-  const getCurrentTime = () => {
-    return getFormattedTime(new Date());
-  };
-  const getFormattedTime = (date) => {
-    const hours = date.getHours().toString().padStart(2, "0"); // Format: HH
-    const minutes = date.getMinutes().toString().padStart(2, "0"); // Format: MM
-    return `${hours}:${minutes}`; // Format: HH:MM
-  };
-  const getFormattedDate = (date) => {
-    return date.toISOString().split("T")[0]; // Format: YYYY-MM-DD
-  };
-  const getFutureDate = (daysAhead) => {
-    const date = new Date();
-    date.setDate(date.getDate() + daysAhead);
-    return getFormattedDate(date);
-  };
-  const getEndOfWeekDate = () => {
-    const today = new Date();
-    const daysToSunday = 7 - today.getDay(); // Days until Sunday
-    const endOfWeek = new Date(today.setDate(today.getDate() + daysToSunday));
-    return getFormattedDate(endOfWeek);
-  };
-
   const [taskText, setTaskText] = useState("");
-  const [dueDate, setDueDate] = useState(getCurrentDate);
-  const [dueTime, setDueTime] = useState(getCurrentTime);
+  const [selectedReminder, setSelectedReminder] = useState(null);
+  const [selectedDueDate, setSelectedDueDate] = useState(null);
   const [description, setDescription] = useState("");
-  const [isReminder, setIsReminder] = useState(true);
-  const [selectedPreset, setSelectedPreset] = useState("");
-
-  const inputRef = useRef(null);
-  const descriptionRef = useRef(null);
+  const [showReminderOverlay, setShowReminderOverlay] = useState(false);
+  const [showDueOverlay, setShowDueOverlay] = useState(false);
+  const [overlayPosition, setOverlayPosition] = useState({ top: 0, left: 0 });
+  const bellButtonRef = useRef(null);
+  const calendarButtonRef = useRef(null);
 
  
   useEffect(() => {
@@ -63,126 +43,324 @@ function InputBar({ onAddTask }) {
   }, []);
 
   const handleAdd = () => {
-    if (taskText.trim() != "") {
-      onAddTask(taskText, dueDate, dueTime, description, isReminder);
-      setTaskText("");
-      setDescription("");
-      setIsReminder(true);
-      if (descriptionRef.current) {
-        descriptionRef.current.style.height = "auto";
+    if (taskText.trim() !== "") {
+      try {
+        // Ensure reminder always has a valid default
+        const reminder = selectedReminder
+          ? {
+              label: selectedReminder.label || "No Reminder",
+              time: selectedReminder.time
+                ? new Date(selectedReminder.time).toISOString() // Convert to ISO format
+                : null,
+            }
+          : { label: "No Reminder", time: null }; // ✅ Default to "No Reminder" if nothing selected
+  
+        // Handle due date (optional)
+        let dueDate = selectedDueDate || null;
+        if (dueDate) {
+          const parsedDueDate = new Date(dueDate);
+          if (isNaN(parsedDueDate.getTime())) {
+            dueDate = null;
+          } else {
+            dueDate = parsedDueDate.toISOString(); // Store in ISO format
+          }
+        }
+  
+        // Pass validated data to the parent function
+        onAddTask(taskText, reminder, description, dueDate);
+  
+        // Clear input fields
+        setTaskText("");
+        setDescription("");
+        setSelectedReminder(null); // Clear the reminder selection
+        setSelectedDueDate(null); // Clear the due date selection
+  
+      } catch (error) {
+        console.error("Error adding task:", error);
       }
     }
   };
+  
+  const handleReminderClick = (event) => {
+    event.stopPropagation();
 
-  const presets = [
-    {
-      label: "Today",
-      value: `${getFutureDate(0)} 17:00`, // End of today
-    },
-    {
-      label: "Tomorrow",
-      value: `${getFutureDate(1)} 17:00`, // End of tomorrow
-    },
-    {
-      label: "This Week",
-      value: `${getEndOfWeekDate()} 17:00`, // End of the week
-    },
-  ];
-
-  const focusTextInput = (event) => {
-    if (event.detail !== 0 && inputRef.current) {
-      setTimeout(() => {
-        inputRef.current.focus();
-      }, 0);
+    if (showReminderOverlay) {
+      setShowReminderOverlay(false);
+    } else if (bellButtonRef.current) {
+      const rect = bellButtonRef.current.getBoundingClientRect();
+      setOverlayPosition({
+        top: rect.bottom + window.scrollY,
+        left: rect.left + window.scrollX,
+      });
+      setShowReminderOverlay(true);
     }
   };
 
-  const handlePresetChange = (value) => {
-    setSelectedPreset(value);
-    setDueDate(value.split(" ")[0]);
-    setDueTime(value.split(" ")[1]);
+  const handleDueDateClick = (event) => {
+    event.stopPropagation();
+
+    if (showDueOverlay) {
+      setShowDueOverlay(false);
+    } else if (calendarButtonRef.current) {
+      const rect = calendarButtonRef.current.getBoundingClientRect();
+      setOverlayPosition({
+        top: rect.bottom + window.scrollY,
+        left: rect.left + window.scrollX,
+      });
+      setShowDueOverlay(true);
+    }
   };
 
+  const handlePresetSelect = (preset) => {
+    if (!preset || !preset.label) {
+      return;
+    }
+    console.log("Selected Reminder:", preset);
+
+    setSelectedReminder(preset); // Ensure we're storing the correct object
+    setShowReminderOverlay(false);
+  };
+
+  const handleDueDateSelect = (date) => {
+    const newDueDate = date === null ? "No Due Date" : new Date(date).toISOString();
+    setSelectedDueDate(newDueDate);
+    setShowDueOverlay(false);
+  };
+  
+  const renderBellIconWithTime = () => {
+    return (
+      <>
+        {selectedReminder?.label === "No Reminder" ? (
+          <>
+            <FaBellSlash
+              className="bell-icon no-reminder"
+              data-tooltip="Remind me"
+              data-tooltip-position="bottom"
+            />
+            <span className="reminder-time">No Reminder</span>
+          </>
+        ) : (
+          <>
+            <FaBell className="bell-icon active" data-tooltip="Remind me" />
+            {selectedReminder?.time && (
+              <span className="reminder-time">
+                {formatReminderTime(selectedReminder.time)} {}
+              </span>
+            )}
+          </>
+        )}
+      </>
+    );
+  };
+
+  const renderCalendarIconWithDate = () => {
+    const isNoDueDate = selectedDueDate === "No Due Date"; // Check if "No Due Date" is explicitly set
+  
+    return (
+      <div className="due-date-wrapper">
+        {/* Always show the calendar icon */}
+        <FaCalendarAlt className={`calendar-icon ${isNoDueDate ? "no-due-date-icon" : ""}`} />
+  
+        {/* Show text only if a due date is selected, including "No Due Date" */}
+        {selectedDueDate && (
+          <span className="due-date">{isNoDueDate ? "No Due Date" : formatDueDate(selectedDueDate)}</span>
+        )}
+      </div>
+    );
+  };
+  
+  const formatReminderTime = (time) => {
+    const date = new Date(time);
+    if (isNaN(date.getTime())) return "Invalid Time";
+  
+    const now = new Date();
+    const tomorrow = new Date();
+    tomorrow.setDate(now.getDate() + 1);
+  
+    // 🔹 Find the upcoming Monday
+    const nextMonday = new Date(now);
+    const dayOfWeek = now.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+    if (dayOfWeek === 0) {
+      // Today is Sunday, set next Monday (tomorrow)
+      nextMonday.setDate(now.getDate() + 1);
+    } else {
+      // Move to the next Monday
+      nextMonday.setDate(now.getDate() + (8 - dayOfWeek));
+    }
+    nextMonday.setHours(0, 0, 0, 0);
+  
+    // 🔹 Find the Monday after that (for week after next)
+    const followingMonday = new Date(nextMonday);
+    followingMonday.setDate(nextMonday.getDate() + 7);
+  
+    const isToday = date.toDateString() === now.toDateString();
+    const isTomorrow = date.toDateString() === tomorrow.toDateString();
+    const isWithinNextWeek = date >= nextMonday && date < followingMonday;
+    const isThisYear = date.getFullYear() === now.getFullYear();
+  
+    // 🔹 Remove "Tomorrow", show full date instead
+    if (isToday) {
+      return `Today, ${date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true })}`;
+    }
+  
+    if (isWithinNextWeek) {
+      return `${date.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}, ${date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true })}`;
+    }
+  
+    return `${date.toLocaleDateString("en-US", {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+      year: isThisYear ? undefined : "numeric",
+    })}, ${date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true })}`;
+  };
+  
+  const formatDueDate = (date) => {
+    const dueDate = new Date(date);
+    if (isNaN(dueDate.getTime())) return "Invalid Date";
+  
+    const now = new Date();
+    const tomorrow = new Date();
+    tomorrow.setDate(now.getDate() + 1);
+  
+    const nextMonday = new Date(now);
+    const dayOfWeek = now.getDay();
+    if (dayOfWeek === 0) {
+      nextMonday.setDate(now.getDate() + 1);
+    } else {
+      nextMonday.setDate(now.getDate() + (8 - dayOfWeek));
+    }
+    nextMonday.setHours(0, 0, 0, 0);
+
+    const followingMonday = new Date(nextMonday);
+    followingMonday.setDate(nextMonday.getDate() + 7);
+  
+    const isToday = dueDate.toDateString() === now.toDateString();
+    const isTomorrow = dueDate.toDateString() === tomorrow.toDateString();
+    const isWithinNextWeek = dueDate >= nextMonday && dueDate < followingMonday;
+    const isThisYear = dueDate.getFullYear() === now.getFullYear();
+  
+    return dueDate.toLocaleDateString("en-US", {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+      year: isThisYear ? undefined : "numeric",
+    });
+  };
+  
   return (
     <div className="page-border">
       <div className="input-bar task-container p-2">
         <form
           onSubmit={(e) => {
-            e.preventDefault(); // Prevent the default page reload
+            e.preventDefault();
             handleAdd();
           }}
         >
+          {/* Task Input */}
           <input
             type="text"
             value={taskText}
             onChange={(e) => setTaskText(e.target.value)}
-            placeholder="Task title"
+            placeholder="Add a Task"
             className="task-input"
-            ref={inputRef}
           />
 
-          <div className="preset-dates">
-            {/* <p className="preset-title">Preset Due Dates:</p> */}
-            {presets.map((preset, index) => (
-              <label key={index} className="preset-date-label">
-                <input
-                  type="radio"
-                  name="preset-due-date"
-                  value={preset.value}
-                  className="preset-date-input"
-                  checked={selectedPreset === preset.value}
-                  onChange={() => handlePresetChange(preset.value)}
-                />
-                <span className="preset-date-btn" onClick={focusTextInput}>
-                  {preset.label}
-                </span>
-              </label>
-            ))}
-          </div>
+          {/* Description Input */}
           <textarea
             className="task-textarea"
-            ref={descriptionRef}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Add a description (optional)"
             rows={1}
-            onInput={(e) => {
-              e.target.style.height = "auto";
-              e.target.style.height = `${e.target.scrollHeight}px`;
-            }}
           />
-          <div className="task-controls">
-            {/* Reminder Checkbox */}
-            <label className="bell-checkbox" htmlFor="reminder-checkbox">
-              <input
-                type="checkbox"
-                id="reminder-checkbox"
-                checked={isReminder}
-                onChange={(e) => setIsReminder(e.target.checked)}
-              />
-              <img
-                src={
-                  isReminder
-                    ? `/vector_arts/checked_bell.png`
-                    : `/vector_arts/bell.png`
-                }
-                alt="Reminder"
-              />
-            </label>
 
-            <button
-              className="change-btn"
-              type="submit"
-              onClick={focusTextInput}
-            >
-              <img
-                src="/vector_arts/add.svg"
-                alt="Add Icon"
-                className="btn-icon"
-              />
-              Add Task
-            </button>
-          </div>
+          {/* Reminder, Due Date & Submit Button */}
+          <div className="task-controls">
+  {/* If both Due Date & Reminder are selected, move Due Date to a new row */}
+  {selectedDueDate && selectedReminder && (
+    <div className="due-date-wrapper full-width" style={{ position: "relative" }}>
+    </div>
+  )}
+
+  {/* Always Render the Row for Bell (Reminder) + Add Task Button + Calendar */}
+  <div className="task-controls">
+  {/* Always Render Due Date in the Top Row if Reminder is Selected */}
+  {selectedReminder && (
+    <div className="due-date-wrapper full-width" style={{ position: "relative" }}>
+      <button
+        ref={calendarButtonRef}
+        className="due-date-display"
+        type="button"
+        onClick={handleDueDateClick}
+      >
+        {renderCalendarIconWithDate()}
+      </button>
+      {showDueOverlay && (
+        <DueOverlay
+          onSelectDate={handleDueDateSelect}
+          targetPosition={overlayPosition}
+          onClose={() => setShowDueOverlay(false)}
+          calendarButtonRef={calendarButtonRef}
+        />
+      )}
+    </div>
+  )}
+
+  {/* Main Row for Bell + Add Task Button */}
+  <div className="task-controls-row">
+    {/* Render Due Date (When Reminder is NOT Selected) */}
+    {!selectedReminder && (
+      <div className="due-date-wrapper" style={{ position: "relative" }}>
+        <button
+          ref={calendarButtonRef}
+          className="due-date-display"
+          type="button"
+          onClick={handleDueDateClick}
+        >
+          {renderCalendarIconWithDate()}
+        </button>
+        {showDueOverlay && (
+          <DueOverlay
+            onSelectDate={handleDueDateSelect}
+            targetPosition={overlayPosition}
+            onClose={() => setShowDueOverlay(false)}
+            calendarButtonRef={calendarButtonRef}
+          />
+        )}
+      </div>
+    )}
+
+    {/* Render Reminder */}
+    <div className="reminder-wrapper" style={{ position: "relative" }}>
+      <button
+        ref={bellButtonRef}
+        className="reminder-display"
+        type="button"
+        onClick={handleReminderClick}
+      >
+        {renderBellIconWithTime()}
+      </button>
+      {showReminderOverlay && (
+        <ReminderOverlay
+          onSelectPreset={handlePresetSelect}
+          targetPosition={overlayPosition}
+          onClose={() => setShowReminderOverlay(false)}
+          bellButtonRef={bellButtonRef}
+        />
+      )}
+    </div>
+
+    {/* Add Task Button */}
+    <button className="change-btn" type="submit">
+      Add Task
+    </button>
+  </div>
+</div>
+
+
+</div>
+
         </form>
       </div>
     </div>

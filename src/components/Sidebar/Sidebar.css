@@ -1,7 +1,38 @@
+.nav-tabs {
+  border-bottom: none !important;
+  margin-top: -7px !important; 
+  margin-bottom: 0 !important;
+  background-color: #ffffff !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .nav-link {
-  color: rgb(86, 86, 86) !important;
+  font-size: 14px;
+  color: var(--primary-color) !important;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none !important;
+  background-color: transparent !important;
+  transition: background-color 0.3s, color 0.3s, border-bottom 0.3s;
+}
+
+.nav-link:hover,
+.nav-link.active:hover {
+  text-decoration: none;
+  background-color: var(--hover-color) !important; /* Apply hover effect even if active */
 }
 
 .nav-link.active {
-  color: #ffad54 !important;
+  border-bottom: 3px solid var(--primary-color) !important; 
+  color: var(--primary-color) !important;
+  background-color: transparent !important; 
+}
+
+.nav-link .icon {
+  color: var(--primary-color) !important;
+  transition: color 0.3s ease;
 }
