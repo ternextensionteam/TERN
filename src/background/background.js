@@ -126,6 +126,23 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
     return true;  // Keep the message port open for async response
   }
+
+  if (request.action === "deleteTask") {
+    let taskId = request.taskId;
+    chrome.storage.local.get("tasks", (data) => {
+      let tasks = data.tasks || {};
+      if (tasks[taskId]) {
+        console.log("deleting task:", taskId);
+        delete(tasks[taskId]);
+        chrome.storage.local.set({ tasks }, () => {
+          console.log("task deletd from storage");
+          chrome.alarms.clear(taskId);
+        });
+        sendResponse({ success: true });
+      }
+    });
+    return true;
+  }
   
 });
 
