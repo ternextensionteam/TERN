@@ -107,33 +107,49 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     chrome.storage.local.set({ pageIndex: JSON.stringify(miniSearch) });
 
     sendResponse({ success: true });
+    return;
   }
 
   // Implementing Notifications
   if (request.action === "addTask") {
     chrome.storage.local.get("tasks", (data) => {
-      let tasks = data.tasks || {};
-      tasks[request.task.id] = request.task;
+      // Ensure tasks is always an object
+      let tasks = (typeof data.tasks === "object" && data.tasks !== null) ? data.tasks : {};  
+
+      tasks[request.task.id] = request.task;  
+
       chrome.storage.local.set({ tasks }, () => {
-        chrome.alarms.create(request.task.id, { when: request.task.dueDate }); // Create alarm for task reminder
+        chrome.alarms.create(request.task.id, { when: request.task.dueDate });
         sendResponse({ success: true });
       });
     });
-    return true;
+
+    return true;  // Keep the message port open for async response
   }
+  
 });
 
 // Notify the user when a task is due
 chrome.alarms.onAlarm.addListener((alarm) => {
+  console.log("Alarm triggered:", alarm.name);
+
   chrome.storage.local.get("tasks", (data) => {
     let tasks = data.tasks || {};
     let task = tasks[alarm.name];
+
     if (task && !task.recentlyDeleted) {
-      chrome.notifications.create(alarm.name, {
-        type: "basic",
-        iconUrl: chrome.runtime.getURL("/vector_arts/bell.png"),
-        title: `Task Reminder: ${task.title}`,
-        message: task.description,
+      chrome.notifications.clear(alarm.name, () => {
+        console.log("Notification cleared");  // Clearing notifications with that existing id so that it can display on screen
+        chrome.notifications.create(alarm.name, {
+          type: "basic",
+          title: `Task Reminder: ${task.title}`,
+          message: task.description,
+          iconUrl: chrome.runtime.getURL("vector_arts/bell.png"),
+          priority: 2,
+          requireInteraction: true // doesnt disapper unless closed
+        }, (notificationId) => {
+          console.log("Notification created:", notificationId);
+        });
       });
     }
   });
