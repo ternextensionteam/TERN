@@ -146,11 +146,33 @@ chrome.alarms.onAlarm.addListener((alarm) => {
           message: task.description,
           iconUrl: chrome.runtime.getURL("vector_arts/bell.png"),
           priority: 2,
-          requireInteraction: true // doesnt disapper unless closed
+          requireInteraction: true, // doesnt disapper unless closed
+          buttons: [
+            {title: "Snooze (1 hour)"}
+          ]
         }, (notificationId) => {
           console.log("Notification created:", notificationId);
         });
       });
+    }
+  });
+});
+
+chrome.notifications.onButtonClicked.addListener((notificationId, buttonIndex) => {
+  let snoozeTime = 60*60*1000; // 1 hour (milliseconds)
+  chrome.storage.local.get("tasks",(data) => {
+    let tasks = data.tasks || {};
+    let task = tasks[notificationId];
+    if (task) {
+      console.log("Snoozing task:", task.title, "for 1 hour");
+      let newDueTime = Date.now() + snoozeTime;  // set new due time
+      task.dueDate = newDueTime;
+      
+      tasks[notificationId] = task;
+      chrome.storage.local.set({ tasks });  // update task in storage
+
+      chrome.alarms.create(notificationId, { when: newDueTime });
+      chrome.notifications.clear(notificationId);
     }
   });
 });
