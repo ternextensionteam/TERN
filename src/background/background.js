@@ -193,8 +193,6 @@ chrome.notifications.onButtonClicked.addListener((notificationId, buttonIndex) =
     }
   });
 });
-  }
-});
 
 chrome.runtime.onInstalled.addListener(() => {
   chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true }).catch((error) => console.error(error));
