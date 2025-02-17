@@ -1,254 +1,311 @@
-body {
-    background-color: #f8f9fa;
-    font-family: 'Roboto', Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-}
-
+/* General Page Wrappers */
 .page-border {
     width: 100%;
     height: 100%;
-    padding: 0px; /* removed padding*/
+    padding: 0;
     box-sizing: border-box;
-    background-color: #ffffff;
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-bottom: 7px;
 }
 
+/* Task Container Styles */
 .task-container {
-    width: 100%; /* Full width of sidebar */
-    /*max-width: 300px;  Restrict max width to fit in a sidebar */
-    padding: 5px;
-    background-color: #ebebeb;
-    border-radius: 8px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.task-heading {
-    font-size: 16px; /* Smaller font for sidebar */
-    text-align: left;
-    margin-top: 0;
-    margin-bottom: 10px; /* Compact spacing */
-    color: #333333;
-}
-
-.task-input, .task-textarea {
     width: 100%;
-    font-family: 'Roboto', Arial, sans-serif;
-    margin-bottom: 8px;
-    padding: 8px 10px;
-    background-color: #ffffff;
-    color: #717171;
-    border: 3px solid #ffffff;
+    max-width: 600px;
+    background-color: #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+    padding: 16px;
     border-radius: 4px;
-    font-size: 19px;
+    box-sizing: border-box;
+}
+
+/* Input and Textarea Styles */
+.task-input {
+    width: 100%;
+    font-family: var(--font-family);
+    margin-bottom: 12px;
+    padding: 7px 12px;
+    background-color: var(--white-color);
+    color: var(--text-color);
+    border: none;
+    border-bottom: 3px solid var(--primary-color); 
+    font-size: 22px;
     outline: none;
     box-sizing: border-box;
     transition: border-color 0.3s ease;
-}
-
-.task-input:focus, .task-textarea:focus {
-    border-color: #f78f1e;
-    box-shadow: 0 0 5px rgba(247, 143, 30, 0.5);
-}
-
-.task-input::placeholder {
-    color: #b0b0b0;
-    font-size: 18px;
 }
 
 .task-textarea {
     width: 100%;
-    font-family: 'Roboto', Arial, sans-serif;
+    font-family: var(--font-family);
+    padding: 12px 14px;
+    background-color: var(--white-color);
+    color: var(--text-color);
+    border: none;
+    border-bottom: 3px solid #d2d2d2; 
+    font-size: 18px;
     margin-bottom: 8px;
-    padding: 8px 10px;
-    background-color: #ffffff;
-    color: #717171; /* Same color as task title input */
-    border: 3px solid #ffffff;
-    border-radius: 4px;
-    font-size: 16px; /* Smaller font size */
     outline: none;
     box-sizing: border-box;
     transition: border-color 0.3s ease;
+}
+
+.task-input:focus,
+.task-textarea:focus {
+    border-color: var(--primary-color);
+}
+
+.task-input::placeholder {
+    color: var(--primary-color);
+    font-size: 16px;
+}
+
+.task-textarea::placeholder {
+    color: #b0b0b0;
+    font-size: 16px;
+}
+
+.task-textarea {
+    font-size: 16px;
     resize: none;
     overflow: hidden;
-  }
-  
-  .task-textarea:focus {
-    border-color: #f78f1e;
-    box-shadow: 0 0 5px rgba(247, 143, 30, 0.5);
-  }
-  
-  .task-textarea::placeholder {
-    color: #b0b0b0;
-    font-size: 16px; /* Smaller font size */
-  }
-
-.preset-dates {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 5px;
-    margin-bottom: 12px;
-    flex-wrap: nowrap;
-}
-
-.preset-title {
-    margin: 0;
-    font-weight: bold;
-    color: #333333;
-    white-space: nowrap;
-}
-
-.preset-date-label {
-    display: flex;
-    align-items: center;
-    position: relative;
-}
-
-.preset-date-input {
-    position: absolute;
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.preset-date-btn {
-    padding: 8px 12px;
-    background-color: #ffffff;
-    color: #ffad54;
-    border: 2px solid #ffad54;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 16px;
-    white-space: nowrap;
-    transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
-    height: 27px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.preset-date-input:checked + .preset-date-btn {
-    background-color: #ff9d34;
-    color: #ffffff;
-    transform: scale(1.05);
-}
-
-.manual-select-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
-    margin-top: 16px;
-    flex-wrap: nowrap;
-}
-
-.manual-select-row label {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.manual-btn-input {
-    display: none;
-}
-
-.manual-btn {
-    flex: 1;
-    padding: 12px 26px;
-    background-color: #ffffff;
-    color: #000000;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    white-space: nowrap;
-    transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
-    text-align: center;
-}
-
-.change-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #FF8700;
-    color: #fff;
-    padding: 10px 16px; /* Adjusted padding for compact size */
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    max-width: fit-content; /* Button width fits content */
 }
 
 .change-btn:hover {
-    background-color: #FF9A33;
-    transform: scale(1.05);
+    background-color: var(--secondary-color);
 }
 
 .change-btn .btn-icon {
-    margin-right: 8px;
-    width: 16px;
-    height: 16px;
+    margin-right: 6px;
+    width: 14px;
+    height: 14px;
 }
 
-.manual-btn-input:checked + .manual-btn {
-    background-color: #f78f1e;
-    color: #ffffff;
-    transform: scale(1.05);
-}
-
-.btn-icon {
-    width: 20px;
-    height: 20px;
-    margin-right: 10px;
-    vertical-align: middle;
-}
-
+/* Task Controls */
 .task-controls {
+    display: flex;
+    flex-direction: column; /* Stack rows when needed */
+    gap: 8px;
+    width: 100%;
+}
+
+
+/* Reminder Display Button */
+.reminder-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    color: inherit;
+    font-size: inherit;
+    transition: none;
+}
+
+.reminder-display:hover,
+.reminder-display:focus {
+    background-color: transparent;
+    outline: none; 
+}
+
+/* Bell Icon Styles */
+.bell-icon {
+    font-size: 24px;
+    transition: color 0.3s ease, box-shadow 0.3s ease;
+    margin-right: 100px;
+    margin-left: 5px;
+    margin-top: 13px;
+    margin-bottom: 10px;
+}
+
+/* Bell Outline */
+.bell-icon.outline {
+    color: var(--primary-color);
+}
+
+/* Active Solid Bell */
+.bell-icon.active {
+    color: var(--primary-color); 
+    filter: none;
+    margin-right: 10px;
+}
+
+/* No Reminder Bell Slash */
+.bell-icon.no-reminder {
+    color: #bbb; 
+    transform: scale(1.2);
+    margin-left: 5px;
+    margin-right: 10px;
+}
+
+/* Glow Effect for Input Focus */
+.input-glow {
+    border-color: var(--primary-color) !important;
+}
+
+/* Overlay Popup Styles */
+.overlay-popup {
+    position: absolute;
+    top: 45px;
+    left: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    width: 260px; /* Fixed width for consistent layout */
+    padding: 10px;
+    font-family: var(--font-family);
+    box-sizing: border-box;
+}
+
+/* Options Container */
+.overlay-options {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.preset-option {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: 5px; /*reduced padding*/
+    padding: 10px 12px;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--text-color); 
+    background-color: transparent;
+    border-radius: 4px;
+    transition: all 0.2s ease;
 }
 
-.bell-checkbox {
+.preset-option:hover {
+    background-color: transparent;
+}
+
+.option-left {
     display: flex;
     align-items: center;
-    margin-right: auto;
+    gap: 8px; 
 }
 
-.bell-checkbox img {
-    width: 30px;
-    height: 30px;
+.icon {
+    font-size: 25px; 
+    color: var(--primary-color);
+}
+
+.label {
+    font-size: 14px;
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+.time {
+    font-size: 13px; 
+    color: var(--text-color);
+    white-space: nowrap;
+}
+
+/* Selected Option Style */
+.preset-option.selected {
+    background-color: transparent;
+    color: var(--text-color);
+}
+
+.preset-option.selected .icon {
+    color: var(--primary-color);
+}
+
+.task-controls.stacked {
+    flex-direction: column; /* Stacks elements in a column when needed */
+    align-items: flex-start; /* Aligns items to the left */
+  }
+
+  .due-date-wrapper,
+  .reminder-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  .task-controls-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Space between icons and button */
+    width: 100%;
+    gap: 12px;
+}
+
+  .due-date-display {
+    border-radius: 6px; /* Rounded edges */
+    padding: 6px 10px; /* Spacing */
     cursor: pointer;
-    transition: transform 0.2s ease, filter 0.2s ease;
+    display: flex;
+    background-color: var(--white-color);
+    align-items: center;
+    justify-content: center;
+  }
+
+  .due-date-display:hover,
+.due-date-display:focus {
+  background-color: var(--white-color); /* Light gray on hover */
+
 }
 
-.bell-checkbox img:hover {
-    transform: scale(1.1);
-    filter: drop-shadow(0 0 5px rgba(255, 165, 0, 1));
+.calendar-icon {
+    color: var(--primary-color) !important; /* Change icon color to blue */
+    font-size: 1.4em !important; /* Increase icon size slightly */
+    padding-top: 3px;
+    transform: scale(1.2);
+    margin-left: -5px;
+  }
+
+  /* Default styling for the due date text (hidden until selected) */
+.due-date {
+    color: var(--text-color); /* Default text color */
+    margin-left: 12px; /* Space between the icon and text */
+    font-weight: normal;
+  }
+
+  .task-controls-left {
+    display: flex;
+    align-items: center;
+    gap: 12px; /* Space between calendar and bell */
 }
 
-.bell-checkbox input:focus + img {
-    transform: scale(1.1);
-    filter: drop-shadow(0 0 5px rgba(255, 165, 0, 1));
+.due-date-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: auto;
 }
 
-.bell-checkbox input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-    position: absolute;
+.full-width {
+    width: 100%; /* Take full width when on a new row */
 }
 
-/* .bell-checkbox img.checked {
-    content: url('/vector_arts/checked_bell.png');
-} */
+.change-btn {
+    margin-left: auto; /* Pushes the button to the far right */
+    background-color: var(--primary-color);
+    color: var(--white-color);
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.3s ease;
+}
 
-
+.no-due-date-icon {
+    color: var(--light-text-color) !important;
+    margin-right: 5px;
+  }
