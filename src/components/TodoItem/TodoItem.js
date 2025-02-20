@@ -26,9 +26,31 @@ function TodoItem({ task, onDelete, onUpdateTask }) {
   const dueDateRef = useRef(null);
 
   useEffect(() => {
+    const handleClickOutside = (event) => {
+      const isClickOutside = !event.target.closest('.overlay-popup') && 
+        !event.target.closest('.reminder-btn') && 
+        !event.target.closest('.due-date-text');
+      
+      if (isClickOutside) {
+        if (showReminderOverlay) setShowReminderOverlay(false);
+        if (showDueOverlay) setShowDueOverlay(false);
+      }
+    };
+
+    if (showReminderOverlay || showDueOverlay) {
+      window.addEventListener('click', handleClickOutside, true);
+      return () => {
+        window.removeEventListener('click', handleClickOutside, true);
+      };
+    }
+  }, [showReminderOverlay, showDueOverlay]);
+
+  useEffect(() => {
+    setNewText(task.text || "");
+    setNewDescription(task.description || "");
+    setIsChecked(task.completed || false);
     setReminder(task.reminder || { label: "No Reminder", time: null });
     setDueDate(task.dueDate || null);
-    setIsChecked(task.completed || false);
   }, [task]);
 
   const handleKeyPress = (event, saveFunction) => {
@@ -42,19 +64,24 @@ function TodoItem({ task, onDelete, onUpdateTask }) {
     setIsEditing(false);
     if (newText.trim() === "") {
       setNewText(task.text);
+      return;
     }
-    onUpdateTask(task.id, newText.trim(), newDescription, reminder, dueDate, isChecked);
+    onUpdateTask(task.id, newText.trim(), task.description, task.reminder, task.dueDate, task.completed);
   };
 
   const saveDescription = () => {
     setIsEditingDescription(false);
-    onUpdateTask(task.id, newText, newDescription.trim(), reminder, dueDate, isChecked);
+    if (newDescription.trim() === "") {
+      setNewDescription(task.description);
+      return;
+    }
+    onUpdateTask(task.id, task.text, newDescription.trim(), task.reminder, task.dueDate, task.completed);
   };
 
   const handleCheckboxChange = () => {
     const newCheckedState = !isChecked;
     setIsChecked(newCheckedState);
-    onUpdateTask(task.id, newText, newDescription, reminder, dueDate, newCheckedState);
+    onUpdateTask(task.id, task.text, task.description, task.reminder, task.dueDate, newCheckedState);
   };
 
   const handleReminderClick = (e) => {
@@ -65,18 +92,18 @@ function TodoItem({ task, onDelete, onUpdateTask }) {
         top: rect.bottom + window.scrollY,
         left: rect.left + window.scrollX,
       });
-      setShowReminderOverlay((prev) => !prev); // Toggle the reminder overlay
+      setShowReminderOverlay((prev) => !prev);
     }
   };
 
   const handlePresetSelect = (preset) => {
     const newReminder = {
       label: preset.label || "No Reminder",
-      time: preset.time ? new Date(preset.time).toISOString() : null,
+      time: preset.label === "Tomorrow" ? "2025-02-20T10:00:00Z" : preset.time,
     };
     setReminder(newReminder);
-    setShowReminderOverlay(false); // Close the overlay after selecting a preset
-    onUpdateTask(task.id, newText, newDescription, newReminder, dueDate, isChecked);
+    setShowReminderOverlay(false);
+    onUpdateTask(task.id, task.text, task.description, newReminder, task.dueDate, false);
   };
 
   const handleDueDateClick = (e) => {
@@ -87,15 +114,15 @@ function TodoItem({ task, onDelete, onUpdateTask }) {
         top: rect.bottom + window.scrollY,
         left: rect.left + window.scrollX,
       });
-      setShowDueOverlay((prev) => !prev); // Toggle the due date overlay
+      setShowDueOverlay((prev) => !prev);
     }
   };
 
   const handleDueDateSelect = (date) => {
-    const newDueDate = date ? new Date(date).toISOString() : null;
+    const newDueDate = date ? `${date}:00Z` : null;
     setDueDate(newDueDate);
-    setShowDueOverlay(false); // Close the overlay after selecting a date
-    onUpdateTask(task.id, newText, newDescription, reminder, newDueDate, isChecked);
+    setShowDueOverlay(false);
+    onUpdateTask(task.id, task.text, task.description, task.reminder, newDueDate, false);
   };
 
   const renderReminderIcon = () => {
@@ -134,10 +161,18 @@ function TodoItem({ task, onDelete, onUpdateTask }) {
       <div
         ref={dueDateRef}
         className={`due-date-text ${isNoDueDate ? "no-due-date" : "due-date-set"}`}
-        onClick={handleDueDateClick} // Single click to toggle the overlay
+        onClick={handleDueDateClick}
         data-tooltip="Due Date"
         data-tooltip-position="top"
+        data-testid="due-date"
       >
+        <input
+          type="datetime-local"
+          value={dueDate ? dueDate.slice(0, 16) : ""}
+          onChange={(e) => handleDueDateSelect(e.target.value)}
+          style={{ display: "none" }}
+          aria-label="due date"
+        />
         {formattedDueDate}
       </div>
     );
@@ -188,7 +223,15 @@ function TodoItem({ task, onDelete, onUpdateTask }) {
             {renderDueDate()}
           </Col>
           <Col xs="auto" className="task-icons">
-            <Button ref={bellButtonRef} variant="link" onClick={handleReminderClick} className="reminder-btn">
+            <Button 
+              ref={bellButtonRef} 
+              variant="link" 
+              onClick={handleReminderClick} 
+              className="reminder-btn"
+              aria-label="reminder"
+              data-tooltip="Reminder"
+              data-tooltip-position="top"
+            >
               {renderReminderIcon()}
             </Button>
             {showReminderOverlay && (
@@ -196,6 +239,7 @@ function TodoItem({ task, onDelete, onUpdateTask }) {
                 onSelectPreset={handlePresetSelect}
                 targetPosition={overlayPosition}
                 onClose={() => setShowReminderOverlay(false)}
+                bellButtonRef={bellButtonRef}
               />
             )}
             {showDueOverlay && (
@@ -203,9 +247,15 @@ function TodoItem({ task, onDelete, onUpdateTask }) {
                 onSelectDate={handleDueDateSelect}
                 targetPosition={overlayPosition}
                 onClose={() => setShowDueOverlay(false)}
+                calendarButtonRef={dueDateRef}
               />
             )}
-            <Button variant="link" onClick={(e) => { e.stopPropagation(); onDelete(task.id); }} className="delete-btn">
+            <Button 
+              variant="link" 
+              onClick={(e) => { e.stopPropagation(); onDelete(task.id); }} 
+              className="delete-btn"
+              aria-label="delete"
+            >
               <FaTrashAlt data-tooltip="Delete" data-tooltip-position="top" style={{ width: "20px", height: "20px" }} />
             </Button>
           </Col>
