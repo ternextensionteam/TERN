@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import TodoItem from "../components/TodoItem/TodoItem";
-import InputBar from "../components/InputBar/InputBar";
+import InputBar from "../components/InputBar/InputBar.js";
 
 describe("TodoItem Component", () => {
   let mockTask, mockUpdateTask, mockDeleteTask;
