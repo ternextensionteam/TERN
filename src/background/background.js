@@ -86,6 +86,7 @@ chrome.omnibox.onInputChanged.addListener((text, suggest) => {
 });
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  console.log("Received message:", request);
   if (request.action === "indexPage") {
     console.log("Indexing page:", request.url);
 
@@ -119,9 +120,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       tasks[request.task.id] = request.task;  
 
       chrome.storage.local.set({ tasks }, () => {
-        chrome.alarms.create(request.task.id, { when: request.task.dueDate });
-        sendResponse({ success: true });
+        chrome.alarms.create(String(request.task.id), { when: request.task.dueDate });
+        console.log("Alarm created for:", new Date(request.task.dueDate));
       });
+      sendResponse({ success: true });
     });
 
     return true;  // Keep the message port open for async response
@@ -130,16 +132,21 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "deleteTask") {
     let taskId = request.taskId;
     chrome.storage.local.get("tasks", (data) => {
-      let tasks = data.tasks || {};
-      if (tasks[taskId]) {
-        console.log("deleting task:", taskId);
-        delete(tasks[taskId]);
+      let tasks = Array.isArray(data.tasks) ? data.tasks : [];  // ensure tasks is a array
+      let taskIndex = tasks.findIndex(task => task.id === taskId);
+      console.log(tasks);
+      if (taskIndex !== -1) {
+        // Remove task from array
+        tasks.splice(taskIndex, 1);
+
+        // Save updated task list
         chrome.storage.local.set({ tasks }, () => {
-          console.log("task deletd from storage");
-          chrome.alarms.clear(taskId);
+          console.log("Task deleted from storage:", taskId);
+          chrome.alarms.clear(String(taskId));
+          sendResponse({ success: true });
         });
-        sendResponse({ success: true });
       }
+      console.log(tasks);
     });
     return true;
   }

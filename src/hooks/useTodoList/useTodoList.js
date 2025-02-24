@@ -41,7 +41,7 @@ export function useTodoList() {
     if (dueDate) {
       const parsedDueDate = new Date(dueDate);
       if (!isNaN(parsedDueDate.getTime())) {
-        due = parsedDueDate.toISOString(); // Store as ISO string
+        due = parsedDueDate.getTime(); // Store as ISO string
       } else {
         console.error("Invalid due date:", dueDate);
       }
@@ -59,11 +59,21 @@ export function useTodoList() {
     };
 
     setTasks((prevTasks) => [...prevTasks, newTask]);
+    
+    //notify background script to create alarms
+    chrome.runtime.sendMessage({ action: "addTask", task: newTask }, (response) => {
+      console.log("Task added:", response);
+    });
+
   };
 
   // Delete a task
   const deleteTask = (taskId) => {
     setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
+    //notify background script
+    chrome.runtime.sendMessage({ action: "deleteTask", taskId }, (response) => {
+      console.log("Task deleted:", response);
+    });
   };
 
   // Toggle a task's reminder
