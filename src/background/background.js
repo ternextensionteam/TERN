@@ -113,20 +113,34 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
   // Implementing Notifications
   if (request.action === "addTask") {
-    chrome.storage.local.get("tasks", (data) => {
-      // Ensure tasks is always an object
-      let tasks = (typeof data.tasks === "object" && data.tasks !== null) ? data.tasks : {};  
+    console.log("addTask was triggered!", request.task);
 
-      tasks[request.task.id] = request.task;  
+    chrome.storage.local.get("tasks", (data) => {
+      let tasks = Array.isArray(data.tasks) ? data.tasks : []; // Ensure tasks is an array
+      console.log("Existing Tasks Before Adding:", tasks);
+
+      tasks.push(request.task); // Add new task to array
 
       chrome.storage.local.set({ tasks }, () => {
-        chrome.alarms.create(String(request.task.id), { when: request.task.dueDate });
-        console.log("Alarm created for:", new Date(request.task.dueDate));
+        console.log("Task stored successfully:", request.task);
+
+        console.log("dueDate:", request.task.dueDate, "->", new Date(request.task.dueDate));
+        console.log("Current time:", Date.now(), "->", new Date(Date.now()));
+        console.log(typeof request.task.dueDate);
+        // Set an alarm if a due date is present
+        if (request.task.dueDate && typeof request.task.dueDate === "number" && request.task.dueDate > Date.now()) {
+          console.log("Setting alarm for:", new Date(request.task.dueDate));
+          chrome.alarms.create(String(request.task.id), { when: request.task.dueDate });
+          console.log("Alarm successfully set for:", new Date(request.task.dueDate));
+        } else {
+          console.log("No alarm set (No due date selected).");
+        }
+
+        sendResponse({ success: true });
       });
-      sendResponse({ success: true });
     });
 
-    return true;  // Keep the message port open for async response
+    return true; // Keep message port open for async storage update
   }
 
   if (request.action === "deleteTask") {
@@ -223,4 +237,27 @@ if (info.menuItemId === "addToHawk") {
     chrome.sidePanel.open({ windowId: tab.windowId });
   });
 }
+});
+
+chrome.idle.onStateChanged.addListener((newState) => {
+  if (newState === "active") {
+    chrome.storage.local.get("tasks", (data) => {
+      let tasks = data.tasks || {};
+      let now = Date.now();
+      Object.values(tasks).forEach((task) => {
+        if (task.dueDate && task.dueDate < now) {
+          console.log("Task overdue:", task.text);
+          // trigger notificaiton
+          chrome.notifications.create(task.id.toString(), {
+            type: "basic",
+            title: `Task Overdue: ${task.text}`,
+            message: task.description,
+            iconUrl: chrome.runtime.getURL("vector_arts/bell.png"),
+            priority: 2,
+            requireInteraction: true, 
+          });
+        }
+      });
+    });
+  }
 });

@@ -53,7 +53,7 @@ function InputBar({ onAddTask }) {
                 ? new Date(selectedReminder.time).toISOString() // Convert to ISO format
                 : null,
             }
-          : { label: "No Reminder", time: null }; // ✅ Default to "No Reminder" if nothing selected
+          : { label: "No Reminder", time: null }; // Default to "No Reminder" if nothing selected
   
         // Handle due date (optional)
         let dueDate = selectedDueDate || null;

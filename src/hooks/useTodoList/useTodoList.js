@@ -30,7 +30,8 @@ export function useTodoList() {
     if (reminder?.time) {
       const parsedReminder = new Date(reminder.time);
       if (!isNaN(parsedReminder.getTime())) {
-        reminderTime = parsedReminder.toISOString(); // Store as ISO string
+        reminderTime = parsedReminder.getTime(); // Store as tiemstamp
+        console.log("Reminder time: ", reminderTime);
       } else {
         console.error("Invalid reminder time:", reminder.time);
       }
@@ -41,7 +42,9 @@ export function useTodoList() {
     if (dueDate) {
       const parsedDueDate = new Date(dueDate);
       if (!isNaN(parsedDueDate.getTime())) {
-        due = parsedDueDate.getTime(); // Store as ISO string
+        due = parsedDueDate.getTime(); // Store as timestamp
+        console.log("Due time: ", due);
+
       } else {
         console.error("Invalid due date:", dueDate);
       }
@@ -154,9 +157,9 @@ export function useTodoList() {
               ...task,
               reminder: {
                 label: task.reminder.label,
-                time: parsedReminder ? parsedReminder.toISOString() : null,
+                time: task.reminder.time ? Number(task.reminder.time) : null,
               },
-              dueDate: parsedDue ? parsedDue.toISOString() : null,
+              dueDate: task.dueDate ? Number(task.dueDate) : null,
             };
           });
           setTasks(deserializedTasks);
