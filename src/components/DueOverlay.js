@@ -83,12 +83,13 @@ function DueOverlay({ onSelectDate, targetPosition, onClose, calendarButtonRef }
       ref={overlayRef}
       className="overlay-popup"
       style={{
-        top: `${adjustedPosition.top}px`,
-        left: `${adjustedPosition.left}px`,
+        top: adjustedPosition?.top || targetPosition?.top || 0,
+        left: adjustedPosition?.left || targetPosition?.left || 0,
         zIndex: 9999,
-        minWidth: isCalendarVisible ? "250px" : "auto", // Make the calendar smaller
+        minWidth: "auto",
       }}
     >
+      <h4 className="overlay-title">Set Due Date</h4>
       {isCalendarVisible ? (
         <div className="calendar-overlay">
           <Calendar

@@ -18,6 +18,8 @@ const defaultRegexList = [
   "^https://quip.com/.*$",
 ];
 
+const SCORE_THRESHOLD = 0.5;
+
 function removeAnchorLink(url) {
   return url.split("#")[0];
 }
@@ -67,9 +69,9 @@ chrome.omnibox.onInputChanged.addListener((text, suggest) => {
 
   // Perform a MiniSearch query
   let results = miniSearch.search(text, { prefix: true, fuzzy: 0.2 });
-
+  let filteredResults = results.filter((result) => result.score > SCORE_THRESHOLD);
   // Format results for omnibox suggestions
-  let suggestions = results.map((result) => ({
+  let suggestions = filteredResults.map((result) => ({
     content: result.id,
     description: encode(result.title),
   }));
