@@ -261,3 +261,24 @@ chrome.idle.onStateChanged.addListener((newState) => {
     });
   }
 });
+
+chrome.runtime.onInstalled.addListener(() => {
+  chrome.storage.local.get("tasks", (data) => {
+    let tasks = data.tasks || {};
+    let now = Date.now();
+    Object.values(tasks).forEach((task) => {
+      if (task.dueDate && task.dueDate < now) {
+        console.log("Task overdue:", task.text);
+        // trigger notificaiton
+        chrome.notifications.create(task.id.toString(), {
+          type: "basic",
+          title: `Task Overdue: ${task.text}`,
+          message: task.description,
+          iconUrl: chrome.runtime.getURL("vector_arts/bell.png"),
+          priority: 2,
+          requireInteraction: true, 
+        });
+      }
+    });
+  });
+});
