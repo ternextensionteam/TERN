@@ -9,37 +9,10 @@ import IndexingSection from "../IndexingSection/IndexingSection";
 import "../tooltip";
 import "../base.css";
 import "./Sidebar.css";
+import SettingsSection from "../SettingsSection/SettingsSection";
 
 function Sidebar() {
   const [activeSection, setActiveSection] = useState("tasks");
-
-  function exportBackup() {
-    chrome.storage.local.get(null, (data) => {
-      const blob = new Blob([JSON.stringify(data)], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "backup.json";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    });
-  }
-
-
-  function importBackup(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const data = JSON.parse(e.target.result);
-      chrome.storage.local.set(data, () => {
-        console.log("Backup restored.");
-      });
-    };
-    reader.readAsText(file);
-  }
 
   return (
     <Container className="sidebar">
@@ -82,13 +55,7 @@ function Sidebar() {
       {/* Conditionally Render Sections */}
       {activeSection === "tasks" && <TaskSection />}
       {activeSection === "indexing" && <IndexingSection />}
-      {activeSection === "settings" && (
-        <div>
-          <h5>Backup & Restore</h5>
-          <Button onClick={exportBackup} variant="primary" className="m-2">export data</Button>
-          <input type="file" onChange={importBackup} className="m-2" />
-        </div>
-      )}
+      {activeSection === "settings" && <SettingsSection />}
     </Container>
   );
 }
