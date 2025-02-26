@@ -1,291 +1,227 @@
 /* General Calendar Styles */
 .react-calendar {
-    width: 100%;
-    max-width: 350px;
-    background: var(--white-color);
-    font-family: var(--font-family);
-    line-height: 1.2em;
-    font-size: 12px;
-    border-radius: 8px;
-    transform: translateX(-10px);
-  }
-  
-  .react-calendar--doubleView {
-    width: 700px;
-  }
-  
-  .react-calendar--doubleView .react-calendar__viewContainer {
-    display: flex;
-    margin: -0.5em;
-  }
-  
-  .react-calendar--doubleView .react-calendar__viewContainer > * {
-    width: 50%;
-    margin: 0.5em;
-  }
-  
-  .react-calendar,
-  .react-calendar * {
-    box-sizing: border-box;
-  }
-  
-  .react-calendar button {
-    margin: 0;
-    border: 0;
-    outline: none;
-    cursor: pointer;
-  }
-  
-  /* Navigation Styles */
-  .react-calendar__navigation {
-    display: flex;
-    height: 44px;
-    margin-bottom: 0.5em;
-    margin-top: -15px;
-  }
-  
-  .react-calendar__navigation button {
-    min-width: 28px;
-    background: none;
-    color: var(--text-color);
-    border-radius: 4px;
-    padding: 3px 5px;
-    font-size: 12px;
-    cursor: pointer;
-  }
-  
-  .react-calendar__navigation button:disabled {
-    background-color: var(--white-color);
-  }
-  
-  
-  .react-calendar__navigation__label {
-    font-size: 14px;
-    padding: 2px 4px;
-    color: var(--text-color);
-  }
-  
-  /* Weekdays & Days Styles */
-  .react-calendar__month-view__weekdays {
-    text-align: center;
-    font-size: 0.95em;
-    margin-bottom: 8px; 
-    text-decoration: underline;
-  }
-  
-  .react-calendar__month-view__weekdays__weekday abbr {
-    text-decoration: none !important;
-  }
-  
-  .react-calendar__month-view__days__day {
-    color: var(--text-color);
-    text-align: center;
-    padding: 10px 6.6667px;
-    background: none;
-    font-size: 0.833em;
-    border-radius: 50%;
-  }
-  
-  .react-calendar__month-view__days__day--weekend {
-    color: var(--text-color);
-    background-color: var(--white-color);
-  }
-  
-  .react-calendar__month-view__days__day--neighboringMonth,
-  .react-calendar__decade-view__years__year--neighboringDecade,
-  .react-calendar__century-view__decades__decade--neighboringCentury {
-    color: var(--light-text-color);
-  }
-  
-  .react-calendar__month-view__days__day--neighboringMonth {
-    color: var(--text-color) !important;
-  }
-  
-  .react-calendar__tile:disabled,
-  .react-calendar__month-view__days__day--neighboringMonth:disabled {
-    color: var(--light-text-color);
-    background-color: var(--white-color);
-  }
-  
-  /* Active & Hover Styles */
-  .react-calendar__tile--active {
-    background: var(--primary-color) !important;
-    color: var(--white-color) !important; /* Ensure text color is white for active tiles */
-    border-radius: 50%;
-    font-weight: bold;
-  }
-  
-  .react-calendar__tile--hasActive {
-    background: var(--primary-color) !important;
-    color: var(--white-color) !important; /* Ensure text color is white for active tiles */
-    border-radius: 50%;
-    font-weight: bold;
-  }
-  
-  .react-calendar__tile--now {
-    background-color: var(--light-primary-color);
-    color: var(--white-color);
-    border-radius: 50%;
-  }
-  
-  .react-calendar__tile--now.react-calendar__tile--active {
-    background-color: var(--primary-color) !important;
-    color: var(--white-color) !important; /* Ensure text color is white for active tiles */
-    border-radius: 50%;
-    font-weight: bold;
-  }
-  
-  .react-calendar__tile:enabled:hover,
-  .react-calendar__tile:enabled:focus {
-    color: var(--text-color);
-  }
-  
-  /* Prevent Hovering on Selected Month and Current Month */
-  .react-calendar__tile--now:hover {
-    background-color: var(--primary-color) !important;
-    color: var(--white-color) !important; 
-  }
-  
-  /* Month & Year View Styles */
-  .react-calendar__year-view .react-calendar__tile,
-  .react-calendar__decade-view .react-calendar__tile,
-  .react-calendar__century-view .react-calendar__tile {
-    font-size: 12px;
-    padding: 6px;
-    border-radius: 2px;
-    color: var(--text-color);
-    background-color: var(--white-color);
-    transition: all 0.2s ease-in-out;
-    cursor: pointer;
-  }
+  width: 100%;
+  max-width: 300px;
+  background: var(--white-color);
+  font-family: var(--font-family);
+  line-height: 1.2em;
+  font-size: 12px;
+  border-radius: 8px;
+  padding: 10px;
+}
 
-  .react-calendar__viewContainer .react-calendar__year-view .react-calendar__tile--disabled,
-  .react-calendar__viewContainer .react-calendar__decade-view .react-calendar__tile--disabled,
-  .react-calendar__viewContainer .react-calendar__century-view .react-calendar__tile--disabled {
-    color: var(--text-color);
-    cursor: not-allowed;
-  }
-  
-  /* Calendar Overlay */
-  .calendar-overlay {
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color: var(--white-color);
-    border-radius: 8px;
-    min-width: 250px;
-  }
-  
-  /* Ensure Year View Active Months are Styled Correctly */
-  .react-calendar__year-view .react-calendar__tile--active {
-    background-color: var(--primary-color) !important;
-    color: var(--white-color) !important; /* Ensure text color is white for active tiles */
-    border-radius: 2px;
-  }
-  
-  .react-calendar__year-view .react-calendar__tile--active:hover {
-    background-color: var(--primary-color) !important;
-    color: var(--white-color) !important; /* Ensure text color is white on hover */
-  }
-  
-  .react-calendar__year-view .react-calendar__tile--now {
-    background-color: var(--light-primary-color);
-    color: var(--white-color);
-    border-radius: 2px;
-  }
-  
-  .react-calendar__year-view .react-calendar__tile--now.react-calendar__tile--active {
-    background-color: var(--primary-color) !important;
-    color: var(--white-color) !important; /* Ensure text color is white for active tiles */
-  }
-  
-  .react-calendar__decade-view .react-calendar__tile--now {
-    background-color: var(--light-primary-color);
-    color: var(--white-color);
-    border-radius: 2px;
-  }
-  
-  .react-calendar__decade-view .react-calendar__tile--active {
-    background-color: var(--primary-color) !important;
-    color: var(--white-color) !important; /* Ensure text color is white for active tiles */
-    border-radius: 2px;
-  }
-  
-  .react-calendar__century-view .react-calendar__tile--now {
-    background-color: var(--light-primary-color);
-    color: var(--white-color);
-    border-radius: 2px;
-  }
-  
-  .react-calendar__century-view .react-calendar__tile--active {
-    background-color: var(--primary-color) !important;
-    color: var(--white-color) !important; /* Ensure text color is white for active tiles */
-    border-radius: 2px;
-  }
-  
-  .react-calendar__year-view .react-calendar__tile--active:hover {
-    background-color: var(--primary-color) !important;
-    color: var(--white-color) !important; /* Ensure text color is white on hover */
-  }
-  
-  .react-calendar__decade-view .react-calendar__tile--active:hover {
-    background-color: var(--primary-color) !important;
-    color: var(--white-color) !important; /* Ensure text color is white on hover */
-  }
-  
-  .react-calendar__century-view .react-calendar__tile--active:hover {
-    background-color: var(--primary-color) !important;
-    color: var(--white-color) !important; /* Ensure text color is white on hover */
-  }
+.react-calendar--doubleView {
+  width: 600px;
+}
 
-  .react-calendar__year-view .react-calendar__tile,
-  .react-calendar__decade-view .react-calendar__tile,
-  .react-calendar__century-view .react-calendar__tile {
-    line-height: 1.5em;
-    font-size: 12px; 
-    padding: 8px;
-  }
+.react-calendar--doubleView .react-calendar__viewContainer {
+  display: flex;
+  margin: -0.5em;
+}
 
+.react-calendar--doubleView .react-calendar__viewContainer > * {
+  width: 50%;
+  margin: 0.5em;
+}
 
+.react-calendar,
+.react-calendar * {
+  box-sizing: border-box;
+}
 
-  
+.react-calendar button {
+  margin: 0;
+  border: 0;
+  outline: none;
+  cursor: pointer;
+}
+
+/* Navigation Styles */
+.react-calendar__navigation {
+  display: flex;
+  height: 40px;
+  margin-bottom: 0.5em;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.react-calendar__navigation button {
+  min-width: 28px;
+  background: none;
+  color: var(--text-color);
+  border-radius: 4px;
+  padding: 3px 5px;
+  font-size: 12px;
+  transition: background-color 0.2s ease;
+}
+
+.react-calendar__navigation button:hover {
+  background-color: var(--hover-color);
+}
+
+.react-calendar__navigation button:disabled {
+  background-color: transparent;
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.react-calendar__navigation__label {
+  font-size: 14px;
+  padding: 2px 8px;
+  color: var(--text-color);
+  font-weight: 500;
+}
+
+/* Weekdays & Days Styles */
+.react-calendar__month-view__weekdays {
+  text-align: center;
+  font-size: 0.9em;
+  margin-bottom: 8px;
+  color: var(--text-color);
+  font-weight: 500;
+}
+
+.react-calendar__month-view__weekdays__weekday abbr {
+  padding-left: 15px;
+  text-decoration: none !important;
+}
+
+.react-calendar__month-view__days__day {
+  color: var(--text-color);
+  text-align: center;
+  padding: 8px;
+  background: none;
+  font-size: 0.833em;
+  border-radius: 50%;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.react-calendar__month-view__days__day--weekend {
+  color: var(--text-color);
+}
+
+/* Only dim past dates, not neighboring months */
+.react-calendar__month-view__days__day--past,
+.react-calendar__decade-view__years__year--past,
+.react-calendar__century-view__decades__decade--past {
+  color: var(--light-text-color);
+  cursor: not-allowed;
+}
+
+.react-calendar__month-view__days__day--neighboringMonth,
+.react-calendar__decade-view__years__year--neighboringDecade,
+.react-calendar__century-view__decades__decade--neighboringCentury {
+  color: var(--text-color); /* Show future dates in neighboring months in text color */
+}
+
+.react-calendar__tile:disabled {
+  color: var(--light-text-color);
+  background-color: transparent;
+  cursor: not-allowed;
+}
+
+/* Active & Hover Styles */
+.react-calendar__tile--active {
+  background: var(--primary-color) !important;
+  color: var(--white-color) !important;
+  border-radius: 50%;
+  font-weight: bold;
+}
+
+.react-calendar__tile--hasActive {
+  background: var(--primary-color) !important;
+  color: var(--white-color) !important;
+  border-radius: 50%;
+}
+
+.react-calendar__tile--now {
+  background: var(--light-primary-color);
+  color: var(--white-color);
+  border-radius: 50%;
+}
+
+.react-calendar__tile--now.react-calendar__tile--active {
+  background: var(--primary-color) !important;
+  color: var(--white-color) !important;
+}
+
+.react-calendar__tile:enabled:hover,
+.react-calendar__tile:enabled:focus {
+  background: var(--hover-color);
+  color: var(--text-color);
+  border-radius: 50%;
+}
+
+/* Month & Year View Styles */
+.react-calendar__year-view .react-calendar__tile,
+.react-calendar__decade-view .react-calendar__tile,
+.react-calendar__century-view .react-calendar__tile {
+  font-size: 12px;
+  padding: 8px;
+  border-radius: 2px;
+  color: var(--text-color);
+  background-color: transparent;
+  transition: all 0.2s ease-in-out;
+}
+
+.react-calendar__year-view .react-calendar__tile--active,
+.react-calendar__decade-view .react-calendar__tile--active,
+.react-calendar__century-view .react-calendar__tile--active {
+  background-color: var(--primary-color) !important;
+  color: var(--white-color) !important;
+  border-radius: 2px;
+}
+
+.react-calendar__year-view .react-calendar__tile--now,
+.react-calendar__decade-view .react-calendar__tile--now,
+.react-calendar__century-view .react-calendar__tile--now {
+  background-color: var(--light-primary-color);
+  color: var(--white-color);
+  border-radius: 2px;
+}
+
+.react-calendar__year-view .react-calendar__tile:hover,
+.react-calendar__decade-view .react-calendar__tile:hover,
+.react-calendar__century-view .react-calendar__tile:hover {
+  background-color: var(--hover-color);
+  color: var(--text-color);
+  border-radius: 2px;
+}
+
+/* Calendar Overlay */
+.calendar-overlay {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--white-color);
+  border-radius: 8px;
+  min-width: 250px;
+  max-block-size: 350px;
+  transform: translate(-8px, -11px) !important;
+}
 
 /* Dropdown Wrapper */
 .dropdown-wrapper {
+  margin: 0;
+  padding: 0;
   position: relative;
   display: inline-block;
   width: 100%;
-  transform: translateX(-8px);
+  transform: translateX(2px);
   margin-top: 8px;
-}
-
-/* Dropdown Header */
-.dropdown-header {
-  padding: 0 32px 0 20px; /* Add consistent left and right padding */
-  border: 1px solid var(--light-text-color);
-  border-radius: 5px;
-  font-size: 14px;
-  color: var(--text-color);
-  cursor: pointer;
-  background-color: var(--white-color);
-  display: flex; /* Use flexbox for alignment */
-  align-items: center; /* Center vertically */
-  justify-content: flex-start; /* Align text to the left */
-  height: 40px; /* Fixed height for consistency */
-  position: relative; /* Needed for absolute positioning of the arrow */
 }
 
 /* Dropdown Arrow using ::after */
 .dropdown-wrapper::after {
   content: "▼";
-  font-size: 10px; /* Arrow size */
-  color: var(--light-text-color); /* Light gray arrow */
+  font-size: 10px;
+  color: var(--light-text-color);
   position: absolute;
-  right: 12px; /* Adjust horizontal position */
-  top: 50%; /* Center vertically */
-  transform: translateY(-50%); /* Perfect vertical alignment */
-  pointer-events: none; /* Ensure clicks pass through to the dropdown */
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
 }
 
 /* Dropdown Options */
@@ -294,15 +230,14 @@
   top: 100%;
   left: 0;
   width: 100%;
-  margin-top: 0; /* Remove gap between dropdown and options */
-  border: 1px solid var(--light-text-color);
-  border-radius: 5px;
   background-color: var(--white-color);
-  list-style: none;
   padding: 0;
+  margin: 0;
+  list-style: none;
   z-index: 1000;
-  max-height: 200px; /* Increased height */
-  overflow-y: auto; /* Add scroll if options exceed height */
+  max-height: 200px;
+  overflow-y: auto;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 /* Scrollbar Styling */
@@ -311,41 +246,82 @@
 }
 
 .dropdown-options::-webkit-scrollbar-track {
-  background: var(--white-color); /* Light background */
+  background: var(--white-color);
   border-radius: 3px;
 }
 
 .dropdown-options::-webkit-scrollbar-thumb {
-  background: var(--white-color); /* Light gray scrollbar thumb */
+  background: var(--light-text-color);
   border-radius: 3px;
 }
 
 /* Dropdown Options List Items */
 .dropdown-options li {
-  padding: 12px 20px; /* Add consistent padding for items */
+  padding: 12px 20px;
   font-size: 14px;
+  background: var(--white-color);
   color: var(--text-color);
   cursor: pointer;
-  display: flex;
-  align-items: center; /* Center text vertically */
+  display: block;
+  border: none;
+  border-radius: 0;
+  margin: 0;
+  line-height: 1;
+  height: auto;
+  white-space: nowrap;
+}
+
+/* Ensure no gaps appear between items */
+.dropdown-options li + li {
+  border-top: 1px solid var(--light-text-color);
 }
 
 /* Hover Effect for Options */
 .dropdown-options li:hover {
-  background-color: var(--hover-color); /* Use your --hover-color variable */
+  background-color: var(--hover-color);
   color: var(--text-color);
 }
 
 /* Selected Option */
 .dropdown-options li.selected {
-  background-color: var(--primary-color); /* Use your --primary-color variable */
+  background-color: var(--primary-color);
   color: var(--white-color);
 }
 
-.dropdown-header .selected-time {
-  transform: translateY(8px); 
-  padding-left: 10px;
-  display: inline-block;
+/* Dropdown Header */
+.dropdown-header {
+  padding: 10px 5px 5px 10px !important;
+  border: 1px solid var(--light-text-color);
+  border-radius: 5px;
+  font-size: 14px;
+  color: var(--text-color);
+  cursor: pointer;
+  background-color: var(--white-color);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: 40px;
+  position: relative;
+}
+
+/* Maintain styles when focused, hovered, or active */
+.dropdown-header:focus,
+.dropdown-header:hover,
+.dropdown-header:active {
+  padding: 10px 5px 5px 10px !important;
+  border: 1px solid var(--light-text-color) !important;
+  border-radius: 5px !important;
+  font-size: 14px !important;
+  color: var(--text-color) !important;
+  cursor: pointer !important;
+  background-color: var(--white-color) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  height: 40px !important;
+  position: relative !important;
+  outline: none !important; /* Remove default browser outline */
+  box-shadow: none !important; /* Prevent any default shadow */
 }
 
 /* Action Buttons Container */
@@ -353,8 +329,8 @@
   display: flex;
   justify-content: space-between;
   margin-top: 12px;
-  gap: 80px;
-  transform: translateX(-10px);
+  width: 100%;
+  gap: 10px;
 }
 
 /* Back Button Styling */
@@ -362,30 +338,33 @@
   background-color: var(--white-color);
   color: var(--text-color);
   border: 1px solid var(--light-text-color);
-  border-radius: 2px;
-  padding: 10px 20px;
+  border-radius: 4px;
+  padding: 8px 16px;
   font-size: 14px;
   cursor: pointer;
-  transition: background-color 0.3s ease, border-color 0.3s ease; 
+  transition: background-color 0.3s ease;
+  flex: 1;
 }
 
 .action-buttons .back-btn:hover {
-  background-color: var(--hover-color); 
+  background-color: var(--hover-color);
 }
 
 /* Save Button Styling */
 .action-buttons .save-btn {
-  background-color: var(--primary-color); 
-  color: var(--white-color); 
-  border: 1px solid var(--primary-color); 
-  border-radius: 2px; 
-  padding: 10px 20px;
+  background-color: var(--primary-color);
+  color: var(--white-color);
+  border: 1px solid var(--primary-color);
+  border-radius: 4px;
+  padding: 8px 16px;
   font-size: 14px;
   cursor: pointer;
-  transition: background-color 0.3s ease, border-color 0.3s ease; 
+  transition: background-color 0.3s ease;
+  flex: 1;
 }
 
 .action-buttons .save-btn:hover {
   background-color: var(--secondary-color);
   border-color: var(--secondary-color);
 }
+

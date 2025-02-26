@@ -289,8 +289,9 @@
 }
 
 .change-btn {
-    margin-left: auto; /* Pushes the button to the far right */
+    margin-left: auto;
     margin-right: 5px;
+    margin-bottom: 8px;
     background-color: var(--primary-color);
     color: var(--white-color);
     padding: 8px 16px;
@@ -310,5 +311,5 @@
   }
 
   .task-container {
-    padding: 32px; /* Increased padding for better spacing */
+    padding: 32px;
 }

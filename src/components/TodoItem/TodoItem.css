@@ -48,17 +48,12 @@
   box-shadow: none;
 }
 
-/* Task Name Styling */
-.task-name {
-  font-size: 1.2rem;
-  color: var(--black-color);
-  width: 100%; /* Ensure it uses full width */
-}
 
 .task-content {
+  display: flex;
+  align-items: flex-start; /* Align checkbox and title to the top */
   flex: 1; /* Allow content to grow and fill available space */
-  margin-left: 10px;
-  word-break: break-word;
+  margin-left: 10px; /* Space between checkbox and title */
 }
 
 .task-title {
@@ -69,7 +64,8 @@
 .task-icons {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 8px; /* Space between icons */
+  margin-left: auto; /* Push icons to the right */
   flex-shrink: 0; /* Prevent icons from shrinking */
 }
 
@@ -177,14 +173,9 @@
 
 .task-row {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  align-items: flex-start; /* Align items to the top */
+  justify-content: space-between; /* Space between task content and icons */
   width: 100%; /* Ensure it uses full width */
-}
-
-/* Additional Styling */
-.task-name {
-  font-size: 1.2rem;
 }
 
 .description-text {
@@ -260,11 +251,10 @@
 
 .reminder-overlay-container {
   top: 100%;
-  left: 50%; /* Center horizontally */
-  transform: translateX(-50%); /* Adjust for centering */
+  left: 50%;
+  transform: translateX(-50%);
 }
 
-/* Delete Button Styling */
 .delete-btn {
   color: var(--primary-color) !important;
 }
@@ -289,11 +279,20 @@
 .title-container {
   display: flex;
   align-items: center;
-  gap: 6px; /* Space between text and icon */
+  gap: 6px;
 }
 
 .due-date-container {
   display: flex;
   align-items: center;
-  gap: 6px; /* Space between due date and icon */
+  gap: 6px;
+}
+
+/* Task Name Styling */
+.task-name {
+  font-size: 1.2rem;
+  color: var(--black-color);
+  flex: 1; 
+  min-width: 0;
+  margin-left: 0; /* Changed from 10px to 0 to move it more to the left */
 }

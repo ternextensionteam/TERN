@@ -16,32 +16,21 @@ export function useTodoList() {
     loadTasks();
   }, []);
 
-  // Add a new task with separate reminder & due date
+  // Add a new task with boolean reminder and due date with time
   const addTask = (
     taskText,
-    reminder = { label: "No Reminder", time: null },
+    hasReminder = false, // Changed to boolean
     description = "",
     dueDate = null
   ) => {
     if (taskText.trim() === "") return;
 
-    // Validate reminder time
-    let reminderTime = null;
-    if (reminder?.time) {
-      const parsedReminder = new Date(reminder.time);
-      if (!isNaN(parsedReminder.getTime())) {
-        reminderTime = parsedReminder.toISOString(); // Store as ISO string
-      } else {
-        console.error("Invalid reminder time:", reminder.time);
-      }
-    }
-
-    // Validate due date
-    let due = null;
+    // Validate due date (now includes time)
+    let validatedDueDate = null;
     if (dueDate) {
       const parsedDueDate = new Date(dueDate);
       if (!isNaN(parsedDueDate.getTime())) {
-        due = parsedDueDate.toISOString(); // Store as ISO string
+        validatedDueDate = parsedDueDate.toISOString(); // Store as ISO string with time
       } else {
         console.error("Invalid due date:", dueDate);
       }
@@ -51,11 +40,8 @@ export function useTodoList() {
       id: Date.now(),
       text: taskText,
       description: description,
-      reminder: {
-        label: reminder.label || "No Reminder",
-        time: reminderTime, // Store validated reminder time
-      },
-      dueDate: due, // Store validated due date
+      hasReminder, // Simple boolean instead of object
+      dueDate: validatedDueDate, // Now includes time
     };
 
     setTasks((prevTasks) => [...prevTasks, newTask]);
@@ -66,34 +52,28 @@ export function useTodoList() {
     setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
   };
 
-  // Toggle a task's reminder
+  // Toggle a task's reminder (now just toggles the boolean)
   const toggleReminder = (taskId) => {
     setTasks((prevTasks) =>
       prevTasks.map((task) =>
         task.id === taskId
-          ? {
-              ...task,
-              reminder: {
-                ...task.reminder,
-                time: task.reminder.time ? null : new Date().toISOString(), // Toggle reminder time
-              },
-            }
+          ? { ...task, hasReminder: !task.hasReminder }
           : task
       )
     );
   };
 
-  // Update a task's text, description, reminder, or due date
-  const updateTask = (taskId, newText, newDescription, newReminder, newDueDate) => {
+  // Update a task's text, description, reminder boolean, or due date
+  const updateTask = (taskId, newText, newDescription, newHasReminder, newDueDate) => {
     setTasks((prevTasks) =>
       prevTasks.map((task) =>
         task.id === taskId
           ? {
               ...task,
-              text: newText || task.text, // Fallback to existing text
-              description: newDescription || task.description, // Fallback to existing description
-              reminder: newReminder || task.reminder, // Fallback to existing reminder
-              dueDate: newDueDate || task.dueDate, // Fallback to existing due date
+              text: newText || task.text,
+              description: newDescription || task.description,
+              hasReminder: newHasReminder !== undefined ? newHasReminder : task.hasReminder,
+              dueDate: newDueDate || task.dueDate,
             }
           : task
       )
@@ -105,10 +85,7 @@ export function useTodoList() {
     try {
       const serializedTasks = tasks.map((task) => ({
         ...task,
-        reminder: {
-          label: task.reminder.label,
-          time: task.reminder.time ? task.reminder.time : null,
-        },
+        hasReminder: task.hasReminder,
         dueDate: task.dueDate ? task.dueDate : null,
       }));
       chrome.storage.local.set({ tasks: serializedTasks }, () => {
@@ -125,16 +102,9 @@ export function useTodoList() {
       chrome.storage.local.get(["tasks"], (result) => {
         if (result.tasks) {
           const deserializedTasks = result.tasks.map((task) => {
-            let parsedReminder = task.reminder?.time ? new Date(task.reminder.time) : null;
             let parsedDue = task.dueDate ? new Date(task.dueDate) : null;
 
-            // Validate reminder time
-            if (parsedReminder && isNaN(parsedReminder.getTime())) {
-              console.error("Invalid reminder time in loaded task:", task.reminder.time);
-              parsedReminder = null;
-            }
-
-            // Validate due date
+            // Validate due date (now includes time)
             if (parsedDue && isNaN(parsedDue.getTime())) {
               console.error("Invalid due date in loaded task:", task.dueDate);
               parsedDue = null;
@@ -142,10 +112,7 @@ export function useTodoList() {
 
             return {
               ...task,
-              reminder: {
-                label: task.reminder.label,
-                time: parsedReminder ? parsedReminder.toISOString() : null,
-              },
+              hasReminder: task.hasReminder || false, // Default to false if undefined
               dueDate: parsedDue ? parsedDue.toISOString() : null,
             };
           });

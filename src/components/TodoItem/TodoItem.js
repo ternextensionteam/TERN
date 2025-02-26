@@ -3,10 +3,8 @@ import { Card, Row, Col, Form, Collapse, Button } from "react-bootstrap";
 import { FaTrashAlt, FaBell, FaBellSlash } from "react-icons/fa";
 import "../tooltip";
 import "../base.css";
+import DueOverlay from "../DueOverlay"; // Ensure this is the correct import
 import "./TodoItem.css";
-import ReminderOverlay from "../ReminderOverlay";
-import DueOverlay from "../DueOverlay";
-import { formatReminderTime, formatDueDate } from "../FormatTime";
 
 function TodoItem({ task, onDelete, onUpdateTask }) {
   const [isDescriptionVisible, setIsDescriptionVisible] = useState(false);
@@ -16,20 +14,22 @@ function TodoItem({ task, onDelete, onUpdateTask }) {
   const [newText, setNewText] = useState(task.text || "");
   const [newDescription, setNewDescription] = useState(task.description || "");
   const [isChecked, setIsChecked] = useState(task.completed || false);
-  const [reminder, setReminder] = useState(task.reminder || { label: "No Reminder", time: null });
+  const [hasReminder, setHasReminder] = useState(task.hasReminder || false);
   const [dueDate, setDueDate] = useState(task.dueDate || null);
-  const [showReminderOverlay, setShowReminderOverlay] = useState(false);
   const [showDueOverlay, setShowDueOverlay] = useState(false);
   const [overlayPosition, setOverlayPosition] = useState({ top: 0, left: 0 });
 
   const bellButtonRef = useRef(null);
   const dueDateRef = useRef(null);
-  const longPressTimer = useRef(null); // Timer for long press detection
+  const longPressTimer = useRef(null);
 
   useEffect(() => {
-    setReminder(task.reminder || { label: "No Reminder", time: null });
-    setDueDate(task.dueDate || null);
+    setHasReminder(task.hasReminder || false);
+    const parsedDueDate = task.dueDate ? new Date(task.dueDate) : null;
+    setDueDate(parsedDueDate && !isNaN(parsedDueDate.getTime()) ? parsedDueDate.toISOString() : null);
     setIsChecked(task.completed || false);
+    setNewText(task.text || "");
+    setNewDescription(task.description || "");
   }, [task]);
 
   const handleKeyPress = (event, saveFunction) => {
@@ -44,135 +44,124 @@ function TodoItem({ task, onDelete, onUpdateTask }) {
     if (newText.trim() === "") {
       setNewText(task.text);
     }
-    onUpdateTask(task.id, newText.trim(), newDescription, reminder, dueDate, isChecked);
+    onUpdateTask(task.id, newText.trim(), newDescription, hasReminder, dueDate);
   };
 
   const saveDescription = () => {
     setIsEditingDescription(false);
-    onUpdateTask(task.id, newText, newDescription.trim(), reminder, dueDate, isChecked);
+    onUpdateTask(task.id, newText, newDescription.trim(), hasReminder, dueDate);
   };
 
   const handleCheckboxChange = () => {
     const newCheckedState = !isChecked;
     setIsChecked(newCheckedState);
-    onUpdateTask(task.id, newText, newDescription, reminder, dueDate, newCheckedState);
+    onUpdateTask(task.id, newText, newDescription, hasReminder, dueDate);
   };
 
-  const handleReminderMouseDown = (e) => {
+  const handleReminderClick = (e) => {
     e.stopPropagation();
-    longPressTimer.current = setTimeout(() => {
-      // Long press action: close the overlay
-      setShowReminderOverlay(false);
-      setShowDueOverlay(false);
-    }, 500); // 500ms for long press
-  };
-
-  const handleReminderMouseUp = (e) => {
-    e.stopPropagation();
-    if (longPressTimer.current) {
-      clearTimeout(longPressTimer.current); // Clear the long press timer
-      longPressTimer.current = null;
-
-      // Regular click action: toggle the overlay
-      if (bellButtonRef.current) {
-        const rect = bellButtonRef.current.getBoundingClientRect();
-        setOverlayPosition({
-          top: rect.bottom + window.scrollY,
-          left: rect.left + window.scrollX,
-        });
-        setShowReminderOverlay((prev) => !prev); // Toggle the reminder overlay
-        setShowDueOverlay(false); // Ensure the due date overlay is closed
-      }
-    }
+    const newReminderState = !hasReminder;
+    setHasReminder(newReminderState);
+    onUpdateTask(task.id, newText, newDescription, newReminderState, dueDate);
   };
 
   const handleDueDateMouseDown = (e) => {
     e.stopPropagation();
+    console.log("Mouse down on due date");
     longPressTimer.current = setTimeout(() => {
-      // Long press action: close the overlay
       setShowDueOverlay(false);
-      setShowReminderOverlay(false);
-    }, 500); // 500ms for long press
+    }, 500);
   };
 
   const handleDueDateMouseUp = (e) => {
     e.stopPropagation();
+    console.log("Mouse up on due date");
     if (longPressTimer.current) {
-      clearTimeout(longPressTimer.current); // Clear the long press timer
+      clearTimeout(longPressTimer.current);
       longPressTimer.current = null;
 
-      // Regular click action: toggle the overlay
       if (dueDateRef.current) {
         const rect = dueDateRef.current.getBoundingClientRect();
         setOverlayPosition({
           top: rect.bottom + window.scrollY,
           left: rect.left + window.scrollX,
         });
-        setShowDueOverlay((prev) => !prev); // Toggle the due date overlay
-        setShowReminderOverlay(false); // Ensure the reminder overlay is closed
+        console.log("Toggling DueOverlay, current state:", showDueOverlay);
+        setShowDueOverlay((prev) => !prev);
       }
     }
   };
 
-  const handlePresetSelect = (preset) => {
-    const newReminder = {
-      label: preset.label || "No Reminder",
-      time: preset.time ? new Date(preset.time).toISOString() : null,
-    };
-    setReminder(newReminder);
-    setShowReminderOverlay(false); // Close the overlay after selecting a preset
-    onUpdateTask(task.id, newText, newDescription, newReminder, dueDate, isChecked);
-  };
-
-  const handleDueDateSelect = (date) => {
-    const newDueDate = date ? new Date(date).toISOString() : null;
+  const handleDueDateSelect = (preset) => {
+    console.log("Selected preset from DueOverlay:", preset);
+    let newDueDate = null;
+    if (preset && preset.time) {
+      const parsedDate = new Date(preset.time);
+      if (!isNaN(parsedDate.getTime())) {
+        newDueDate = parsedDate.toISOString();
+      } else {
+        console.error("Invalid time in preset:", preset.time);
+      }
+    }
+    console.log("New due date set:", newDueDate);
     setDueDate(newDueDate);
-    setShowDueOverlay(false); // Close the overlay after selecting a date
-    onUpdateTask(task.id, newText, newDescription, reminder, newDueDate, isChecked);
+    setShowDueOverlay(false);
+    onUpdateTask(task.id, newText, newDescription, hasReminder, newDueDate);
   };
 
   const renderReminderIcon = () => {
-    if (!reminder.time) {
-      return (
-        <FaBellSlash
-          className="reminder-icon reminder-off"
-          data-tooltip="No Reminder"
-          data-tooltip-position="top"
-          style={{ width: "24px", height: "24px" }}
-        />
-      );
-    }
-
-    let formattedTime = "Reminder";
-    try {
-      formattedTime = formatReminderTime(reminder.time);
-    } catch (error) {
-      formattedTime = "Invalid Time";
-    }
     return (
-      <FaBell
-        className="reminder-icon reminder-on"
-        data-tooltip={formattedTime}
-        data-tooltip-position="top"
-        style={{ width: "24px", height: "24px" }}
-      />
+      <Button
+        ref={bellButtonRef}
+        variant="link"
+        onClick={handleReminderClick}
+        className="reminder-btn"
+      >
+        {hasReminder ? (
+          <FaBell
+            className="reminder-icon reminder-on"
+            data-tooltip="Reminder on"
+            data-tooltip-position="top"
+            style={{ width: "24px", height: "24px" }}
+          />
+        ) : (
+          <FaBellSlash
+            className="reminder-icon reminder-off"
+            data-tooltip="No Reminder"
+            data-tooltip-position="top"
+            style={{ width: "24px", height: "24px" }}
+          />
+        )}
+      </Button>
     );
   };
 
   const renderDueDate = () => {
-    const isNoDueDate = !dueDate;
-    const formattedDueDate = isNoDueDate ? "No Due Date" : formatDueDate(dueDate);
+    const formatDateTime = (date) => {
+      if (!date) return "No Due Date";
+      const dueDate = new Date(date);
+      if (isNaN(dueDate.getTime())) return "Invalid Date";
+
+      return dueDate.toLocaleString("en-US", {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+      }).replace(/,/, "");
+    };
 
     return (
       <div
         ref={dueDateRef}
-        className={`due-date-text ${isNoDueDate ? "no-due-date" : "due-date-set"}`}
+        className={`due-date-text ${!dueDate ? "no-due-date" : "due-date-set"}`}
         onMouseDown={handleDueDateMouseDown}
         onMouseUp={handleDueDateMouseUp}
         data-tooltip="Due Date"
         data-tooltip-position="top"
       >
-        {formattedDueDate}
+        {formatDateTime(dueDate)}
       </div>
     );
   };
@@ -186,7 +175,8 @@ function TodoItem({ task, onDelete, onUpdateTask }) {
           setIsHovering(false);
         }
       }}
-      onClick={() => {
+      onClick={(e) => {
+        e.stopPropagation();
         if (!isEditingDescription) {
           setIsDescriptionVisible(!isDescriptionVisible);
         }
@@ -222,27 +212,13 @@ function TodoItem({ task, onDelete, onUpdateTask }) {
             {renderDueDate()}
           </Col>
           <Col xs="auto" className="task-icons">
-            <Button
-              ref={bellButtonRef}
-              variant="link"
-              onMouseDown={handleReminderMouseDown}
-              onMouseUp={handleReminderMouseUp}
-              className="reminder-btn"
-            >
-              {renderReminderIcon()}
-            </Button>
-            {showReminderOverlay && (
-              <ReminderOverlay
-                onSelectPreset={handlePresetSelect}
-                targetPosition={overlayPosition}
-                onClose={() => setShowReminderOverlay(false)}
-              />
-            )}
+            {renderReminderIcon()}
             {showDueOverlay && (
               <DueOverlay
-                onSelectDate={handleDueDateSelect}
+                onSelectPreset={handleDueDateSelect} // Changed to onSelectPreset
                 targetPosition={overlayPosition}
                 onClose={() => setShowDueOverlay(false)}
+                bellButtonRef={dueDateRef} // Use dueDateRef instead of bellButtonRef
               />
             )}
             <Button variant="link" onClick={(e) => { e.stopPropagation(); onDelete(task.id); }} className="delete-btn">

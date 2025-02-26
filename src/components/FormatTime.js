@@ -31,10 +31,10 @@ export const formatReminderTime = (time) => {
 };
 
 export const formatDueDate = (date) => {
-    if (!date) return "No Due Date"; // Handle cases where no due date is selected
+    if (!date) return "No Due Date";
 
     const dueDate = new Date(date);
-    if (isNaN(dueDate.getTime())) return "Invalid Date"; // Handle invalid dates
+    if (isNaN(dueDate.getTime())) return "Invalid Date";
 
     const now = new Date();
     const isThisYear = dueDate.getFullYear() === now.getFullYear();
