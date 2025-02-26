@@ -168,7 +168,7 @@ function TodoItem({ task, onDelete, onUpdateTask }) {
       >
         <input
           type="datetime-local"
-          value={dueDate ? dueDate.slice(0, 16) : ""}
+          value={dueDate ? new Date(dueDate).toISOString().slice(0, 16) : ""}
           onChange={(e) => handleDueDateSelect(e.target.value)}
           style={{ display: "none" }}
           aria-label="due date"

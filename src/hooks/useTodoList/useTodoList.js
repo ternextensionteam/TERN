@@ -43,8 +43,6 @@ export function useTodoList() {
       const parsedDueDate = new Date(dueDate);
       if (!isNaN(parsedDueDate.getTime())) {
         due = parsedDueDate.getTime(); // Store as timestamp
-        console.log("Due time: ", due);
-
       } else {
         console.error("Invalid due date:", dueDate);
       }
@@ -56,16 +54,23 @@ export function useTodoList() {
       description: description,
       reminder: {
         label: reminder.label || "No Reminder",
-        time: reminderTime, // Store validated reminder time
+        time: reminder.time ? new Date(reminder.time).getTime() : null, // Store validated reminder time
       },
-      dueDate: due, // Store validated due date
+      dueDate: dueDate ? new Date(dueDate).getTime() : null, // Store validated due date
     };
-
+    
     setTasks((prevTasks) => [...prevTasks, newTask]);
     
-    //notify background script to create alarms
-    chrome.runtime.sendMessage({ action: "addTask", task: newTask }, (response) => {
-      console.log("Task added:", response);
+    //add task and notify background script to create alarms
+    chrome.storage.local.get("tasks", (data) => {
+      let tasks = Array.isArray(data.tasks) ? data.tasks : [];
+      tasks.push(newTask);
+      chrome.storage.local.set({ tasks }, () => {
+        console.log("Task stored successfully:", newTask);
+      });
+      chrome.runtime.sendMessage({ action: "addTask", task: newTask }, (response) => {
+        console.log("Task added:", response);
+      });
     });
 
   };
