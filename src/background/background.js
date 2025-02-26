@@ -149,7 +149,8 @@ chrome.runtime.onInstalled.addListener(() => {
 chrome.contextMenus.create({
   id: "addToHawk",
   title: "Add Task",
-  contexts: ["selection"]
+  contexts: ["selection"],
+
 });
 });
 
