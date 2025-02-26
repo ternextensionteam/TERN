@@ -38,6 +38,7 @@ module.exports = {
             minimized: true, // Display fewer logs in Webpack output
           },
         },
+        { from: 'public/icons', to: 'dist/icons' },
       ],
       options: {
         concurrency: 100, // Speeds up copying with parallel processing
