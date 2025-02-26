@@ -18,8 +18,24 @@ const defaultRegexList = [
   "^https://quip.com/.*$",
 ];
 
+const SCORE_THRESHOLD = 0.5;
+
 function removeAnchorLink(url) {
   return url.split("#")[0];
+}
+
+function getWordsSet(str) {
+  return new Set(str.toLowerCase().match(/\b\w+\b/g)); // Extract words, ignoring case
+}
+
+function jaccardSimilarityTexts(text1, text2) {
+  const setA = getWordsSet(text1);
+  const setB = getWordsSet(text2);
+
+  const intersection = new Set([...setA].filter(word => setB.has(word)));
+  const union = new Set([...setA, ...setB]);
+
+  return union.size === 0 ? 0 : intersection.size / union.size;
 }
 
 let miniSearch = new MiniSearch(indexDescriptor);
@@ -62,14 +78,28 @@ chrome.omnibox.onInputEntered.addListener((text) => {
   });
 });
 
+const JACCARD_THRESHOLD = 0.8;
+
+function removeDuplicates(results){
+  for (let i = 0; i < results.length; i++) {
+    for (let j = i + 1; j < results.length; j++) {
+      if (jaccardSimilarityTexts(results[i].title, results[j].title) > JACCARD_THRESHOLD) {
+        results.splice(j, 1);
+        j--;
+      }
+    }
+  }
+}
+
 chrome.omnibox.onInputChanged.addListener((text, suggest) => {
   if (!text.trim()) return;
 
   // Perform a MiniSearch query
   let results = miniSearch.search(text, { prefix: true, fuzzy: 0.2 });
-
+  let filteredResults = results.filter((result) => result.score > SCORE_THRESHOLD).slice(0,10);
+  removeDuplicates(filteredResults);
   // Format results for omnibox suggestions
-  let suggestions = results.map((result) => ({
+  let suggestions = filteredResults.map((result) => ({
     content: result.id,
     description: encode(result.title),
   }));
@@ -119,7 +149,8 @@ chrome.runtime.onInstalled.addListener(() => {
 chrome.contextMenus.create({
   id: "addToHawk",
   title: "Add Task",
-  contexts: ["selection"]
+  contexts: ["selection"],
+
 });
 });
 

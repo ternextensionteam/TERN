@@ -43,6 +43,7 @@ function TodoItem({ task, onDelete, onUpdateTask }) {
     setIsEditing(false);
     if (newText.trim() === "") {
       setNewText(task.text);
+      return;
     }
     onUpdateTask(task.id, newText.trim(), newDescription, hasReminder, dueDate);
   };
@@ -160,6 +161,7 @@ function TodoItem({ task, onDelete, onUpdateTask }) {
         onMouseUp={handleDueDateMouseUp}
         data-tooltip="Due Date"
         data-tooltip-position="top"
+        data-testid="due-date"
       >
         {formatDateTime(dueDate)}
       </div>
@@ -221,7 +223,12 @@ function TodoItem({ task, onDelete, onUpdateTask }) {
                 bellButtonRef={dueDateRef} // Use dueDateRef instead of bellButtonRef
               />
             )}
-            <Button variant="link" onClick={(e) => { e.stopPropagation(); onDelete(task.id); }} className="delete-btn">
+            <Button 
+              variant="link" 
+              onClick={(e) => { e.stopPropagation(); onDelete(task.id); }} 
+              className="delete-btn"
+              aria-label="delete"
+            >
               <FaTrashAlt data-tooltip="Delete" data-tooltip-position="top" style={{ width: "20px", height: "20px" }} />
             </Button>
           </Col>

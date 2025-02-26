@@ -1,15 +1,15 @@
 import React, { useState } from "react";
-import { Container, Nav } from "react-bootstrap";
+import { Container, Nav, Button } from "react-bootstrap";
 import { FaCog } from "react-icons/fa";
 import { LuListTodo } from "react-icons/lu";
 import { AiOutlineNodeIndex } from "react-icons/ai";
 import WhitelistIndicator from "../WhitelistIndicator/WhitelistIndicator";
-
 import TaskSection from "../TaskSection/TaskSection";
 import IndexingSection from "../IndexingSection/IndexingSection";
 import "../tooltip";
 import "../base.css";
 import "./Sidebar.css";
+import SettingsSection from "../SettingsSection/SettingsSection";
 
 function Sidebar() {
   const [activeSection, setActiveSection] = useState("tasks");
@@ -55,7 +55,7 @@ function Sidebar() {
       {/* Conditionally Render Sections */}
       {activeSection === "tasks" && <TaskSection />}
       {activeSection === "indexing" && <IndexingSection />}
-      {activeSection === "settings" && <div>Settings</div>}
+      {activeSection === "settings" && <SettingsSection />}
     </Container>
   );
 }
