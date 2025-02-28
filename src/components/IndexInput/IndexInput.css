@@ -18,13 +18,13 @@
   
   
   .index-input-field:focus {
-    border-color: #ffad54;   
+    border-color: #0069b9;   
     outline: none;          
   }
   
  
   .index-input-button {
-    background-color: #ffad54;   
+    background-color: #0069b9;   
     color: #fff;                 
     padding: 12px 20px;         
     border: none;                
@@ -36,7 +36,7 @@
   
  
   .index-input-button:hover {
-    background-color: #ffad54;   
+    background-color: #0069b9;   
     transform: scale(1.05);      
   }
   
