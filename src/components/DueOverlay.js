@@ -1,23 +1,24 @@
 import React, { useRef, useEffect, useState } from "react";
 import ReactDOM from "react-dom";
-import Calendar from "react-calendar"; // Import Calendar directly
+import Calendar from "react-calendar";
 import { FaRegClock, FaBellSlash, FaRegCalendarAlt } from "react-icons/fa";
 import "./ReminderOverlay.css";
 import "./CalendarOverlay.css";
 
-function DueOverlay({ onSelectDate, targetPosition, onClose, calendarButtonRef }) {
+function ReminderOverlay({ onSelectPreset, targetPosition, onClose, bellButtonRef }) {
   const overlayRef = useRef(null);
   const [adjustedPosition, setAdjustedPosition] = useState(null);
   const [isCalendarVisible, setIsCalendarVisible] = useState(false);
   const [selectedDateTime, setSelectedDateTime] = useState(new Date());
+  const [selectedTime, setSelectedTime] = useState("12:00 PM");
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  // Handle closing the overlay when clicking outside or clicking the calendar button
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
         overlayRef.current &&
         !overlayRef.current.contains(event.target) &&
-        !(calendarButtonRef?.current && calendarButtonRef.current.contains(event.target))
+        !(bellButtonRef?.current && bellButtonRef.current.contains(event.target))
       ) {
         onClose();
       }
@@ -27,9 +28,8 @@ function DueOverlay({ onSelectDate, targetPosition, onClose, calendarButtonRef }
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [onClose, calendarButtonRef]);
+  }, [onClose, bellButtonRef]);
 
-  // Adjust position to prevent overlay overflow
   useEffect(() => {
     if (!targetPosition) return;
 
@@ -65,8 +65,14 @@ function DueOverlay({ onSelectDate, targetPosition, onClose, calendarButtonRef }
   }, [targetPosition]);
 
   const handleDateSave = () => {
+    const [time, period] = selectedTime.split(" ");
+    const [hours, minutes] = time.split(":").map(Number);
+    const adjustedHours = period === "PM" && hours !== 12 ? hours + 12 : period === "AM" && hours === 12 ? 0 : hours;
+
     const savedDate = new Date(selectedDateTime);
-    onSelectDate(savedDate); // Pass the selected date back to the parent
+    savedDate.setHours(adjustedHours, minutes, 0, 0);
+
+    onSelectPreset({ label: "Custom", time: savedDate.toISOString() });
     setIsCalendarVisible(false);
     onClose();
   };
@@ -75,7 +81,42 @@ function DueOverlay({ onSelectDate, targetPosition, onClose, calendarButtonRef }
     setSelectedDateTime(date);
   };
 
-  // Prevent rendering until adjustedPosition is set
+  const generateTimeOptions = () => {
+    const times = [];
+    for (let hour = 0; hour < 24; hour++) {
+      for (let min of [0, 30]) {
+        const formattedTime = new Date(0, 0, 0, hour, min).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+        });
+        times.push(formattedTime);
+      }
+    }
+
+    const now = new Date();
+    const currentHour = now.getHours();
+    const currentMinutes = now.getMinutes();
+
+    const nextIntervalIndex = times.findIndex((time) => {
+      const [hour, minute] = time.split(/:| /);
+      const amPm = time.split(" ")[1];
+      const hour24 = amPm === "PM" && hour !== "12" ? +hour + 12 : amPm === "AM" && hour === "12" ? 0 : +hour;
+
+      return (
+        hour24 > currentHour || (hour24 === currentHour && +minute > currentMinutes)
+      );
+    });
+
+    const startIndex = nextIntervalIndex === -1 ? 0 : nextIntervalIndex;
+    const reorderedTimes = [
+      ...times.slice(startIndex),
+      ...times.slice(0, startIndex),
+    ];
+
+    return reorderedTimes;
+  };
+
   if (!adjustedPosition) return null;
 
   return ReactDOM.createPortal(
@@ -86,38 +127,64 @@ function DueOverlay({ onSelectDate, targetPosition, onClose, calendarButtonRef }
         top: adjustedPosition?.top || targetPosition?.top || 0,
         left: adjustedPosition?.left || targetPosition?.left || 0,
         zIndex: 9999,
-        minWidth: "auto",
+        minWidth: isCalendarVisible ? "250px" : "auto",
       }}
     >
       <h4 className="overlay-title">Set Due Date</h4>
       {isCalendarVisible ? (
         <div className="calendar-overlay">
-          <Calendar
-            formatShortWeekday={(locale, date) =>
-              ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"][date.getDay()]
-            }
-            onChange={handleDateChange}
-            value={selectedDateTime}
-            className="calendar-component"
-            locale="en-US"
-            minDate={new Date()}
-            tileDisabled={({ date, view }) => {
-              if (view === "month") {
-                return date < new Date().setHours(0, 0, 0, 0);
+          <div className="calendar-content">
+            <Calendar
+              formatShortWeekday={(locale, date) =>
+                ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"][date.getDay()]
               }
-              return false;
-            }}
-            tileClassName={({ date, view }) => {
-              const currentDate = new Date();
-              currentDate.setHours(0, 0, 0, 0);
+              onChange={handleDateChange}
+              value={selectedDateTime}
+              className="calendar-component"
+              locale="en-US"
+              minDate={new Date()}
+              tileDisabled={({ date, view }) => {
+                if (view === "month") {
+                  return date < new Date().setHours(0, 0, 0, 0);
+                }
+                return false;
+              }}
+              tileClassName={({ date, view }) => {
+                const currentDate = new Date();
+                currentDate.setHours(0, 0, 0, 0);
 
-              if (view === "month" && date < currentDate) {
-                return "disabled-tile";
-              }
+                if (view === "month" && date < currentDate) {
+                  return "disabled-tile";
+                }
+                return "";
+              }}
+            />
 
-              return "";
-            }}
-          />
+            <div className="dropdown-wrapper">
+              <div
+                className="dropdown-header"
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              >
+                <span className={isDropdownOpen ? "" : "selected-time"}>{selectedTime}</span>
+              </div>
+              {isDropdownOpen && (
+                <ul className="dropdown-options">
+                  {generateTimeOptions().map((time) => (
+                    <li
+                      key={time}
+                      onClick={() => {
+                        setSelectedTime(time);
+                        setIsDropdownOpen(false);
+                      }}
+                      className={selectedTime === time ? "selected" : ""}
+                    >
+                      {time}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
 
           <div className="action-buttons">
             <button className="back-btn" onClick={() => setIsCalendarVisible(false)}>
@@ -135,7 +202,7 @@ function DueOverlay({ onSelectDate, targetPosition, onClose, calendarButtonRef }
             { label: "Tomorrow", time: new Date(new Date().setDate(new Date().getDate() + 1)).setHours(9, 0, 0, 0), icon: <FaRegClock /> },
             { label: "Next week", time: new Date(new Date().setDate(new Date().getDate() + 7 - new Date().getDay())).setHours(9, 0, 0, 0), icon: <FaRegClock /> },
             { label: "Pick a date & time", time: "", icon: <FaRegCalendarAlt /> },
-            { label: "No Due", time: null, icon: <FaBellSlash /> },
+            { label: "No Due Date", time: null},
           ].map((preset) => (
             <div
               key={preset.label}
@@ -144,7 +211,7 @@ function DueOverlay({ onSelectDate, targetPosition, onClose, calendarButtonRef }
                 if (preset.label === "Pick a date & time") {
                   setIsCalendarVisible(true);
                 } else {
-                  onSelectDate(preset.time); // Pass the selected date back to the parent
+                  onSelectPreset({ label: preset.label, time: preset.time });
                   onClose();
                 }
               }}
@@ -165,4 +232,4 @@ function DueOverlay({ onSelectDate, targetPosition, onClose, calendarButtonRef }
   );
 }
 
-export default DueOverlay;
+export default ReminderOverlay;

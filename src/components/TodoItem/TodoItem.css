@@ -1,7 +1,6 @@
 /* Due Date Styling */
 .due-date-text {
   color: var(--primary-color);
-
 }
 
 .due-date-text.overdue {
@@ -49,16 +48,12 @@
   box-shadow: none;
 }
 
-/* Task Name Styling */
-.task-name {
-  font-size: 1.2rem;
-  color: var(--black-color);
-}
 
 .task-content {
-  flex: auto;
-  margin-left: -10px;
-  word-break: break-word;
+  display: flex;
+  align-items: flex-start; /* Align checkbox and title to the top */
+  flex: 1; /* Allow content to grow and fill available space */
+  margin-left: 10px; /* Space between checkbox and title */
 }
 
 .task-title {
@@ -69,7 +64,9 @@
 .task-icons {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 8px; /* Space between icons */
+  margin-left: auto; /* Push icons to the right */
+  flex-shrink: 0; /* Prevent icons from shrinking */
 }
 
 .reminder-btn {
@@ -155,26 +152,30 @@
   color: var(--primary-color);
 }
 
+/* Parent Container Styling */
+.parent-container {
+  width: 100%; /* Allow full width */
+  max-width: 100%; /* Prevent overflow */
+  overflow: visible; /* Ensure content is not clipped */
+}
+
 /* Task Card Styling */
 .task-card {
   display: flex;
   flex-direction: column;
   margin-top: 10px;
   padding: 10px;
+  width: 100%; /* Use full width of parent */
   border: 1px solid var(--light-gray-color);
   border-radius: 8px;
+  box-sizing: border-box; /* Include padding and border in width calculation */
 }
 
 .task-row {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-}
-
-/* Additional Styling */
-.task-name {
-  font-size: 1.2rem;
+  align-items: flex-start; /* Align items to the top */
+  justify-content: space-between; /* Space between task content and icons */
+  width: 100%; /* Ensure it uses full width */
 }
 
 .description-text {
@@ -195,8 +196,8 @@
 .reminder-overlay {
   position: absolute;
   top: 40px;
-  left: 70%; /* Moves the overlay further right */
-  transform: translateX(-30%); /* Adjust centering */
+  left: 50%; /* Center horizontally */
+  transform: translateX(-50%); /* Adjust for centering */
   background: var(--white-color);
   border: 1px solid var(--light-text-color);
   border-radius: 8px;
@@ -250,10 +251,10 @@
 
 .reminder-overlay-container {
   top: 100%;
-  left: -500px !important; /* Adjust this value to move it more to the right */
+  left: 50%;
+  transform: translateX(-50%);
 }
 
-/* Delete Button Styling */
 .delete-btn {
   color: var(--primary-color) !important;
 }
@@ -271,17 +272,27 @@
   height: 12px;
 }
 
-.edit-icon:hover{
+.edit-icon:hover {
   color: var(--light-gray-color);
 }
+
 .title-container {
   display: flex;
   align-items: center;
-  gap: 6px; /* Space between text and icon */
+  gap: 6px;
 }
 
 .due-date-container {
   display: flex;
   align-items: center;
-  gap: 6px; /* Space between due date and icon */
+  gap: 6px;
+}
+
+/* Task Name Styling */
+.task-name {
+  font-size: 1.2rem;
+  color: var(--black-color);
+  flex: 1; 
+  min-width: 0;
+  margin-left: 0; /* Changed from 10px to 0 to move it more to the left */
 }
