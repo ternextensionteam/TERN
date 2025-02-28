@@ -12,7 +12,7 @@
   background: #ffffff;
   padding: 20px;
   border-radius: 8px;
-  border: 1px solid #ffad54;
+  border: 1px solid #0069b9;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   margin: 20px 0;
   text-align: center;
@@ -27,9 +27,9 @@
 }
 
 .subnav-link.active {
-  color: #ffad54;
+  color: #0069b9;
   font-weight: bold;
-  border-bottom: 3px solid #ffad54;
+  border-bottom: 3px solid #0069b9;
 }
 
 .section-title {
