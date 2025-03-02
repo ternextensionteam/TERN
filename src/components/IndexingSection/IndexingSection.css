@@ -1,43 +1,104 @@
-.indexing-section {
-  max-width: 700px;
-  margin: 0 auto;
-  padding: 20px;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+.page-border {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 7px;
 }
 
-
-.indexing-box {
-  background: #ffffff;
-  padding: 20px;
+.indexing-upper-container {
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto;
   border-radius: 8px;
+<<<<<<< Updated upstream
   border: 1px solid #0069b9;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   margin: 20px 0;
+=======
+  background-color: var(--white-color);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.nav-tabs {
+  display: flex;
+  padding: 0;
+  margin: 0 0 30px 0 !important;
+  margin-top: 5px;
+  border-bottom: 2px solid var(--light-text-color);
+}
+
+.nav-tabs .nav-item {
+  margin: 0 !important;
+  padding: 0 !important;
+  flex-grow: 1;
+>>>>>>> Stashed changes
   text-align: center;
 }
 
-
-.subnav-link {
-  color: #555;
-  padding: 10px 15px;
-  font-size: 1rem;
-  transition: all 0.3s ease-in-out;
+.nav-tabs .nav-item .subnav-link {
+  padding: 6px 10px !important;
+  font-size: 0.85rem;
+  text-align: center;
+  border: none;
+  background-color: transparent;
+  color: var(--text-color);
+  font-family: var(--font-family);
 }
 
+<<<<<<< Updated upstream
 .subnav-link.active {
   color: #0069b9;
   font-weight: bold;
   border-bottom: 3px solid #0069b9;
+=======
+.nav-tabs .nav-item .subnav-link:hover {
+  color: var(--primary-color);
+}
+
+.nav-tabs .nav-item .subnav-link.active {
+  color: var(--primary-color);
+  font-weight: bold;
+  background-color: transparent;
+  border-bottom: 3px solid var(--primary-color);
+}
+
+.indexing-input-box {
+  padding-top: 1%;
+  text-align: center;
+}
+
+.indexing-lower-container {
+  width: 100%;
+  margin: 0 auto;
+  border-radius: 8px;
+  background-color: var(--primary-color);
+  padding: 20px;
+}
+
+.list-name {
+  width: 100%;
+  max-width: 700px; 
+  margin: 0 auto;
+  padding: 5px 20px 5px 10px; 
+  text-align: left;
+  background-color: var(--white-color);
+  border-radius: 8px;
+  margin-bottom: 20px;
+>>>>>>> Stashed changes
 }
 
 .section-title {
-  font-size: 1.3rem;
-  font-weight: 700;
-  color: #000000;
-  margin-bottom: 15px;
+  font-size: 1.1rem;
+  margin: 0;
   text-transform: capitalize;
   letter-spacing: 1px;
-  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+  color: var(--primary-color);
+  font-family: var(--font-family);
 }
+

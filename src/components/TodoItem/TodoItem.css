@@ -51,9 +51,9 @@
 
 .task-content {
   display: flex;
-  align-items: flex-start; /* Align checkbox and title to the top */
-  flex: 1; /* Allow content to grow and fill available space */
-  margin-left: 10px; /* Space between checkbox and title */
+  align-items: flex-start;
+  flex: 1;
+  margin-left: 10px;
 }
 
 .task-title {
@@ -64,9 +64,9 @@
 .task-icons {
   display: flex;
   align-items: center;
-  gap: 8px; /* Space between icons */
-  margin-left: auto; /* Push icons to the right */
-  flex-shrink: 0; /* Prevent icons from shrinking */
+  gap: 8px;
+  margin-left: auto;
+  flex-shrink: 0;
 }
 
 .reminder-btn {
@@ -154,9 +154,9 @@
 
 /* Parent Container Styling */
 .parent-container {
-  width: 100%; /* Allow full width */
-  max-width: 100%; /* Prevent overflow */
-  overflow: visible; /* Ensure content is not clipped */
+  width: 100%;
+  max-width: 100%;
+  overflow: visible;
 }
 
 /* Task Card Styling */
@@ -165,17 +165,17 @@
   flex-direction: column;
   margin-top: 10px;
   padding: 10px;
-  width: 100%; /* Use full width of parent */
+  width: 100%;
   border: 1px solid var(--light-gray-color);
   border-radius: 8px;
-  box-sizing: border-box; /* Include padding and border in width calculation */
+  box-sizing: border-box;
 }
 
 .task-row {
   display: flex;
-  align-items: flex-start; /* Align items to the top */
-  justify-content: space-between; /* Space between task content and icons */
-  width: 100%; /* Ensure it uses full width */
+  align-items: flex-start;
+  justify-content: space-between;
+  width: 100%;
 }
 
 .description-text {
@@ -294,5 +294,5 @@
   color: var(--black-color);
   flex: 1; 
   min-width: 0;
-  margin-left: 0; /* Changed from 10px to 0 to move it more to the left */
+  margin-left: 0; 
 }

@@ -10,27 +10,27 @@ const useIndexMatching = () => {
         // Load initial state from local storage
         chrome.storage.local.get(['allowedSites', 'allowedRegex', 'allowedURLs', 'allowedStringMatches'], (result) => {
             if (result.allowedSites) {
-            setSites(result.allowedSites);
-            console.log('Loaded allowedSites from local storage:', result.allowedSites);
+                setSites(result.allowedSites);
+                console.log('Loaded allowedSites from local storage:', result.allowedSites);
             }
             if (result.allowedRegex) {
-            setRegexs(result.allowedRegex);
-            console.log('Loaded allowedRegex from local storage:', result.allowedRegex);
+                setRegexs(result.allowedRegex);
+                console.log('Loaded allowedRegex from local storage:', result.allowedRegex);
             }
             if (result.allowedURLs) {
-            setUrls(result.allowedURLs);
-            console.log('Loaded allowedURLs from local storage:', result.allowedURLs);
+                setUrls(result.allowedURLs);
+                console.log('Loaded allowedURLs from local storage:', result.allowedURLs);
             }
             if (result.allowedStringMatches) {
-            setStringMatches(result.allowedStringMatches);
-            console.log('Loaded allowedStringMatches from local storage:', result.allowedStringMatches);
+                setStringMatches(result.allowedStringMatches);
+                console.log('Loaded allowedStringMatches from local storage:', result.allowedStringMatches);
             }
         });
     }, []);
 
     const saveStateToLocalStorage = (key, value) => {
         chrome.storage.local.set({ [key]: value });
-        console.log(`Saved ${key} to local storage: ${value}`);
+        console.log(`Saved ${key} to local storage:`, value);
     };
 
     const addSite = (site) => {
@@ -39,8 +39,8 @@ const useIndexMatching = () => {
         saveStateToLocalStorage('allowedSites', newSites);
     };
 
-    const removeSite = (site) => {
-        const newSites = allowedSites.filter(s => s !== site);
+    const removeSite = (index) => { // Changed to accept index
+        const newSites = allowedSites.filter((_, i) => i !== index);
         setSites(newSites);
         saveStateToLocalStorage('allowedSites', newSites);
     };
@@ -57,8 +57,8 @@ const useIndexMatching = () => {
         saveStateToLocalStorage('allowedRegex', newRegexs);
     };
 
-    const removeRegex = (regex) => {
-        const newRegexs = allowedRegex.filter(r => r !== regex);
+    const removeRegex = (index) => { // Changed to accept index
+        const newRegexs = allowedRegex.filter((_, i) => i !== index);
         setRegexs(newRegexs);
         saveStateToLocalStorage('allowedRegex', newRegexs);
     };
@@ -70,13 +70,14 @@ const useIndexMatching = () => {
     };
 
     const addUrl = (url) => {
+        console.log('addUrl called with:', url); // Debug log
         const newUrls = [...allowedURLs, url];
         setUrls(newUrls);
         saveStateToLocalStorage('allowedURLs', newUrls);
     };
 
-    const removeUrl = (url) => {
-        const newUrls = allowedURLs.filter(u => u !== url);
+    const removeUrl = (index) => { // Changed to accept index
+        const newUrls = allowedURLs.filter((_, i) => i !== index);
         setUrls(newUrls);
         saveStateToLocalStorage('allowedURLs', newUrls);
     };
@@ -93,8 +94,8 @@ const useIndexMatching = () => {
         saveStateToLocalStorage('allowedStringMatches', newStringMatches);
     };
 
-    const removeStringMatch = (stringMatch) => {
-        const newStringMatches = allowedStringMatches.filter(sm => sm !== stringMatch);
+    const removeStringMatch = (index) => { // Changed to accept index
+        const newStringMatches = allowedStringMatches.filter((_, i) => i !== index);
         setStringMatches(newStringMatches);
         saveStateToLocalStorage('allowedStringMatches', newStringMatches);
     };

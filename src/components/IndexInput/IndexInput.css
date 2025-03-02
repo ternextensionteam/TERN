@@ -1,12 +1,11 @@
-
 .index-input-container {
-    display: flex;
-    align-items: center;
-    gap: 10px;              
-    margin-top: 15px;       
-  }
-  
+  display: flex;
+  flex-direction: column; /* Stack children vertically */
+  gap: 10px; /* Space between input and button */
+  margin-top: 15px;
+}
 
+<<<<<<< Updated upstream
   .index-input-field {
     flex: 1; 
     padding: 10px;        
@@ -40,12 +39,61 @@
     transform: scale(1.05);      
   }
   
+=======
+.index-input-field {
+  width: 100%; /* Changed from 95% to 100% for full width */
+  font-family: var(--font-family);
+  height: 50px;
+  padding: 12px 14px;
+  display: block;
+  background-color: var(--white-color);
+  color: var(--text-color);
+  border: none;
+  border-bottom: 3px solid var(--primary-color);
+  font-size: 16px;
+  outline: none;
+  text-align: left;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+>>>>>>> Stashed changes
 
-  .index-input-button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-    transform: scale(1);
-  }
-  
+.index-input-field:focus {
+  border-color: var(--primary-color);
+}
 
-  
+.index-input-field::placeholder {
+  color: var(--primary-color);
+  font-size: 16px;
+}
+
+.index-input-button-container {
+  display: flex;
+  padding-top: 5px;
+  justify-content: flex-end;
+}
+
+.index-input-button {
+  padding: 7px 20px;
+  margin-left: auto;
+  margin-top: 5px;
+  background-color: var(--primary-color);
+  color: var(--white-color);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.3s ease;
+}
+
+.index-input-button:hover {
+  background-color: var(--primary-color);
+}
+
+.index-input-button:disabled {
+  background-color: var(--light-text-color);
+  cursor: not-allowed;
+}
