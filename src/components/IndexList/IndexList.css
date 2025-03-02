@@ -16,19 +16,10 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-<<<<<<< Updated upstream
 
 li:hover {
-  background-color: #0069b9; 
-  color: white; 
-=======
-.index-url {
-  font-size: 1.2rem;
-  color: var(--black-color);
-  flex: 1;
-  min-width: 0;
-  word-break: break-word;
->>>>>>> Stashed changes
+  background-color: var(--primary-color); 
+  color: var(--white-color); 
 }
 
 .index-icons {

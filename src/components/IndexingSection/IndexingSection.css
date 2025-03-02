@@ -14,30 +14,9 @@
   max-width: 700px;
   margin: 0 auto;
   border-radius: 8px;
-<<<<<<< Updated upstream
-  border: 1px solid #0069b9;
+  border: 1px solid var(--primary-color);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   margin: 20px 0;
-=======
-  background-color: var(--white-color);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
-  padding: 20px;
-  margin-bottom: 20px;
-}
-
-.nav-tabs {
-  display: flex;
-  padding: 0;
-  margin: 0 0 30px 0 !important;
-  margin-top: 5px;
-  border-bottom: 2px solid var(--light-text-color);
-}
-
-.nav-tabs .nav-item {
-  margin: 0 !important;
-  padding: 0 !important;
-  flex-grow: 1;
->>>>>>> Stashed changes
   text-align: center;
 }
 
@@ -51,46 +30,10 @@
   font-family: var(--font-family);
 }
 
-<<<<<<< Updated upstream
 .subnav-link.active {
-  color: #0069b9;
-  font-weight: bold;
-  border-bottom: 3px solid #0069b9;
-=======
-.nav-tabs .nav-item .subnav-link:hover {
-  color: var(--primary-color);
-}
-
-.nav-tabs .nav-item .subnav-link.active {
   color: var(--primary-color);
   font-weight: bold;
-  background-color: transparent;
   border-bottom: 3px solid var(--primary-color);
-}
-
-.indexing-input-box {
-  padding-top: 1%;
-  text-align: center;
-}
-
-.indexing-lower-container {
-  width: 100%;
-  margin: 0 auto;
-  border-radius: 8px;
-  background-color: var(--primary-color);
-  padding: 20px;
-}
-
-.list-name {
-  width: 100%;
-  max-width: 700px; 
-  margin: 0 auto;
-  padding: 5px 20px 5px 10px; 
-  text-align: left;
-  background-color: var(--white-color);
-  border-radius: 8px;
-  margin-bottom: 20px;
->>>>>>> Stashed changes
 }
 
 .section-title {
