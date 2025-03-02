@@ -1,43 +1,26 @@
 .index-input-container {
   display: flex;
-  flex-direction: column; 
-  gap: 10px; 
+  flex-direction: column; /* Stack children vertically */
+  gap: 10px; /* Space between input and button */
   margin-top: 15px;
 }
 
-  .index-input-field {
-    flex: 1; 
-    padding: 10px;        
-    font-size: 1rem;        
-    border: 1px solid var(--white-color);  
-    border-radius: 5px;      
-    transition: border-color 0.3s ease; 
-  }
-  
-  
-  .index-input-field:focus {
-    border-color: var(--primary-color);   
-    outline: none;          
-  }
-  
- 
-  .index-input-button {
-    background-color: var(--primary-color);   
-    color: var(--white-color);                 
-    padding: 12px 20px;         
-    border: none;                
-    border-radius: 5px;         
-    font-size: 1rem;            
-    cursor: pointer;             
-    transition: background-color 0.3s ease, transform 0.3s ease; 
-  }
-  
- 
-  .index-input-button:hover {
-    background-color: var(--primary-color);   
-    transform: scale(1.05);      
-  }
-  
+.index-input-field {
+  width: 100%; /* Changed from 95% to 100% for full width */
+  font-family: var(--font-family);
+  height: 50px;
+  padding: 12px 14px;
+  display: block;
+  background-color: var(--white-color);
+  color: var(--text-color);
+  border: none;
+  border-bottom: 3px solid var(--primary-color);
+  font-size: 16px;
+  outline: none;
+  text-align: left;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
 
 .index-input-field:focus {
   border-color: var(--primary-color);
