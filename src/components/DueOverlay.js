@@ -130,7 +130,6 @@ function ReminderOverlay({ onSelectPreset, targetPosition, onClose, bellButtonRe
         minWidth: isCalendarVisible ? "250px" : "auto",
       }}
     >
-      <h4 className="overlay-title">Set Due Date</h4>
       {isCalendarVisible ? (
         <div className="calendar-overlay">
           <div className="calendar-content">

@@ -67,11 +67,21 @@ document.addEventListener("DOMContentLoaded", function () {
     if (target) {
       clearTimeout(showTimeout);
       hideTimeout = setTimeout(() => {
-        tooltip.classList.remove("show");
-        tooltip.style.opacity = "0";
-        tooltip.style.top = "-9999px";
-        tooltip.style.left = "-9999px";
+        hideTooltip();
       }, 100);
     }
   });
+
+  document.addEventListener("click", function () {
+    hideTooltip();
+  });
+
+  function hideTooltip() {
+    clearTimeout(showTimeout);
+    clearTimeout(hideTimeout);
+    tooltip.classList.remove("show");
+    tooltip.style.opacity = "0";
+    tooltip.style.top = "-9999px";
+    tooltip.style.left = "-9999px";
+  }
 });

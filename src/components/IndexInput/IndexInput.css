@@ -1,12 +1,12 @@
 .index-input-container {
   display: flex;
-  flex-direction: column; /* Stack children vertically */
-  gap: 10px; /* Space between input and button */
-  margin-top: 15px;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 5px;
 }
 
 .index-input-field {
-  width: 100%; /* Changed from 95% to 100% for full width */
+  width: 100%;
   font-family: var(--font-family);
   height: 50px;
   padding: 12px 14px;
