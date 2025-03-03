@@ -102,6 +102,16 @@ function TodoItem({ task, onDelete, onUpdateTask }) {
     }, 500);
   };
 
+  const handleDelete = (e) => {
+    e.stopPropagation();
+    console.log(`TodoItem ${task.id} - Delete clicked`);
+  
+    setTimeout(() => {
+      onDelete(task.id);
+    }, 250);
+  };
+  
+
   const handleDueDateMouseUp = (e) => {
     e.stopPropagation();
     console.log(`TodoItem ${task.id} - Mouse up on due date`);
@@ -257,16 +267,14 @@ function TodoItem({ task, onDelete, onUpdateTask }) {
             )}
             <Button
               variant="link"
-              onClick={(e) => {
-                e.stopPropagation();
-                console.log(`TodoItem ${task.id} - Delete clicked`);
-                onDelete(task.id);
-              }}
+              onClick={handleDelete}
               className="delete-btn"
+              data-testid="delete-button"
               aria-label="delete"
             >
               <FaTrashAlt data-tooltip="Delete" data-tooltip-position="top" style={{ width: "20px", height: "20px" }} />
             </Button>
+
           </Col>
         </Row>
 

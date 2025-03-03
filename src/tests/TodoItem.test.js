@@ -1,5 +1,5 @@
 import React from "react";
-import { render, fireEvent, screen } from "@testing-library/react";
+import { render, fireEvent, screen, waitFor } from "@testing-library/react";
 import TodoItem from "../components/TodoItem/TodoItem";
 
 const mockTask = {
@@ -29,9 +29,14 @@ describe("TodoItem Component", () => {
 
   test("should be able to remove task by deleting", async () => {
     render(<TodoItem task={mockTask} onDelete={mockOnDelete} onUpdateTask={mockOnUpdateTask} />);
-    const deleteButton = screen.getByRole("button", { name: /delete/i });
+    const deleteButton = screen.getByTestId("delete-button");
+  
     fireEvent.click(deleteButton);
-    expect(mockOnDelete).toHaveBeenCalledWith(mockTask.id);
+  
+    await waitFor(() => {
+      expect(mockOnDelete).toHaveBeenCalledTimes(1);
+      expect(mockOnDelete).toHaveBeenCalledWith(mockTask.id);
+    });
   });
 
   test("should mark task as completed by checking, not remove it", async () => {

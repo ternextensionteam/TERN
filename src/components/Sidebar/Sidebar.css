@@ -2,7 +2,7 @@
   border-bottom: none !important;
   margin-top: -7px !important; 
   margin-bottom: 0 !important;
-  background-color: #ffffff !important;
+  background-color: var(--white-color) !important;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -14,6 +14,7 @@
   text-decoration: none;
   display: flex;
   align-items: center;
+  margin-bottom: 7px !important; 
   justify-content: center;
   border: none !important;
   background-color: transparent !important;
@@ -23,7 +24,7 @@
 .nav-link:hover,
 .nav-link.active:hover {
   text-decoration: none;
-  background-color: var(--hover-color) !important; /* Apply hover effect even if active */
+  background-color: var(--hover-color) !important;
 }
 
 .nav-link.active {
