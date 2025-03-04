@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 export function useTodoList() {
   const [tasks, setTasks] = useState([]);
@@ -14,7 +14,7 @@ export function useTodoList() {
     loadTasks();
   }, []);
 
-  const addTask = (taskText, hasReminder = false, description = "", dueDate = null) => {
+  const addTask = (taskText, hasReminder = false, description = "", dueDate = null, completed = false) => {
     if (taskText.trim() === "") return;
 
     let validatedDueDate = null;
@@ -33,7 +33,7 @@ export function useTodoList() {
       description: description,
       hasReminder,
       dueDate: validatedDueDate,
-      completed: false,
+      completed,
     };
 
     console.log("useTodoList - Adding task:", newTask);
@@ -104,10 +104,10 @@ export function useTodoList() {
               ...task,
               hasReminder: task.hasReminder ?? false,
               dueDate: parsedDue ? parsedDue.toISOString() : null,
-              completed: task.completed ?? false,
+              completed: task.completed ?? false, 
             };
           });
-          const activeTasks = deserializedTasks.filter((task) => !task.completed);
+          const activeTasks = deserializedTasks.filter((task) => !task.completed); 
           console.log("useTodoList - Loaded all tasks:", deserializedTasks);
           console.log("useTodoList - Filtered active tasks on load:", activeTasks);
           setTasks(activeTasks);
@@ -119,5 +119,5 @@ export function useTodoList() {
     }
   };
 
-  return { tasks, addTask, deleteTask, toggleReminder, updateTask, saveTasks, loadTasks };
+  return { tasks, addTask, deleteTask, toggleReminder, updateTask, saveTasks, loadTasks, setTasks }; // Added setTasks to return value
 }

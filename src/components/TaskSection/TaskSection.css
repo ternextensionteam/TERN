@@ -1,0 +1,10 @@
+.todo-list.scrollable {
+    width: 100%; 
+    max-width: 1000px; 
+    margin: 0 auto;
+    padding: 0; 
+    list-style: none;
+    max-height: 850px; 
+    overflow-y: auto;
+}
+  

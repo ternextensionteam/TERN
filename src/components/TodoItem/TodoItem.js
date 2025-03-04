@@ -198,7 +198,7 @@ function TodoItem({ task, onDelete, onUpdateTask }) {
     return (
       <div
         ref={dueDateRef}
-        className={`due-date-text ${!dueDate ? "no-due-date" : "due-date-set"}`}
+        className={`due-date-text ${!dueDate ? "no-due-date" : new Date(dueDate) < new Date() ? "overdue" : "due-date-set"}`}
         onMouseDown={handleDueDateMouseDown}
         onMouseUp={handleDueDateMouseUp}
         data-tooltip="Due Date"
