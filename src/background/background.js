@@ -144,45 +144,58 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   // Implementing Notifications
   if (request.action === "addTask") {
     let task = request.task;
-    
     console.log("Received new task:", task);
 
-    // Schedule reminder notification
-    if (task.reminder.time) {
-      chrome.alarms.create(`reminder-${task.id}`, { when: task.reminder.time });
-      console.log("Reminder alarm set for task:", task.id, "at", task.reminder.time);
+    // Schedule notification
+    if (task.dueDate && task.hasReminder) {
+      const dueTime = new Date(task.dueDate).getTime();
+      chrome.alarms.create(`task-${task.id}`, { when: dueTime });
+      console.log(`Alarm set for task ${task.id} at ${task.dueDate}`);
     }
-
-    // Schedule due date notification
-    if (task.dueDate) {
-      chrome.alarms.create(`due-${task.id}`, { when: task.dueDate });
-      console.log("Due date alarm set for task:", task.id, "at", task.dueDate);
-    }
-
     sendResponse({ success: true });
   }
 
   if (request.action === "deleteTask") {
-    let taskId = request.taskId;
+    const taskId = request.taskId;
 
     chrome.storage.local.get("tasks", (data) => {
-      let tasks = Array.isArray(data.tasks) ? data.tasks : [];  // ensure tasks is a array
+      let tasks = Array.isArray(data.tasks) ? data.tasks : [];
       let updatedTasks = tasks.filter(task => String(task.id) !== String(taskId)); // Remove task
-      // Save updated task list
+
       chrome.storage.local.set({ tasks: updatedTasks }, () => {
         console.log("Task deleted:", taskId);
 
-        // Clear associated alarms
-        chrome.alarms.clear(`reminder-${taskId}`);
-        chrome.alarms.clear(`due-${taskId}`);
+        // Clear associated alarm (only one alarm per task now)
+        chrome.alarms.clear(`task-${taskId}`, (wasCleared) => {
+          if (wasCleared) {
+            console.log(`Cleared alarm for deleted task: task-${taskId}`);
+          }
+        });
 
-        console.log(`Cleared alarms for deleted task: reminder-${taskId}, due-${taskId}`);
         sendResponse({ success: true });
       });
     });
-    return true;
+
+    return true; // Required for asynchronous sendResponse
   }
-  
+
+  if (request.action === "updateTask") {
+    const { taskId, newDueDate, newHasReminder } = request;
+
+    // Clear the old alarm
+    chrome.alarms.clear(`task-${taskId}`, () => {
+        console.log(`Previous alarm for task ${taskId} cleared.`);
+    });
+
+    // Set a new alarm if the task has a due date and reminders are enabled
+    if (newDueDate && newHasReminder) {
+        const dueTime = new Date(newDueDate).getTime();
+        chrome.alarms.create(`task-${taskId}`, { when: dueTime });
+        console.log(`New alarm set for task ${taskId} at ${newDueDate}`);
+    }
+
+    sendResponse({ success: true });
+}
 });
 
 // Notify the user when a task is due
@@ -191,56 +204,26 @@ chrome.alarms.onAlarm.addListener((alarm) => {
 
   chrome.storage.local.get("tasks", (data) => {
     let tasks = Array.isArray(data.tasks) ? data.tasks : [];
-    let taskId;
-    let type;
-
-    if (alarm.name.startsWith("reminder-")) {
-      taskId = alarm.name.replace("reminder-", "");
-      type = "Reminder";
-    } else if (alarm.name.startsWith("due-")) {
-      taskId = alarm.name.replace("due-", "");
-      type = "Due";
-    }
-
+    let taskId = alarm.name.replace("task-", ""); // Extract task ID
     let task = tasks.find(t => String(t.id) === taskId);
 
-    if (type === "Due") {
-      // Mark the task as overdue
-      task.isOverdue = true;
+    if (task.hasReminder) {
+      let notificationOptions = {
+        type: "basic",
+        title: `Task Due: ${task.text}`,
+        message: task.description || `Your task "${task.text}" is now due!`, // Show description or fallback to default message
+        iconUrl: chrome.runtime.getURL("vector_arts/bell.png"),
+        priority: 2,
+        requireInteraction: true,
+        buttons: [{ title: "Snooze (1 hour)" }] // Add snooze option
+      };
 
-      // Save the updated tasks to storage
-      chrome.storage.local.set({ tasks }, () => {
-        console.log("Task marked as overdue:", task.text);
+      chrome.notifications.clear(alarm.name, () => {
+        chrome.notifications.create(alarm.name, notificationOptions, (notificationId) => {
+          console.log("Notification created:", notificationId);
+        });
       });
     }
-
-    let notificationTitle = type === "Reminder" 
-      ? `Reminder: ${task.text}` 
-      : `Task Due: ${task.text}`;
-
-    let notificationMessage = type === "Reminder" 
-      ? `Your task "${task.text}" is due soon.` 
-      : `Your task "${task.text}" is now due!`;
-
-    let notificationOptions = {
-      type: "basic",
-      title: notificationTitle,
-      message: notificationMessage,
-      iconUrl: chrome.runtime.getURL("vector_arts/bell.png"),
-      priority: 2,
-      requireInteraction: true,
-    };
-
-    // Add snooze button ONLY for due notifications
-    if (type === "Due") {
-      notificationOptions.buttons = [{ title: "Snooze (1 hour)" }];
-    }
-
-    chrome.notifications.clear(alarm.name, () => {
-      chrome.notifications.create(alarm.name, notificationOptions, (notificationId) => {
-        console.log("Notification created:", notificationId);
-      });
-    });
     
   });
 });
@@ -249,37 +232,31 @@ chrome.alarms.onAlarm.addListener((alarm) => {
 chrome.notifications.onButtonClicked.addListener((notificationId, buttonIndex) => {
   let snoozeTime = 60 * 60 * 1000; // 1 hour snooze
   let taskId;
-  let type;
 
-  // Identify whether it was a reminder or due notification
-  if (notificationId.startsWith("reminder-")) {
-    taskId = notificationId.replace("reminder-", "");
-    type = "Reminder";
-  } else if (notificationId.startsWith("due-")) {
-    taskId = notificationId.replace("due-", "");
-    type = "Due";
-  }
+  // Extract task ID from the notification ID
+  taskId = notificationId.replace("task-", ""); // Updated to reflect task notifications
 
   chrome.storage.local.get("tasks", (data) => {
     let tasks = Array.isArray(data.tasks) ? data.tasks : [];
     let task = tasks.find(t => String(t.id) === taskId);
 
     if (task) {
-      let newSnoozeTime = Date.now() + snoozeTime;
-      tasks[taskIndex] = { 
-        ...task, 
-        dueDate: newDueTime, 
-        isOverdue: false 
-      };
+      let newDueTime = Date.now() + snoozeTime; // Add 1 hour for snooze
 
+      // Update task with the new due date
+      task.dueDate = newDueTime;
+
+      // Save the updated tasks to storage
       chrome.storage.local.set({ tasks }, () => {
         console.log("Task snoozed:", task.text, "New due time:", new Date(newDueTime).toLocaleString());
   
         // Create a new alarm for the snoozed task
-        chrome.alarms.create(`due-${task.id}`, { when: newDueTime });
+        chrome.alarms.create(`task-${task.id}`, { when: newDueTime });
   
         // Clear the old notification
-        chrome.notifications.clear(notificationId);
+        chrome.notifications.clear(notificationId, () => {
+          console.log("Old notification cleared:", notificationId);
+        });
       });
     }
   });

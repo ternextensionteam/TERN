@@ -97,6 +97,15 @@ export function useTodoList() {
           : task
       )
     );
+    // Notify background script to update alarm
+    chrome.runtime.sendMessage({ 
+      action: "updateTask", 
+      taskId, 
+      newDueDate, 
+      newHasReminder 
+    }, (response) => {
+      console.log("Task update sent to background:", response);
+    });
   };
 
   const saveTasks = () => {
