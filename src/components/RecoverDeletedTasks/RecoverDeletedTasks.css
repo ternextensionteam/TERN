@@ -1,0 +1,152 @@
+.recover-tasks-container {
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 20px;
+  text-align: center;
+  background-color: var(--white-color);
+  border-radius: 8px;
+  box-sizing: border-box;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 90vh;
+}
+
+.recover-tasks-container h2.section-title {
+  font-size: 1.4rem;
+  margin-bottom: 15px;
+  color: var(--primary-color);
+  position: relative;
+  top: -5px;
+}
+
+.due-date-text {
+  font-size: 0.9rem;
+  margin-top: 4px;
+}
+
+.due-date-text.due-date-set {
+  color: var(--primary-color);
+}
+
+.due-date-text.overdue {
+  color: red;
+}
+
+.due-date-text.no-due-date {
+  color: var(--slight-light-text-color);
+}
+
+.highlighted-border {
+  border-left: 4px solid var(--primary-color) !important;
+}
+
+.default-border {
+  border-left: 4px solid var(--light-text-color) !important;
+}
+
+.custom-checkbox input[type="checkbox"] {
+  accent-color: var(--primary-color);
+  transition: all 0.2s ease-in-out;
+  background-color: transparent;
+  border-color: var(--light-text-color);
+  border-radius: 2px;
+}
+
+.custom-checkbox input[type="checkbox"]:hover {
+  cursor: default;
+  background-color: var(--transparent-blue);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.25rem var(--transparent-blue);
+  transition: all 0.2s ease-in-out;
+}
+
+.custom-checkbox input[type="checkbox"]:checked {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  border-radius: 2px;
+}
+
+.custom-checkbox input[type="checkbox"]:focus {
+  outline: none;
+  border-radius: 2px;
+}
+
+.custom-checkbox input[type="checkbox"]:focus:not(:hover) {
+  box-shadow: none;
+}
+
+/* Task Card Styling */
+.task-card {
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+  padding: 10px;
+  width: 100%;
+  border: 1px solid var(--light-gray-color);
+  border-radius: 8px;
+  box-sizing: border-box;
+  background-color: var(--white-color);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Task Row Styling */
+.task-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  gap: 10px;
+}
+
+/* Task Content Styling*/
+.task-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex: 1;
+  margin-left: 0;
+}
+
+/* Task Name Styling */
+.task-name {
+  font-size: 1.2rem;
+  color: var(--black-color);
+  flex: 1;
+  min-width: 0;
+  margin-left: 0;
+}
+
+.task-name.line-through {
+  text-decoration: line-through;
+}
+
+/* Task Icons Styling (Adjusted for recover button only) */
+.task-icons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+/* Description Styling */
+.description-text {
+  font-size: 0.9rem;
+  color: var(--text-color);
+  word-break: break-word;
+  margin-left: 45px;
+  text-align: left;
+}
+
+.mt-2 {
+  margin-top: 0;
+}
+
+/* Empty Message Styling */
+.empty-message {
+  color: var(--text-color);
+  font-size: 14px;
+  margin-top: 15px;
+}

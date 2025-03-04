@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import "../tooltip";
+import "../base.css";
 import './IndexInput.css'; 
 const IndexInput = ({ add }) => {
   const [inputValue, setInputValue] = useState('');
@@ -17,11 +19,13 @@ const IndexInput = ({ add }) => {
         className="index-input-field"
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
-        placeholder="Enter value"
+        placeholder="Enter link here"
       />
-      <button className="index-input-button" onClick={handleAdd}>
-        Add
-      </button>
+      <div className="index-input-button-container">
+        <button className="index-input-button" onClick={handleAdd}>
+          Add
+        </button>
+      </div>
     </div>
   );
 };

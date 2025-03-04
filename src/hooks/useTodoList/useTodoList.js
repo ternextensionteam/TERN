@@ -1,17 +1,15 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 export function useTodoList() {
   const [tasks, setTasks] = useState([]);
   const [tasksLoaded, setTasksLoaded] = useState(false);
 
-  // Save tasks to Chrome storage whenever they are updated
   useEffect(() => {
     if (tasksLoaded) {
       saveTasks();
     }
   }, [tasks, tasksLoaded]);
 
-  // Load tasks when the component mounts
   useEffect(() => {
     loadTasks();
 
@@ -24,33 +22,14 @@ export function useTodoList() {
     });
   }, []);
 
-  // Add a new task with separate reminder & due date
-  const addTask = (
-    taskText,
-    reminder = { label: "No Reminder", time: null },
-    description = "",
-    dueDate = null
-  ) => {
+  const addTask = (taskText, hasReminder = false, description = "", dueDate = null, completed = false) => {
     if (taskText.trim() === "") return;
 
-    // Validate reminder time
-    let reminderTime = null;
-    if (reminder?.time) {
-      const parsedReminder = new Date(reminder.time);
-      if (!isNaN(parsedReminder.getTime())) {
-        reminderTime = parsedReminder.getTime(); // Store as tiemstamp
-        console.log("Reminder time: ", reminderTime);
-      } else {
-        console.error("Invalid reminder time:", reminder.time);
-      }
-    }
-
-    // Validate due date
-    let due = null;
+    let validatedDueDate = null;
     if (dueDate) {
       const parsedDueDate = new Date(dueDate);
       if (!isNaN(parsedDueDate.getTime())) {
-        due = parsedDueDate.getTime(); // Store as timestamp
+        validatedDueDate = parsedDueDate.toISOString();
       } else {
         console.error("Invalid due date:", dueDate);
       }
@@ -60,15 +39,13 @@ export function useTodoList() {
       id: Date.now(),
       text: taskText,
       description: description,
-      reminder: {
-        label: reminder.label || "No Reminder",
-        time: reminder.time ? new Date(reminder.time).getTime() : null, // Store validated reminder time
-      },
-      dueDate: dueDate ? new Date(dueDate).getTime() : null, // Store validated due date
+      hasReminder,
+      dueDate: validatedDueDate,
+      completed,
     };
     
+    console.log("useTodoList - Adding task:", newTask);
     setTasks((prevTasks) => [...prevTasks, newTask]);
-    
     //add task and notify background script to create alarms
     chrome.storage.local.get("tasks", (data) => {
       let tasks = Array.isArray(data.tasks) ? data.tasks : [];
@@ -85,6 +62,7 @@ export function useTodoList() {
 
   // Delete a task
   const deleteTask = (taskId) => {
+    console.log("useTodoList - Deleting task:", taskId);
     setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
     //notify background script
     chrome.runtime.sendMessage({ action: "deleteTask", taskId }, (response) => {
@@ -92,98 +70,79 @@ export function useTodoList() {
     });
   };
 
-  // Toggle a task's reminder
   const toggleReminder = (taskId) => {
+    console.log("useTodoList - Toggling reminder for task:", taskId);
+    setTasks((prevTasks) =>
+      prevTasks.map((task) =>
+        task.id === taskId
+          ? { ...task, hasReminder: !task.hasReminder }
+          : task
+      )
+    );
+  };
+
+  const updateTask = (taskId, newText, newDescription, newHasReminder, newDueDate, newCompleted) => {
+    console.log("useTodoList - Updating task:", { taskId, newText, newDescription, newHasReminder, newDueDate, newCompleted });
     setTasks((prevTasks) =>
       prevTasks.map((task) =>
         task.id === taskId
           ? {
               ...task,
-              reminder: {
-                ...task.reminder,
-                time: task.reminder.time ? null : new Date().toISOString(), // Toggle reminder time
-              },
+              text: newText !== undefined ? newText : task.text,
+              description: newDescription !== undefined ? newDescription : task.description,
+              hasReminder: newHasReminder !== undefined ? newHasReminder : task.hasReminder,
+              dueDate: newDueDate !== undefined ? newDueDate : task.dueDate,
+              completed: newCompleted !== undefined ? newCompleted : task.completed ?? false,
             }
           : task
       )
     );
   };
 
-  // Update a task's text, description, reminder, or due date
-  const updateTask = (taskId, newText, newDescription, newReminder, newDueDate) => {
-    setTasks((prevTasks) =>
-      prevTasks.map((task) =>
-        task.id === taskId
-          ? {
-              ...task,
-              text: newText || task.text, // Fallback to existing text
-              description: newDescription || task.description, // Fallback to existing description
-              reminder: newReminder || task.reminder, // Fallback to existing reminder
-              dueDate: newDueDate || task.dueDate, // Fallback to existing due date
-              isOverdue: false, // Reset overdue status if due date is changed (snoozed)
-            }
-          : task
-      )
-    );
-  };
-
-  // Save tasks to Chrome local storage
   const saveTasks = () => {
     try {
       const serializedTasks = tasks.map((task) => ({
         ...task,
-        reminder: {
-          label: task.reminder.label,
-          time: task.reminder.time ? task.reminder.time : null,
-        },
+        hasReminder: task.hasReminder,
         dueDate: task.dueDate ? task.dueDate : null,
+        completed: task.completed ?? false,
       }));
       chrome.storage.local.set({ tasks: serializedTasks }, () => {
-        console.log("Tasks saved to Chrome storage:", serializedTasks);
+        console.log("useTodoList - Tasks saved to Chrome storage:", serializedTasks);
       });
     } catch (error) {
-      console.error("Error saving tasks to Chrome storage:", error);
+      console.error("useTodoList - Error saving tasks to Chrome storage:", error);
     }
   };
 
-  // Load tasks from Chrome storage
   const loadTasks = () => {
     try {
       chrome.storage.local.get(["tasks"], (result) => {
         if (result.tasks) {
           const deserializedTasks = result.tasks.map((task) => {
-            let parsedReminder = task.reminder?.time ? new Date(task.reminder.time) : null;
             let parsedDue = task.dueDate ? new Date(task.dueDate) : null;
-
-            // Validate reminder time
-            if (parsedReminder && isNaN(parsedReminder.getTime())) {
-              console.error("Invalid reminder time in loaded task:", task.reminder.time);
-              parsedReminder = null;
-            }
-
-            // Validate due date
             if (parsedDue && isNaN(parsedDue.getTime())) {
               console.error("Invalid due date in loaded task:", task.dueDate);
               parsedDue = null;
             }
-
             return {
               ...task,
-              reminder: {
-                label: task.reminder.label,
-                time: task.reminder.time ? Number(task.reminder.time) : null,
-              },
-              dueDate: task.dueDate ? Number(task.dueDate) : null,
+              hasReminder: task.hasReminder ?? false,
+              dueDate: parsedDue ? parsedDue.toISOString() : null,
+              completed: task.completed ?? false, 
             };
           });
-          setTasks(deserializedTasks);
+          const activeTasks = deserializedTasks.filter((task) => !task.completed); 
+          console.log("useTodoList - Loaded all tasks:", deserializedTasks);
+          console.log("useTodoList - Filtered active tasks on load:", activeTasks);
+          setTasks(activeTasks);
         }
         setTasksLoaded(true);
       });
     } catch (error) {
-      console.error("Error loading tasks from Chrome storage:", error);
+      console.error("useTodoList - Error loading tasks from Chrome storage:", error);
     }
   };
 
-  return { tasks, addTask, deleteTask, toggleReminder, updateTask, saveTasks, loadTasks };
+  return { tasks, addTask, deleteTask, toggleReminder, updateTask, saveTasks, loadTasks, setTasks }; // Added setTasks to return value
 }

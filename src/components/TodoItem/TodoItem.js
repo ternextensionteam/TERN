@@ -3,10 +3,8 @@ import { Card, Row, Col, Form, Collapse, Button } from "react-bootstrap";
 import { FaTrashAlt, FaBell, FaBellSlash } from "react-icons/fa";
 import "../tooltip";
 import "../base.css";
-import "./TodoItem.css";
-import ReminderOverlay from "../ReminderOverlay";
 import DueOverlay from "../DueOverlay";
-import { formatReminderTime, formatDueDate } from "../FormatTime";
+import "./TodoItem.css";
 
 function TodoItem({ task, onDelete, onUpdateTask }) {
   const [isDescriptionVisible, setIsDescriptionVisible] = useState(false);
@@ -15,42 +13,30 @@ function TodoItem({ task, onDelete, onUpdateTask }) {
   const [isEditingDescription, setIsEditingDescription] = useState(false);
   const [newText, setNewText] = useState(task.text || "");
   const [newDescription, setNewDescription] = useState(task.description || "");
-  const [isChecked, setIsChecked] = useState(task.completed || false);
-  const [reminder, setReminder] = useState(task.reminder || { label: "No Reminder", time: null });
+  const [isChecked, setIsChecked] = useState(task.completed ?? false);
+  const [hasReminder, setHasReminder] = useState(task.hasReminder || false);
   const [dueDate, setDueDate] = useState(task.dueDate || null);
-  const [showReminderOverlay, setShowReminderOverlay] = useState(false);
   const [showDueOverlay, setShowDueOverlay] = useState(false);
   const [overlayPosition, setOverlayPosition] = useState({ top: 0, left: 0 });
 
   const bellButtonRef = useRef(null);
   const dueDateRef = useRef(null);
+  const longPressTimer = useRef(null);
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      const isClickOutside = !event.target.closest('.overlay-popup') && 
-        !event.target.closest('.reminder-btn') && 
-        !event.target.closest('.due-date-text');
-      
-      if (isClickOutside) {
-        if (showReminderOverlay) setShowReminderOverlay(false);
-        if (showDueOverlay) setShowDueOverlay(false);
-      }
-    };
-
-    if (showReminderOverlay || showDueOverlay) {
-      window.addEventListener('click', handleClickOutside, true);
-      return () => {
-        window.removeEventListener('click', handleClickOutside, true);
-      };
+    console.log(`TodoItem ${task.id} - useEffect triggered with props:`, task);
+    if (newText !== task.text) setNewText(task.text || "");
+    if (newDescription !== task.description) setNewDescription(task.description || "");
+    if (hasReminder !== task.hasReminder) setHasReminder(task.hasReminder || false);
+    if (dueDate !== task.dueDate) {
+      const parsedDueDate = task.dueDate ? new Date(task.dueDate) : null;
+      setDueDate(parsedDueDate && !isNaN(parsedDueDate.getTime()) ? parsedDueDate.toISOString() : null);
     }
-  }, [showReminderOverlay, showDueOverlay]);
-
-  useEffect(() => {
-    setNewText(task.text || "");
-    setNewDescription(task.description || "");
-    setIsChecked(task.completed || false);
-    setReminder(task.reminder || { label: "No Reminder", time: null });
-    setDueDate(task.dueDate || null);
+    const taskCompleted = task.completed ?? false;
+    if (isChecked !== taskCompleted) {
+      console.log(`TodoItem ${task.id} - Setting isChecked to: ${taskCompleted}`);
+      setIsChecked(taskCompleted);
+    }
   }, [task]);
 
   const handleKeyPress = (event, saveFunction) => {
@@ -66,114 +52,160 @@ function TodoItem({ task, onDelete, onUpdateTask }) {
       setNewText(task.text);
       return;
     }
-    onUpdateTask(task.id, newText.trim(), task.description, task.reminder, task.dueDate, task.completed);
+    console.log(`TodoItem ${task.id} - Saving title:`, { text: newText.trim(), description: newDescription, hasReminder, dueDate, completed: isChecked });
+    if (typeof onUpdateTask !== "function") {
+      console.error(`TodoItem ${task.id} - onUpdateTask is not a function! Current value:`, onUpdateTask);
+      return;
+    }
+    onUpdateTask(task.id, newText.trim(), newDescription, hasReminder, dueDate, isChecked);
   };
 
   const saveDescription = () => {
     setIsEditingDescription(false);
-    if (newDescription.trim() === "") {
-      setNewDescription(task.description);
+    console.log(`TodoItem ${task.id} - Saving description:`, { text: newText, description: newDescription.trim(), hasReminder, dueDate, completed: isChecked });
+    if (typeof onUpdateTask !== "function") {
+      console.error(`TodoItem ${task.id} - onUpdateTask is not a function! Current value:`, onUpdateTask);
       return;
     }
-    onUpdateTask(task.id, task.text, newDescription.trim(), task.reminder, task.dueDate, task.completed);
+    onUpdateTask(task.id, newText, newDescription.trim(), hasReminder, dueDate, isChecked);
   };
 
   const handleCheckboxChange = () => {
     const newCheckedState = !isChecked;
+    console.log(`TodoItem ${task.id} - Checkbox toggled from ${isChecked} to ${newCheckedState}`);
     setIsChecked(newCheckedState);
-    onUpdateTask(task.id, task.text, task.description, task.reminder, task.dueDate, newCheckedState);
+    console.log(`TodoItem ${task.id} - Calling onUpdateTask with:`, { text: newText, description: newDescription, hasReminder, dueDate, completed: newCheckedState });
+    if (typeof onUpdateTask !== "function") {
+      console.error(`TodoItem ${task.id} - onUpdateTask is not a function! Current value:`, onUpdateTask);
+      return;
+    }
+    onUpdateTask(task.id, newText, newDescription, hasReminder, dueDate, newCheckedState);
   };
 
   const handleReminderClick = (e) => {
     e.stopPropagation();
-    if (bellButtonRef.current) {
-      const rect = bellButtonRef.current.getBoundingClientRect();
-      setOverlayPosition({
-        top: rect.bottom + window.scrollY,
-        left: rect.left + window.scrollX,
-      });
-      setShowReminderOverlay((prev) => !prev);
+    const newReminderState = !hasReminder;
+    setHasReminder(newReminderState);
+    console.log(`TodoItem ${task.id} - Reminder toggled to ${newReminderState}`);
+    if (typeof onUpdateTask !== "function") {
+      console.error(`TodoItem ${task.id} - onUpdateTask is not a function! Current value:`, onUpdateTask);
+      return;
     }
+    onUpdateTask(task.id, newText, newDescription, newReminderState, dueDate, isChecked);
   };
 
-  const handlePresetSelect = (preset) => {
-    const newReminder = {
-      label: preset.label || "No Reminder",
-      time: preset.label === "Tomorrow" ? "2025-02-20T10:00:00Z" : preset.time,
-    };
-    setReminder(newReminder);
-    setShowReminderOverlay(false);
-    onUpdateTask(task.id, task.text, task.description, newReminder, task.dueDate, false);
-  };
-
-  const handleDueDateClick = (e) => {
+  const handleDueDateMouseDown = (e) => {
     e.stopPropagation();
-    if (dueDateRef.current) {
-      const rect = dueDateRef.current.getBoundingClientRect();
-      setOverlayPosition({
-        top: rect.bottom + window.scrollY,
-        left: rect.left + window.scrollX,
-      });
-      setShowDueOverlay((prev) => !prev);
+    console.log(`TodoItem ${task.id} - Mouse down on due date`);
+    longPressTimer.current = setTimeout(() => {
+      setShowDueOverlay(false);
+    }, 500);
+  };
+
+  const handleDelete = (e) => {
+    e.stopPropagation();
+    console.log(`TodoItem ${task.id} - Delete clicked`);
+  
+    setTimeout(() => {
+      onDelete(task.id);
+    }, 250);
+  };
+  
+
+  const handleDueDateMouseUp = (e) => {
+    e.stopPropagation();
+    console.log(`TodoItem ${task.id} - Mouse up on due date`);
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+
+      if (dueDateRef.current) {
+        const rect = dueDateRef.current.getBoundingClientRect();
+        setOverlayPosition({
+          top: rect.bottom + window.scrollY,
+          left: rect.left + window.scrollX,
+        });
+        console.log(`TodoItem ${task.id} - Toggling DueOverlay, current state: ${showDueOverlay}`);
+        setShowDueOverlay((prev) => !prev);
+      }
     }
   };
 
-  const handleDueDateSelect = (date) => {
-    const newDueDate = date ? `${date}:00Z` : null;
+  const handleDueDateSelect = (preset) => {
+    console.log(`TodoItem ${task.id} - Selected preset from DueOverlay:`, preset);
+    let newDueDate = null;
+    if (preset && preset.time) {
+      const parsedDate = new Date(preset.time);
+      if (!isNaN(parsedDate.getTime())) {
+        newDueDate = parsedDate.toISOString();
+      } else {
+        console.error(`TodoItem ${task.id} - Invalid time in preset:`, preset.time);
+      }
+    }
+    console.log(`TodoItem ${task.id} - New due date set:`, newDueDate);
     setDueDate(newDueDate);
     setShowDueOverlay(false);
-    onUpdateTask(task.id, task.text, task.description, task.reminder, newDueDate, false);
+    if (typeof onUpdateTask !== "function") {
+      console.error(`TodoItem ${task.id} - onUpdateTask is not a function! Current value:`, onUpdateTask);
+      return;
+    }
+    onUpdateTask(task.id, newText, newDescription, hasReminder, newDueDate, isChecked);
   };
 
   const renderReminderIcon = () => {
-    if (!reminder.time) {
-      return (
-        <FaBellSlash
-          className="reminder-icon reminder-off"
-          data-tooltip="No Reminder"
-          data-tooltip-position="top"
-          style={{ width: "24px", height: "24px" }}
-        />
-      );
-    }
-
-    let formattedTime = "Reminder";
-    try {
-      formattedTime = formatReminderTime(reminder.time);
-    } catch (error) {
-      formattedTime = "Invalid Time";
-    }
     return (
-      <FaBell
-        className="reminder-icon reminder-on"
-        data-tooltip={formattedTime}
-        data-tooltip-position="top"
-        style={{ width: "24px", height: "24px" }}
-      />
+      <Button
+        ref={bellButtonRef}
+        variant="link"
+        onClick={handleReminderClick}
+        className="reminder-btn"
+      >
+        {hasReminder ? (
+          <FaBell
+            className="reminder-icon reminder-on"
+            data-tooltip="Reminder on"
+            data-tooltip-position="top"
+            style={{ width: "24px", height: "24px" }}
+          />
+        ) : (
+          <FaBellSlash
+            className="reminder-icon reminder-off"
+            data-tooltip="No Reminder"
+            data-tooltip-position="top"
+            style={{ width: "24px", height: "24px" }}
+          />
+        )}
+      </Button>
     );
   };
 
   const renderDueDate = () => {
-    const isNoDueDate = !dueDate;
-    const formattedDueDate = isNoDueDate ? "No Due Date" : formatDueDate(dueDate);
+    const formatDateTime = (date) => {
+      if (!date) return "No Due Date";
+      const dueDate = new Date(date);
+      if (isNaN(dueDate.getTime())) return "Invalid Date";
+
+      return dueDate.toLocaleString("en-US", {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+      }).replace(/,/, "");
+    };
 
     return (
       <div
         ref={dueDateRef}
-        className={`due-date-text ${isNoDueDate ? "no-due-date" : "due-date-set"}`}
-        onClick={handleDueDateClick}
+        className={`due-date-text ${!dueDate ? "no-due-date" : new Date(dueDate) < new Date() ? "overdue" : "due-date-set"}`}
+        onMouseDown={handleDueDateMouseDown}
+        onMouseUp={handleDueDateMouseUp}
         data-tooltip="Due Date"
         data-tooltip-position="top"
         data-testid="due-date"
       >
-        <input
-          type="datetime-local"
-          value={dueDate ? new Date(dueDate).toISOString().slice(0, 16) : ""}
-          onChange={(e) => handleDueDateSelect(e.target.value)}
-          style={{ display: "none" }}
-          aria-label="due date"
-        />
-        {formattedDueDate}
+        {formatDateTime(dueDate)}
       </div>
     );
   };
@@ -187,7 +219,8 @@ function TodoItem({ task, onDelete, onUpdateTask }) {
           setIsHovering(false);
         }
       }}
-      onClick={() => {
+      onClick={(e) => {
+        e.stopPropagation();
         if (!isEditingDescription) {
           setIsDescriptionVisible(!isDescriptionVisible);
         }
@@ -226,41 +259,25 @@ function TodoItem({ task, onDelete, onUpdateTask }) {
             {renderDueDate()}
           </Col>
           <Col xs="auto" className="task-icons">
-            <Button 
-              ref={bellButtonRef} 
-              variant="link" 
-              onClick={handleReminderClick} 
-              className="reminder-btn"
-              aria-label="reminder"
-              data-tooltip="Reminder"
-              data-tooltip-position="top"
-            >
-              {renderReminderIcon()}
-            </Button>
-            {showReminderOverlay && (
-              <ReminderOverlay
-                onSelectPreset={handlePresetSelect}
-                targetPosition={overlayPosition}
-                onClose={() => setShowReminderOverlay(false)}
-                bellButtonRef={bellButtonRef}
-              />
-            )}
+            {renderReminderIcon()}
             {showDueOverlay && (
               <DueOverlay
-                onSelectDate={handleDueDateSelect}
+                onSelectPreset={handleDueDateSelect}
                 targetPosition={overlayPosition}
                 onClose={() => setShowDueOverlay(false)}
-                calendarButtonRef={dueDateRef}
+                bellButtonRef={dueDateRef}
               />
             )}
-            <Button 
-              variant="link" 
-              onClick={(e) => { e.stopPropagation(); onDelete(task.id); }} 
+            <Button
+              variant="link"
+              onClick={handleDelete}
               className="delete-btn"
+              data-testid="delete-button"
               aria-label="delete"
             >
               <FaTrashAlt data-tooltip="Delete" data-tooltip-position="top" style={{ width: "20px", height: "20px" }} />
             </Button>
+
           </Col>
         </Row>
 

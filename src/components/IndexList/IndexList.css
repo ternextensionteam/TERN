@@ -1,37 +1,44 @@
-
-ul {
-  list-style-type: none; 
-  padding: 0; 
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: #ffffff; 
-  border-radius: 8px; 
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); 
-  overflow: hidden; 
-  max-width: 400px; 
-  margin: 20px auto; 
+.index-list-container {
+  width: 100%;
+  overflow: visible;
 }
 
-
-li {
-  padding: 12px;
-  border: 1px solid #ddd;
+.index-card {
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+  padding: 10px;
+  width: 100%;
+  border: 1px solid var(--light-gray-color);
   border-radius: 8px;
-  font-size: 16px;
-  color: #333;
-  background-color: #f9f9f9;
-  margin-bottom: 10px; 
-  cursor: pointer;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  box-sizing: border-box;
+  background-color: var(--white-color);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-
-li:hover {
-  background-color: #FFA500; 
-  color: white; 
+.index-url {
+  font-size: 1.2rem;
+  color: var(--black-color);
+  flex: 1;
+  min-width: 0;
+  word-break: break-word;
 }
 
+.index-icons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
 
-li:last-child {
-  border-bottom: none;
+.delete-btn {
+  color: var(--primary-color) !important;
+}
+
+.fa-trash-alt {
+  width: 22px !important;
+  height: 22px !important;
+  vertical-align: middle;
+  color: var(--primary-color);
 }

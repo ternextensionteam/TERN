@@ -12,12 +12,10 @@
 }
 
 
-/* Increase default position further to the right */
 .reminder-popup {
     right: -80px;
 }
 
-/* Prevents overlay from going outside the card */
 .reminder-overlay.adjust-left {
     left: auto;
     right: 0;
