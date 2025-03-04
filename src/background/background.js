@@ -174,12 +174,11 @@ chrome.alarms.onAlarm.addListener((alarm) => {
       type = "Due";
     }
 
-    let taskIndex = tasks.findIndex(t => String(t.id) === taskId);
-    let task = tasks[task];
+    let task = tasks.find(t => String(t.id) === taskId);
 
     if (type === "Due") {
       // Mark the task as overdue
-      tasks[taskIndex] = { ...task, isOverdue: true };
+      task.isOverdue = true;
 
       // Save the updated tasks to storage
       chrome.storage.local.set({ tasks }, () => {
@@ -239,12 +238,21 @@ chrome.notifications.onButtonClicked.addListener((notificationId, buttonIndex) =
 
     if (task) {
       let newSnoozeTime = Date.now() + snoozeTime;
+      tasks[taskIndex] = { 
+        ...task, 
+        dueDate: newDueTime, 
+        isOverdue: false 
+      };
 
-      // Re-create the alarm for snoozed task
-      chrome.alarms.create(notificationId, { when: newSnoozeTime });
-      console.log(`${type} snoozed for task: ${task.text} until ${new Date(newSnoozeTime).toLocaleString()}`);
-
-      chrome.notifications.clear(notificationId);
+      chrome.storage.local.set({ tasks }, () => {
+        console.log("Task snoozed:", task.text, "New due time:", new Date(newDueTime).toLocaleString());
+  
+        // Create a new alarm for the snoozed task
+        chrome.alarms.create(`due-${task.id}`, { when: newDueTime });
+  
+        // Clear the old notification
+        chrome.notifications.clear(notificationId);
+      });
     }
   });
 });

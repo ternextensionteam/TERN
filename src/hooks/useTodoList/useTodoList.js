@@ -14,6 +14,14 @@ export function useTodoList() {
   // Load tasks when the component mounts
   useEffect(() => {
     loadTasks();
+
+    // Listen for storage updates (overdue tasks or snooxe)
+    chrome.storage.onChanged.addListener((changes) => {
+      if (changes.tasks) {
+        console.log("Tasks updated in storage:", changes.tasks.newValue);
+        setTasks(changes.tasks.newValue || []);
+      }
+    });
   }, []);
 
   // Add a new task with separate reminder & due date
@@ -112,6 +120,7 @@ export function useTodoList() {
               description: newDescription || task.description, // Fallback to existing description
               reminder: newReminder || task.reminder, // Fallback to existing reminder
               dueDate: newDueDate || task.dueDate, // Fallback to existing due date
+              isOverdue: false, // Reset overdue status if due date is changed (snoozed)
             }
           : task
       )
