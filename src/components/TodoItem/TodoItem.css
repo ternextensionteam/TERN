@@ -1,12 +1,3 @@
-/* Due Date Styling */
-.due-date-text {
-  color: var(--primary-color);
-}
-
-.due-date-text.overdue {
-  color: red;
-}
-
 /* Card Border Styling */
 .highlighted-border {
   border-left: 4px solid var(--primary-color) !important;
@@ -295,4 +286,13 @@
   flex: 1; 
   min-width: 0;
   margin-left: 0; 
+}
+
+/* Due Date Styling */
+.due-date-text {
+  color: var(--primary-color);
+}
+
+.due-date-text.overdue {
+  color: red;
 }
