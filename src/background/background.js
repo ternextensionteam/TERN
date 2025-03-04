@@ -79,9 +79,8 @@ function removeDuplicates(results){
   }
 }
 
-chrome.omnibox.onInputChanged.addListener((text, suggest) => {
-  if (!text.trim()) return;
 
+function getSuggestions (text) {
   // Perform a MiniSearch query
   let results = miniSearch.search(text, { prefix: true, fuzzy: 0.2 });
   let filteredResults = results.filter((result) => result.score > SCORE_THRESHOLD).slice(0,10);
@@ -99,7 +98,12 @@ chrome.omnibox.onInputChanged.addListener((text, suggest) => {
       description: `No indexed pages found for "${text}"`,
     });
   }
+  return suggestions;
+}
 
+chrome.omnibox.onInputChanged.addListener((text, suggest) => {
+  if (!text.trim()) return;
+  const suggestions = getSuggestions(text);
   suggest(suggestions);
 });
 
