@@ -251,7 +251,6 @@ function TodoItem({ task, onDelete, onUpdateTask }) {
             ) : (
               <div className={`task-name ${isChecked ? "line-through" : ""}`} 
               onDoubleClick={() => setIsEditing(true)}
-              style={{ color: isOverdue ? "red" : "black" }} // task turns red if overdue
               >
                 {newText}
               </div>
