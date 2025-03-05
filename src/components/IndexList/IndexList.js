@@ -3,14 +3,11 @@ import { Card, Row, Col, Button } from "react-bootstrap";
 import { FaTrashAlt } from "react-icons/fa";
 import './IndexList.css';
 
-const IndexList = ({ items = [], onDelete }) => {
-  const handleDelete = (e, index) => {
+const IndexList = ({ items = [], onDelete, activeIndexSection}) => {
+  const handleDelete = (e, item) => {
     e.stopPropagation();
-    console.log(`IndexList - Delete clicked for item ${index}`);
-
-    setTimeout(() => {
-      if (onDelete) onDelete(index);
-    }, 250);
+    console.log(`IndexList - Delete clicked for item ${item}`);
+    onDelete(activeIndexSection, item);
   };
 
   return (
@@ -25,7 +22,7 @@ const IndexList = ({ items = [], onDelete }) => {
               <Col xs="auto" className="index-icons">
                 <Button
                   variant="link"
-                  onClick={(e) => handleDelete(e, index)}
+                  onClick={(e) => handleDelete(e, item)}
                   className="delete-btn"
                   aria-label="delete"
                 >

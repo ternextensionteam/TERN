@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import "../tooltip";
 import "../base.css";
 import './IndexInput.css'; 
-const IndexInput = ({ add }) => {
+const IndexInput = ({ add, activeIndexSection}) => {
   const [inputValue, setInputValue] = useState('');
 
   const handleAdd = () => {
     if (inputValue.trim()) {
-      add(inputValue);
+      add( activeIndexSection, inputValue);
       setInputValue('');
     }
   };

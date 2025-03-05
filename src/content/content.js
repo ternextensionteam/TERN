@@ -1,13 +1,6 @@
-import { checkWhitelist } from "../utils/WhitelistChecker.js";
+import { isUrlWhitelisted, STORAGE_KEY } from "../utils/WhitelistChecker.js";
 
 console.log("Content script loaded.");
-// Cached whitelist
-let cachedWhitelist = {
-  sites: [],
-  urls: [],
-  stringMatches: [],
-  regex: []
-};
 
 // Debounce delay (in milliseconds)
 const DEBOUNCE_DELAY = 10000;
@@ -27,13 +20,13 @@ let observer = null;
 // Utility to manage the observer
 async function manageObserver() {
   const currentURL = window.location.href;
-  const isWhitelisted = await checkWhitelist(currentURL, cachedWhitelist);
+  const isWhitelisted = await isUrlWhitelisted(currentURL);
 
   if (isWhitelisted) {
     console.log("Page is whitelisted. Starting observer...");
     // If not already observing, set up the observer
     if (!observer) {
-        console.log("Setting up observer...");
+      console.log("Setting up observer...");
       observer = new MutationObserver(
         debounce(async () => {
           console.log("DOM mutated, re-indexing...");
@@ -44,7 +37,7 @@ async function manageObserver() {
       observer.observe(document.body, {
         childList: true,
         subtree: true,
-        characterData: true
+        characterData: true,
       });
 
       // Send initial page data
@@ -60,28 +53,11 @@ async function manageObserver() {
   }
 }
 
-// Load whitelist from storage on script load
-chrome.storage.local.get(
-  ["allowedSites", "allowedURLs", "allowedStringMatches", "allowedRegex"],
-  (result) => {
-    cachedWhitelist.sites = result.allowedSites || [];
-    cachedWhitelist.urls = result.allowedURLs || [];
-    cachedWhitelist.stringMatches = result.allowedStringMatches || [];
-    cachedWhitelist.regex = result.allowedRegex || [];
+manageObserver();
 
-    // Check if the current page is whitelisted and manage the observer
-    manageObserver();
-  }
-);
-
-// Update cache and recheck observer when the whitelist changes
+// Update recheck observer when the whitelist changes
 chrome.storage.onChanged.addListener((changes, namespace) => {
-  if (namespace === "local") {
-    if (changes.allowedSites) cachedWhitelist.sites = changes.allowedSites.newValue || [];
-    if (changes.allowedURLs) cachedWhitelist.urls = changes.allowedURLs.newValue || [];
-    if (changes.allowedStringMatches) cachedWhitelist.stringMatches = changes.allowedStringMatches.newValue || [];
-    if (changes.allowedRegex) cachedWhitelist.regex = changes.allowedRegex.newValue || [];
-
+  if (namespace === "local" && changes[STORAGE_KEY]) {
     // Recheck if the current page is whitelisted
     manageObserver();
   }
@@ -89,11 +65,11 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
 
 // Function to send page data
 async function sendPageData() {
-    console.log("Sending page data...");
+  console.log("Sending page data...");
   const currentURL = window.location.href;
   const currentTitle = document.title;
 
-  const isWhitelisted = await checkWhitelist(currentURL, cachedWhitelist);
+  const isWhitelisted = await isUrlWhitelisted(currentURL);
 
   if (isWhitelisted) {
     const pageContent = document.body.innerText;
@@ -101,7 +77,7 @@ async function sendPageData() {
       action: "indexPage",
       url: currentURL,
       title: currentTitle,
-      content: pageContent
+      content: pageContent,
     });
   }
 }
