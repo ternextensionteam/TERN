@@ -97,8 +97,13 @@ const SettingsSection = () => {
       try {
         const data = JSON.parse(e.target.result);
         chrome.storage.local.set(data, () => {
-          const newTheme = data.theme || "system";
-          const newThemeColor = data.themeColor || "#0069b9";
+          console.log("Backup restored.");
+          chrome.runtime.sendMessage({
+            action: "backup_imported",
+          });
+    
+          const newTheme = data.theme || 'system';
+          const newThemeColor = data.themeColor || '#0069b9';
           setTheme(newTheme);
           setThemeColor(newThemeColor);
           applyThemeGlobally(newTheme, newThemeColor);
