@@ -196,6 +196,22 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
     sendResponse({ success: true });
 }
+
+  if (request.action === "backup_imported") {
+    chrome.storage.local.get("tasks", (data) => {
+      let tasks = Array.isArray(data.tasks) ? data.tasks : [];
+      chrome.alarms.clearAll();
+      for (let task of tasks) {
+        if (task.dueDate && task.hasReminder) {
+          const dueTime = new Date(task.dueDate).getTime();
+          chrome.alarms.create(`task-${task.id}`, { when: dueTime });
+          console.log(`Alarm set for task ${task.id} at ${task.dueDate}`);
+        }
+      }
+
+    });
+  };
+
 });
 
 // Notify the user when a task is due

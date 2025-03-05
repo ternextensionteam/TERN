@@ -24,6 +24,9 @@ function importBackup(event) {
     const data = JSON.parse(e.target.result);
     chrome.storage.local.set(data, () => {
       console.log("Backup restored.");
+      chrome.runtime.sendMessage({
+        action: "backup_imported",
+      });
     });
   };
   reader.readAsText(file);
