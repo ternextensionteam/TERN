@@ -7,48 +7,69 @@ import "./SettingsSection.css";
 const SettingsSection = () => {
   const fileInputRef = useRef(null);
   const colorUpdateRef = useRef(null);
-  const [theme, setTheme] = useState(null);
-  const [themeColor, setThemeColor] = useState(null);
+  const [theme, setTheme] = useState("system");
+  const [themeColor, setThemeColor] = useState("#0069b9");
   const [isLoading, setIsLoading] = useState(true);
+
+  const defaultColors = {
+    light: "#0069b9",
+    dark: "#76baff",
+  };
+
+  const lightenColorWithOpacity = (color, opacity = 0.2) => {
+    let num = parseInt(color.slice(1), 16);
+    let r = (num >> 16) & 0xff;
+    let g = (num >> 8) & 0xff;
+    let b = num & 0xff;
+    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+  };
+
+  const applyThemeGlobally = (newTheme, newThemeColor) => {
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const effectiveTheme = newTheme === "system" ? (prefersDark ? "dark" : "light") : newTheme;
+    const defaultThemeColor = effectiveTheme === "dark" ? defaultColors.dark : defaultColors.light;
+
+    const finalThemeColor =
+      newThemeColor === defaultColors.light || newThemeColor === defaultColors.dark || !newThemeColor
+        ? defaultThemeColor
+        : newThemeColor;
+
+    document.documentElement.setAttribute("data-theme", newTheme);
+    document.documentElement.style.setProperty("--primary-color", finalThemeColor);
+    document.documentElement.style.setProperty("--hover-color", lightenColorWithOpacity(finalThemeColor, 0.2));
+
+    chrome.storage.local.set({ theme: newTheme, themeColor: finalThemeColor }, () => {
+      chrome.runtime.sendMessage({
+        type: "applyTheme",
+        theme: newTheme,
+        themeColor: finalThemeColor,
+      });
+    });
+  };
 
   useEffect(() => {
     const loadSettings = () => {
-      try {
-        chrome.storage.local.get(['theme', 'themeColor'], (result) => {
-          console.log('Loading settings from chrome.storage.local:', result);
-          const savedTheme = result.theme || 'system';
-          const savedThemeColor = result.themeColor || '#0069b9';
+      chrome.storage.local.get(["theme", "themeColor"], (result) => {
+        const savedTheme = result.theme || "system";
+        const savedThemeColor = result.themeColor || "#0069b9";
 
-          setTheme(savedTheme);
-          setThemeColor(savedThemeColor);
-          applyTheme(savedTheme, savedThemeColor);
-          setIsLoading(false);
-        });
-      } catch (error) {
-        console.error('Error loading settings:', error);
-        applyDefaultSettings();
+        setTheme(savedTheme);
+        setThemeColor(savedThemeColor);
+        applyThemeGlobally(savedTheme, savedThemeColor);
+
         setIsLoading(false);
-      }
-    };
-
-    const applyDefaultSettings = () => {
-      setTheme('system');
-      setThemeColor('#0069b9');
-      applyTheme('system', '#0069b9');
+      });
     };
 
     loadSettings();
 
     const storageChangeHandler = (changes, area) => {
-      if (area === 'local' && (changes.theme || changes.themeColor)) {
-        console.log('Storage changed, reloading settings:', changes);
-        setIsLoading(true);
+      if (area === "local" && (changes.theme || changes.themeColor)) {
         loadSettings();
       }
     };
 
     chrome.storage.onChanged.addListener(storageChangeHandler);
-
     return () => chrome.storage.onChanged.removeListener(storageChangeHandler);
   }, []);
 
@@ -64,9 +85,7 @@ const SettingsSection = () => {
         a.click();
         document.body.removeChild(a);
       });
-    } catch (error) {
-      console.error('Error exporting backup:', error);
-    }
+    } catch (error) {}
   };
 
   const importBackup = (event) => {
@@ -78,16 +97,13 @@ const SettingsSection = () => {
       try {
         const data = JSON.parse(e.target.result);
         chrome.storage.local.set(data, () => {
-          console.log("Backup restored.");
-          const newTheme = data.theme || 'system';
-          const newThemeColor = data.themeColor || '#0069b9';
+          const newTheme = data.theme || "system";
+          const newThemeColor = data.themeColor || "#0069b9";
           setTheme(newTheme);
           setThemeColor(newThemeColor);
-          applyTheme(newTheme, newThemeColor);
+          applyThemeGlobally(newTheme, newThemeColor);
         });
-      } catch (error) {
-        console.error('Error importing backup:', error);
-      }
+      } catch (error) {}
     };
     reader.readAsText(file);
   };
@@ -96,42 +112,20 @@ const SettingsSection = () => {
     fileInputRef.current.click();
   };
 
-  const applyTheme = (newTheme, newThemeColor = themeColor) => {
-    try {
-      setTheme(newTheme);
-      document.documentElement.setAttribute('data-theme', newTheme);
+  const applyTheme = (newTheme) => {
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const effectiveTheme = newTheme === "system" ? (prefersDark ? "dark" : "light") : newTheme;
+    const defaultThemeColor = effectiveTheme === "dark" ? defaultColors.dark : defaultColors.light;
 
-      let defaultThemeColor;
-      if (newTheme === 'system') {
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
-        defaultThemeColor = prefersDark ? '#76baff' : '#0069b9';
-      } else if (newTheme === 'dark') {
-        defaultThemeColor = '#76baff';
-      } else { // light mode
-        defaultThemeColor = '#0069b9';
-      }
-
-      const finalThemeColor = newThemeColor === '#0069b9' || newThemeColor === '#76baff' || !newThemeColor
+    setTheme(newTheme);
+    // Only use default color if no custom color exists
+    const finalThemeColor =
+      themeColor === defaultColors.light || themeColor === defaultColors.dark || !themeColor
         ? defaultThemeColor
-        : newThemeColor;
+        : themeColor;
 
-      setThemeColor(finalThemeColor);
-      document.documentElement.style.setProperty('--primary-color', finalThemeColor);
-
-      chrome.storage.local.set({ theme: newTheme, themeColor: finalThemeColor }, (error) => {
-        if (error) console.error('Error saving theme:', error);
-        else console.log('Theme saved:', newTheme, 'Theme color:', finalThemeColor);
-      });
-
-      chrome.runtime.sendMessage({
-        type: 'applyTheme',
-        theme: newTheme,
-        themeColor: finalThemeColor,
-      });
-    } catch (error) {
-      console.error('Error applying theme:', error);
-    }
+    setThemeColor(finalThemeColor);
+    applyThemeGlobally(newTheme, finalThemeColor);
   };
 
   const debounce = (func, wait) => {
@@ -147,48 +141,21 @@ const SettingsSection = () => {
     colorUpdateRef.current = newColor;
 
     setThemeColor(newColor);
-    document.documentElement.style.setProperty('--primary-color', newColor);
-  };
-
-  const saveThemeColor = (newColor) => {
-    try {
-      chrome.storage.local.set({ themeColor: newColor }, (error) => {
-        if (error) console.error('Error saving theme color:', error);
-        else console.log('Theme color saved:', newColor);
-      });
-
-      chrome.runtime.sendMessage({
-        type: 'applyTheme',
-        theme: theme,
-        themeColor: newColor,
-      });
-    } catch (error) {
-      console.error('Error changing theme color:', error);
-    }
+    applyThemeGlobally(theme, newColor);
   };
 
   const debouncedUpdateThemeColor = debounce(updateThemeColor, 100);
-  const debouncedSaveThemeColor = debounce(saveThemeColor, 500); 
 
-  const handleThemeColorInput = (e) => {
+  const handleThemeColorChange = (e) => {
     const newColor = e.target.value;
     debouncedUpdateThemeColor(newColor);
-    debouncedSaveThemeColor(newColor);
   };
 
   const resetThemeColor = () => {
-    try {
-      let originalColor;
-      if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        originalColor = '#76baff';
-      } else {
-        originalColor = '#0069b9';
-      }
-      updateThemeColor(originalColor);
-      saveThemeColor(originalColor);
-    } catch (error) {
-      console.error('Error resetting theme color:', error);
-    }
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const effectiveTheme = theme === "system" ? (prefersDark ? "dark" : "light") : theme;
+    const originalColor = effectiveTheme === "dark" ? defaultColors.dark : defaultColors.light;
+    updateThemeColor(originalColor);
   };
 
   if (isLoading) {
@@ -200,22 +167,13 @@ const SettingsSection = () => {
       <section className="settings-group">
         <h2>Theme Mode</h2>
         <div className="theme-options">
-          <button
-            className={`btn ${theme === 'light' ? 'btn-primary' : 'btn-outline-primary'}`}
-            onClick={() => applyTheme('light')}
-          >
+          <button className={`btn ${theme === "light" ? "btn-primary" : "btn-outline-primary"}`} onClick={() => applyTheme("light")}>
             Light Mode
           </button>
-          <button
-            className={`btn ${theme === 'dark' ? 'btn-primary' : 'btn-outline-primary'}`}
-            onClick={() => applyTheme('dark')}
-          >
+          <button className={`btn ${theme === "dark" ? "btn-primary" : "btn-outline-primary"}`} onClick={() => applyTheme("dark")}>
             Dark Mode
           </button>
-          <button
-            className={`btn ${theme === 'system' ? 'btn-primary' : 'btn-outline-primary'}`}
-            onClick={() => applyTheme('system')}
-          >
+          <button className={`btn ${theme === "system" ? "btn-primary" : "btn-outline-primary"}`} onClick={() => applyTheme("system")}>
             Follow System
           </button>
         </div>
@@ -224,48 +182,23 @@ const SettingsSection = () => {
       <section className="settings-group">
         <h2>Change Theme Color</h2>
         <div className="theme-color-picker">
-          <input
-            type="color"
-            value={themeColor}
-            onInput={handleThemeColorInput}
-            className="color-picker"
-          />
+          <input type="color" value={themeColor} onChange={handleThemeColorChange} className="color-picker" />
           <span className="current-color">{themeColor.toUpperCase()}</span>
-          <Button
-            variant="success"
-            onClick={resetThemeColor}
-            className="recover-btn1"
-            data-tooltip="Recover default color"
-            data-tooltip-position="top"
-          >
+          <Button variant="success" onClick={resetThemeColor} className="recover-btn1">
             <FaRedo />
           </Button>
         </div>
       </section>
-
       <section className="settings-group">
         <h2>Backups</h2>
         <div className="backup-options">
-          <button
-            className="btn btn-primary"
-            onClick={exportBackup}
-            style={{ marginRight: "10px" }}
-          >
+          <button className="btn btn-primary" onClick={exportBackup} style={{ marginRight: "10px" }}>
             Export Backup
           </button>
-          <button
-            className="btn btn-primary"
-            onClick={handleImportBackupClick}
-          >
+          <button className="btn btn-primary" onClick={handleImportBackupClick}>
             Import Backup
           </button>
-          <input
-            type="file"
-            accept=".json"
-            onChange={importBackup}
-            ref={fileInputRef}
-            style={{ display: "none" }}
-          />
+          <input type="file" accept=".json" onChange={importBackup} ref={fileInputRef} style={{ display: "none" }} />
         </div>
       </section>
 

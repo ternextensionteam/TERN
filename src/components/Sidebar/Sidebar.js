@@ -6,14 +6,22 @@ import { AiOutlineNodeIndex } from "react-icons/ai";
 import WhitelistIndicator from "../WhitelistIndicator/WhitelistIndicator";
 import TaskSection from "../TaskSection/TaskSection";
 import IndexingSection from "../IndexingSection/IndexingSection";
+import SettingsSection from "../SettingsSection/SettingsSection";
 import "../tooltip";
 import "../base.css";
 import "./Sidebar.css";
-import SettingsSection from "../SettingsSection/SettingsSection";
 
 function Sidebar() {
   const [activeSection, setActiveSection] = useState("tasks");
   const sidebarRef = useRef(null);
+
+  const lightenColorWithOpacity = (color, opacity = 0.2) => {
+    let num = parseInt(color.slice(1), 16);
+    let r = (num >> 16) & 0xff;
+    let g = (num >> 8) & 0xff;
+    let b = num & 0xff;
+    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+  };
 
   useEffect(() => {
     const loadAndApplySettings = (attempt = 0) => {
@@ -37,11 +45,13 @@ function Sidebar() {
           const savedThemeColor = result.themeColor || '#0069b9';
 
           document.documentElement.setAttribute('data-theme', savedTheme);
+          document.documentElement.style.setProperty('--primary-color', savedThemeColor);
+          document.documentElement.style.setProperty('--hover-color', lightenColorWithOpacity(savedThemeColor, 0.2));
+
           if (savedTheme === 'system') {
             const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
             document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
           }
-          document.documentElement.style.setProperty('--primary-color', savedThemeColor);
 
           chrome.runtime.sendMessage({
             type: 'applyTheme',
@@ -60,6 +70,8 @@ function Sidebar() {
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
       document.documentElement.style.setProperty('--primary-color', '#0069b9');
+      document.documentElement.style.setProperty('--hover-color', lightenColorWithOpacity('#0069b9', 0.2));
+
       chrome.runtime.sendMessage({
         type: 'applyTheme',
         theme: 'system',
@@ -68,13 +80,6 @@ function Sidebar() {
     };
 
     loadAndApplySettings();
-
-    const timer = setTimeout(() => {
-      const sidebar = document.querySelector('.sidebar');
-      if (sidebar) {
-        sidebar.classList.add('loaded');
-      }
-    }, 100);
 
     const checkOverflow = () => {
       if (sidebarRef.current) {
@@ -93,7 +98,6 @@ function Sidebar() {
 
     const storageChangeHandler = (changes, area) => {
       if (area === 'local' && (changes.theme || changes.themeColor)) {
-        console.log('Storage changed, reloading settings:', changes);
         loadAndApplySettings();
       }
     };
@@ -112,9 +116,8 @@ function Sidebar() {
       chrome.storage.onChanged.removeListener(storageChangeHandler);
       mediaQuery.removeEventListener('change', handleSystemThemeChange);
       window.removeEventListener('resize', checkOverflow);
-      clearTimeout(timer);
     };
-  }, [activeSection]);
+  }, []);
 
   return (
     <div ref={sidebarRef} className="sidebar">
