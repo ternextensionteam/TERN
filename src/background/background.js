@@ -98,9 +98,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           console.log(`Alarm set for task ${task.id} at ${task.dueDate}`);
         }
       }
-
+      
+      sendResponse({ success: true });
     });
-  };
+    
+    return true; // Required for asynchronous sendResponse
+  }
 
 });
 
