@@ -12,6 +12,14 @@ export function useTodoList() {
 
   useEffect(() => {
     loadTasks();
+
+    // Listen for storage updates (overdue tasks or snooxe)
+    chrome.storage.onChanged.addListener((changes) => {
+      if (changes.tasks) {
+        console.log("Tasks updated in storage:", changes.tasks.newValue);
+        setTasks(changes.tasks.newValue || []);
+      }
+    });
   }, []);
 
   const addTask = (taskText, hasReminder = false, description = "", dueDate = null, completed = false) => {
@@ -35,14 +43,31 @@ export function useTodoList() {
       dueDate: validatedDueDate,
       completed,
     };
-
+    
     console.log("useTodoList - Adding task:", newTask);
     setTasks((prevTasks) => [...prevTasks, newTask]);
+    //add task and notify background script to create alarms
+    chrome.storage.local.get("tasks", (data) => {
+      let tasks = Array.isArray(data.tasks) ? data.tasks : [];
+      tasks.push(newTask);
+      chrome.storage.local.set({ tasks }, () => {
+        console.log("Task stored successfully:", newTask);
+      });
+      chrome.runtime.sendMessage({ action: "addTask", task: newTask }, (response) => {
+        console.log("Task added:", response);
+      });
+    });
+
   };
 
+  // Delete a task
   const deleteTask = (taskId) => {
     console.log("useTodoList - Deleting task:", taskId);
     setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
+    //notify background script
+    chrome.runtime.sendMessage({ action: "deleteTask", taskId }, (response) => {
+      console.log("Task deleted:", response);
+    });
   };
 
   const toggleReminder = (taskId) => {
@@ -72,6 +97,15 @@ export function useTodoList() {
           : task
       )
     );
+    // Notify background script to update alarm
+    chrome.runtime.sendMessage({ 
+      action: "updateTask", 
+      taskId, 
+      newDueDate, 
+      newHasReminder 
+    }, (response) => {
+      console.log("Task update sent to background:", response);
+    });
   };
 
   const saveTasks = () => {

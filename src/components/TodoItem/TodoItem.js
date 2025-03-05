@@ -249,7 +249,9 @@ function TodoItem({ task, onDelete, onUpdateTask }) {
                 className="edit-input"
               />
             ) : (
-              <div className={`task-name ${isChecked ? "line-through" : ""}`} onDoubleClick={() => setIsEditing(true)}>
+              <div className={`task-name ${isChecked ? "line-through" : ""}`} 
+              onDoubleClick={() => setIsEditing(true)}
+              >
                 {newText}
               </div>
             )}
