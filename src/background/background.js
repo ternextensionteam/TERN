@@ -212,7 +212,7 @@ chrome.alarms.onAlarm.addListener((alarm) => {
         type: "basic",
         title: `Task Due: ${task.text}`,
         message: task.description || `Your task "${task.text}" is now due!`, // Show description or fallback to default message
-        iconUrl: chrome.runtime.getURL("vector_arts/bell.png"),
+        iconUrl: chrome.runtime.getURL("icons/logo48x48.png"),
         priority: 2,
         requireInteraction: true,
         buttons: [{ title: "Snooze (1 hour)" }] // Add snooze option
