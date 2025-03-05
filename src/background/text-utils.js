@@ -29,7 +29,7 @@ const JACCARD_THRESHOLD = 0.8;
 /**
  * Remove duplicate search results based on title similarity
  */
-function removeDuplicates(results) {
+export function removeDuplicates(results) {
   for (let i = 0; i < results.length; i++) {
     for (let j = i + 1; j < results.length; j++) {
       if (

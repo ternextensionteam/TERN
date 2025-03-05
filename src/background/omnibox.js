@@ -1,4 +1,4 @@
-import { getSuggestions } from "./search-engine.js";
+import { getSuggestions } from "./searchEngine.js";
 
 export function initializeOmnibox() {
   chrome.omnibox.onInputChanged.addListener((text, suggest) => {
