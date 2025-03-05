@@ -16,7 +16,7 @@ function InputBar({ onAddTask }) {
   const [overlayPosition, setOverlayPosition] = useState({ top: 0, left: 0 });
   const calendarButtonRef = useRef(null);
   const bellButtonRef = useRef(null);
-  const longPressTimer = useRef(null); // Timer for long press detection
+  const longPressTimer = useRef(null);
 
   useEffect(() => {
     chrome.storage.local.get(["selectedText"], (result) => {
@@ -73,25 +73,23 @@ function InputBar({ onAddTask }) {
   const handleDueDateMouseDown = (e) => {
     e.stopPropagation();
     longPressTimer.current = setTimeout(() => {
-      // Long press action: close the overlay
       setShowDueOverlay(false);
-    }, 500); // 500ms for long press
+    }, 500);
   };
 
   const handleDueDateMouseUp = (e) => {
     e.stopPropagation();
     if (longPressTimer.current) {
-      clearTimeout(longPressTimer.current); // Clear the long press timer
+      clearTimeout(longPressTimer.current);
       longPressTimer.current = null;
 
-      // Regular click action: toggle the overlay
       if (calendarButtonRef.current) {
         const rect = calendarButtonRef.current.getBoundingClientRect();
         setOverlayPosition({
           top: rect.bottom + window.scrollY,
           left: rect.left + window.scrollX,
         });
-        setShowDueOverlay((prev) => !prev); // Toggle the due date overlay
+        setShowDueOverlay((prev) => !prev);
       }
     }
   };
@@ -102,7 +100,7 @@ function InputBar({ onAddTask }) {
     } else {
       setSelectedDueDate(preset.time);
     }
-    setShowDueOverlay(false); // Close the overlay after selecting a date
+    setShowDueOverlay(false);
   };
 
   const renderBellIcon = () => {
@@ -129,6 +127,9 @@ function InputBar({ onAddTask }) {
       const dueDate = new Date(date);
       if (isNaN(dueDate.getTime())) return "Invalid Date";
 
+      const currentYear = new Date().getFullYear();
+      const dueYear = dueDate.getFullYear();
+
       return dueDate.toLocaleString("en-US", {
         weekday: "short",
         month: "short",
@@ -136,7 +137,7 @@ function InputBar({ onAddTask }) {
         hour: "2-digit",
         minute: "2-digit",
         hour12: false,
-      }).replace(/,/, "");
+      }).replace(/,/, "") + (dueYear !== currentYear ? `, ${dueYear}` : "");
     };
 
     return (

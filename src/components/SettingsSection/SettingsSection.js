@@ -7,8 +7,9 @@ import "./SettingsSection.css";
 const SettingsSection = () => {
   const fileInputRef = useRef(null);
   const colorUpdateRef = useRef(null);
-  const [theme, setTheme] = useState('system');
-  const [themeColor, setThemeColor] = useState('#0069b9');
+  const [theme, setTheme] = useState(null);
+  const [themeColor, setThemeColor] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const loadSettings = () => {
@@ -21,10 +22,12 @@ const SettingsSection = () => {
           setTheme(savedTheme);
           setThemeColor(savedThemeColor);
           applyTheme(savedTheme, savedThemeColor);
+          setIsLoading(false);
         });
       } catch (error) {
         console.error('Error loading settings:', error);
         applyDefaultSettings();
+        setIsLoading(false);
       }
     };
 
@@ -39,6 +42,7 @@ const SettingsSection = () => {
     const storageChangeHandler = (changes, area) => {
       if (area === 'local' && (changes.theme || changes.themeColor)) {
         console.log('Storage changed, reloading settings:', changes);
+        setIsLoading(true);
         loadSettings();
       }
     };
@@ -130,7 +134,6 @@ const SettingsSection = () => {
     }
   };
 
-  // Debounce utility function
   const debounce = (func, wait) => {
     let timeout;
     return (...args) => {
@@ -187,6 +190,10 @@ const SettingsSection = () => {
       console.error('Error resetting theme color:', error);
     }
   };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <Container className="settings-section">
