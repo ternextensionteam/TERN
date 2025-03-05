@@ -6,8 +6,15 @@ import "../tooltip";
 import "../base.css";
 import "./RecoverDeletedIndex.css";
 
-const RecoverDeletedIndex = ({ deletedItems = {}, onRecover, onBack, onGoToIndexing, activeItems = {} }) => {
-  const [activeDeletedSection, setActiveDeletedSection] = useState("allowedSites");
+const RecoverDeletedIndex = ({
+  deletedItems = {},
+  onRecover,
+  onBack,
+  onGoToIndexing,
+  activeItems = {},
+}) => {
+  const [activeDeletedSection, setActiveDeletedSection] =
+    useState("allowedSites");
 
   const safeDeletedItems = deletedItems || {
     allowedSites: [],
@@ -16,31 +23,53 @@ const RecoverDeletedIndex = ({ deletedItems = {}, onRecover, onBack, onGoToIndex
     regex: [],
   };
 
-  const sectionFunctions = {
+  const sectionMap = {
     allowedSites: { label: "Sites" },
     allowedURLs: { label: "URLs" },
-    stringmatches: { label: "String Matches" },
-    regex: { label: "RegEx" },
+    allowedStringMatches: { label: "String Matches" },
+    allowedRegex: { label: "RegEx" },
   };
 
-  console.log(`RecoverDeletedIndex - Raw deletedItems[${activeDeletedSection}]:`, safeDeletedItems[activeDeletedSection]);
-  console.log(`RecoverDeletedIndex - Raw activeItems[${activeDeletedSection}]:`, activeItems[activeDeletedSection]);
-
-  const filteredDeletedItems = (safeDeletedItems[activeDeletedSection] || []).filter(
-    (item) => !(activeItems[activeDeletedSection] || []).includes(item)
+  console.log(
+    `RecoverDeletedIndex - Raw deletedItems[${activeDeletedSection}]:`,
+    safeDeletedItems[activeDeletedSection]
+  );
+  console.log(
+    `RecoverDeletedIndex - Raw activeItems[${activeDeletedSection}]:`,
+    activeItems[activeDeletedSection]
   );
 
-  console.log(`RecoverDeletedIndex - Filtered deleted items for ${activeDeletedSection}:`, filteredDeletedItems);
+  const filteredDeletedItems = (
+    safeDeletedItems[activeDeletedSection] || []
+  ).filter((item) => !(activeItems[activeDeletedSection] || []).includes(item));
+
+  console.log(
+    `RecoverDeletedIndex - Filtered deleted items for ${activeDeletedSection}:`,
+    filteredDeletedItems
+  );
 
   return (
     <div className="recover-deleted-container">
-      <h2 className="section-title">Deleted {sectionFunctions[activeDeletedSection].label}</h2>
+      <h2 className="section-title">
+        Deleted {sectionMap[activeDeletedSection]?.label}
+      </h2>
 
-      <Nav variant="tabs" activeKey={activeDeletedSection} onSelect={setActiveDeletedSection}>
-        {Object.keys(sectionFunctions).map((key) => (
+      <Nav
+        variant="tabs"
+        activeKey={activeDeletedSection}
+        onSelect={setActiveDeletedSection}
+      >
+        {Object.keys(sectionMap).map((key) => (
           <Nav.Item key={key}>
-            <Nav.Link eventKey={key} className={`subnav-link ${activeDeletedSection === key ? "active" : ""}`}>
-              {sectionFunctions[key].label}
+            <Nav.Link
+              eventKey={key}
+              className={`subnav-link ${
+                activeDeletedSection === key ? "active" : ""
+              }`}
+              data-tooltip={sectionMap[key].label}
+              data-tooltip-position="top"
+            >
+              {sectionMap[key].label}
             </Nav.Link>
           </Nav.Item>
         ))}
@@ -48,7 +77,9 @@ const RecoverDeletedIndex = ({ deletedItems = {}, onRecover, onBack, onGoToIndex
 
       <div className="recover-card-container">
         {filteredDeletedItems.length === 0 ? (
-          <p className="empty-message">No deleted {sectionFunctions[activeDeletedSection].label} to recover.</p>
+          <p className="empty-message">
+            No deleted {sectionMap[activeDeletedSection]?.label} to recover.
+          </p>
         ) : (
           filteredDeletedItems.map((item, index) => (
             <Card className="recover-card" key={index}>
@@ -56,7 +87,7 @@ const RecoverDeletedIndex = ({ deletedItems = {}, onRecover, onBack, onGoToIndex
                 <span className="recover-text">{item}</span>
                 <Button
                   variant="success"
-                  onClick={() => onRecover(activeDeletedSection, index)}
+                  onClick={() => onRecover(activeDeletedSection, item)}
                   className="recover-btn"
                   data-tooltip="Recover link"
                   data-tooltip-position="top"
@@ -68,7 +99,12 @@ const RecoverDeletedIndex = ({ deletedItems = {}, onRecover, onBack, onGoToIndex
           ))
         )}
       </div>
-      <Button variant="secondary" onClick={onBack} className="back-btn1" data-tooltip="Back">
+      <Button
+        variant="secondary"
+        onClick={onBack}
+        className="back-btn1"
+        data-tooltip="Back"
+      >
         <IoChevronBackOutline />
       </Button>
     </div>

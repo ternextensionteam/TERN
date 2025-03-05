@@ -1,5 +1,7 @@
 import MiniSearch from "minisearch";
 import { encode } from "he";
+import { STORAGE_KEY, defaultWhitelistRules } from "../utils/WhitelistChecker";
+
 
 const indexDescriptor = {
   fields: ["title", "content"], // Fields to index
@@ -11,12 +13,6 @@ const indexDescriptor = {
   },
 };
 
-const defaultRegexList = [
-  "^https://[^/]+.amazon.com/.*$",
-  "^https://atoz.amazon.work/.*$",
-  "^https://quip-amazon.com/.*$",
-  "^https://quip.com/.*$",
-];
 
 const SCORE_THRESHOLD = 0.5;
 
@@ -45,15 +41,7 @@ chrome.runtime.onInstalled.addListener(() => {
     .setPanelBehavior({ openPanelOnActionClick: true })
     .catch((error) => console.error(error));
 
-  chrome.storage.local.set({ allowedSites: [] }, () => {});
-
-  chrome.storage.local.set({ allowedURLs: [] }, () => {});
-
-  chrome.storage.local.set({ allowedStringMatches: [] }, () => {});
-
-  chrome.storage.local.set({ allowedRegex: defaultRegexList }, () => {});
-
-  chrome.storage.local.set({ allLastTitles: {} }, () => {});
+  chrome.storage.local.set({STORAGE_KEY: defaultWhitelistRules});
 
   // chrome.storage.local.set({ pageIndex: JSON.stringify(miniSearch) }, () => {});
 

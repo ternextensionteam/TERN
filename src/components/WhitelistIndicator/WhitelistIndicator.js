@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { checkWhitelist } from "../../utils/WhitelistChecker";
+import { isUrlWhitelisted, STORAGE_KEY } from "../../utils/WhitelistChecker";
 
 function WhitelistIndicator() {
   const [isWhitelisted, setIsWhitelisted] = useState(false);
@@ -9,18 +9,8 @@ function WhitelistIndicator() {
       const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
       const currentTab = tabs[0];
 
-      const result = await chrome.storage.local.get(
-        ["allowedSites", "allowedURLs", "allowedStringMatches", "allowedRegex"]
-      );
-
-      const cachedWhitelist = {
-        sites: result.allowedSites || [],
-        urls: result.allowedURLs || [],
-        stringMatches: result.allowedStringMatches || [],
-        regex: result.allowedRegex || []
-      };
       const currentURL = currentTab.url;
-      const isPageWhitelisted = await checkWhitelist(currentURL, cachedWhitelist);
+      const isPageWhitelisted = await isUrlWhitelisted(currentURL);
       setIsWhitelisted(isPageWhitelisted);
     };
 
@@ -29,7 +19,7 @@ function WhitelistIndicator() {
     const handleStorageChange = (changes, namespace) => {
       if (
         namespace === "local" &&
-        (changes.allowedSites || changes.allowedURLs || changes.allowedStringMatches || changes.allowedRegex)
+        (changes[STORAGE_KEY])
       ) {
         updateWhitelistStatus();
       }

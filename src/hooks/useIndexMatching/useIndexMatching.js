@@ -1,171 +1,90 @@
 import { useState, useEffect } from 'react';
+import { isUrlWhitelisted, getWhitelistRules, STORAGE_KEY, defaultWhitelistRules} from '../../utils/WhitelistChecker';
 
-const useIndexMatching = () => {
-  const [allowedSites, setSites] = useState(null);
-  const [allowedRegex, setRegexs] = useState(null);
-  const [allowedURLs, setUrls] = useState(null);
-  const [allowedStringMatches, setStringMatches] = useState(null);
+const DELETED_STORAGE_KEY = 'deletedWhitelistRules';
 
-  const STORAGE_KEY = 'indexMatchingData';
+const defaultDeletedRules = defaultWhitelistRules
 
+function useIndexMatching() {
+  const [rules, setRules] = useState(defaultWhitelistRules);
+  const [deletedRules, setDeletedRules] = useState(defaultDeletedRules);
+
+  // Load rules and deleted rules from storage on mount
   useEffect(() => {
-    chrome.storage.local.get([STORAGE_KEY], (result) => {
-      const defaultData = {
-        allowedSites: [],
-        allowedRegex: [
-          "^https://[^/]+.amazon.com/.*$",
-          "^https://atoz.amazon.work/.*$",
-          "^https://quip-amazon.com/.*$",
-          "^https://quip.com/.*$"
-        ],
-        allowedURLs: [],
-        allowedStringMatches: [],
-      };
-      const loadedData = result[STORAGE_KEY] || defaultData;
-      if (!loadedData.allowedRegex || loadedData.allowedRegex.length === 0) {
-        loadedData.allowedRegex = defaultData.allowedRegex;
-      }
-      setSites(loadedData.allowedSites);
-      setRegexs(loadedData.allowedRegex);
-      setUrls(loadedData.allowedURLs);
-      setStringMatches(loadedData.allowedStringMatches);
-    });
+    const loadRules = async () => {
+      const storedRules = await getWhitelistRules();
+      setRules(storedRules);
+
+      const deletedResult = await chrome.storage.local.get(DELETED_STORAGE_KEY);
+      setDeletedRules(deletedResult[DELETED_STORAGE_KEY] || defaultDeletedRules);
+    };
+    loadRules();
   }, []);
 
-  const saveStateToLocalStorage = (updatedData) => {
-    chrome.storage.local.get([STORAGE_KEY], (result) => {
-      const currentData = result[STORAGE_KEY] || {
-        allowedSites: [],
-        allowedRegex: [
-          "^https://[^/]+.amazon.com/.*$",
-          "^https://atoz.amazon.work/.*$",
-          "^https://quip-amazon.com/.*$",
-          "^https://quip.com/.*$"
-        ],
-        allowedURLs: [],
-        allowedStringMatches: [],
-      };
-      const newData = { ...currentData, ...updatedData };
-      chrome.storage.local.set({ [STORAGE_KEY]: newData });
-    });
+  // Save rules to storage
+  const saveRulesToStorage = async (updatedRules) => {
+    await chrome.storage.local.set({ [STORAGE_KEY]: updatedRules });
   };
 
-  const addSite = (site) => {
-    if (allowedSites === null) return;
-    const newSites = [...allowedSites, site];
-    setSites(newSites);
-    saveStateToLocalStorage({ allowedSites: newSites });
+  // Save deleted rules to storage
+  const saveDeletedRulesToStorage = async (updatedDeletedRules) => {
+    await chrome.storage.local.set({ [DELETED_STORAGE_KEY]: updatedDeletedRules });
   };
 
-  const removeSite = (index) => {
-    if (allowedSites === null) return;
-    const newSites = allowedSites.filter((_, i) => i !== index);
-    setSites(newSites);
-    saveStateToLocalStorage({ allowedSites: newSites });
+  // Add a rule
+  const addRule = async (type, rule) => {
+    if (rules[type].includes(rule)) return; // Avoid duplicates
+    const updatedRules = { ...rules, [type]: [...rules[type], rule] };
+    setRules(updatedRules);
+    await saveRulesToStorage(updatedRules);
   };
 
-  const updateSite = (index, newSite) => {
-    if (allowedSites === null) return;
-    const newSites = allowedSites.map((s, i) => (i === index ? newSite : s));
-    setSites(newSites);
-    saveStateToLocalStorage({ allowedSites: newSites });
+  // Remove a rule (move it to deleted rules)
+  const removeRule = async (type, ruleToRemove) => {
+    if (!rules[type].includes(ruleToRemove)) return;
+    
+    const updatedRules = {
+      ...rules,
+      [type]: rules[type].filter(rule => rule !== ruleToRemove)
+    };
+    
+    const updatedDeletedRules = {
+      ...deletedRules,
+      [type]: [...deletedRules[type], ruleToRemove]
+    };
+
+    setRules(updatedRules);
+    setDeletedRules(updatedDeletedRules);
+    await saveRulesToStorage(updatedRules);
+    await saveDeletedRulesToStorage(updatedDeletedRules);
   };
 
-  const addRegex = (regex) => {
-    if (allowedRegex === null) return;
-    const newRegexs = [...allowedRegex, regex];
-    setRegexs(newRegexs);
-    saveStateToLocalStorage({ allowedRegex: newRegexs });
+  // Recover a deleted rule (move it back to active rules)
+  const recoverRule = async (type, ruleToRecover) => {
+    if (!deletedRules[type].includes(ruleToRecover)) return;
+    
+    const updatedDeletedRules = {
+      ...deletedRules,
+      [type]: deletedRules[type].filter(rule => rule !== ruleToRecover)
+    };
+
+    const updatedRules = {
+      ...rules,
+      [type]: [...rules[type], ruleToRecover]
+    };
+
+    setRules(updatedRules);
+    setDeletedRules(updatedDeletedRules);
+    await saveRulesToStorage(updatedRules);
+    await saveDeletedRulesToStorage(updatedDeletedRules);
   };
 
-  const removeRegex = (index) => {
-    if (allowedRegex === null) return;
-    const newRegexs = allowedRegex.filter((_, i) => i !== index);
-    setRegexs(newRegexs);
-    saveStateToLocalStorage({ allowedRegex: newRegexs });
+  // Check if the current URL is whitelisted
+  const checkCurrentUrl = async () => {
+    return isUrlWhitelisted(window.location.href);
   };
 
-  const updateRegex = (index, newRegex) => {
-    if (allowedRegex === null) return;
-    const newRegexs = allowedRegex.map((r, i) => (i === index ? newRegex : r));
-    setRegexs(newRegexs);
-    saveStateToLocalStorage({ allowedRegex: newRegexs });
-  };
-
-  const addUrl = (url) => {
-    if (allowedURLs === null) return;
-    const newUrls = [...allowedURLs, url];
-    setUrls(newUrls);
-    saveStateToLocalStorage({ allowedURLs: newUrls });
-  };
-
-  const removeUrl = (index) => {
-    if (allowedURLs === null) return;
-    const newUrls = allowedURLs.filter((_, i) => i !== index);
-    setUrls(newUrls);
-    saveStateToLocalStorage({ allowedURLs: newUrls });
-  };
-
-  const updateUrl = (index, newUrl) => {
-    if (allowedURLs === null) return;
-    const newUrls = allowedURLs.map((u, i) => (i === index ? newUrl : u));
-    setUrls(newUrls);
-    saveStateToLocalStorage({ allowedURLs: newUrls });
-  };
-
-  const addStringMatch = (stringMatch) => {
-    if (allowedStringMatches === null) return;
-    const newStringMatches = [...allowedStringMatches, stringMatch];
-    setStringMatches(newStringMatches);
-    saveStateToLocalStorage({ allowedStringMatches: newStringMatches });
-  };
-
-  const removeStringMatch = (index) => {
-    if (allowedStringMatches === null) return;
-    const newStringMatches = allowedStringMatches.filter((_, i) => i !== index);
-    setStringMatches(newStringMatches);
-    saveStateToLocalStorage({ allowedStringMatches: newStringMatches });
-  };
-
-  const updateStringMatch = (index, newStringMatch) => {
-    if (allowedStringMatches === null) return;
-    const newStringMatches = allowedStringMatches.map((sm, i) =>
-      i === index ? newStringMatch : sm
-    );
-    setStringMatches(newStringMatches);
-    saveStateToLocalStorage({ allowedStringMatches: newStringMatches });
-  };
-
-  const checkMatch = (url) => {
-    if (allowedSites === null || allowedRegex === null || allowedURLs === null || allowedStringMatches === null) return false;
-    const siteMatch = allowedSites.some((site) => url.includes(site));
-    const regexMatch = allowedRegex.some((regex) => new RegExp(regex).test(url));
-    const urlMatch = allowedURLs.includes(url);
-    const stringMatch = allowedStringMatches.some((stringMatch) =>
-      url.includes(stringMatch)
-    );
-    return siteMatch || regexMatch || urlMatch || stringMatch;
-  };
-
-  return {
-    allowedSites,
-    allowedRegex,
-    allowedURLs,
-    allowedStringMatches,
-    addSite,
-    removeSite,
-    updateSite,
-    addRegex,
-    removeRegex,
-    updateRegex,
-    addUrl,
-    removeUrl,
-    updateUrl,
-    addStringMatch,
-    removeStringMatch,
-    updateStringMatch,
-    checkMatch,
-  };
-};
+  return { rules, deletedRules, addRule, removeRule, recoverRule, checkCurrentUrl };
+}
 
 export default useIndexMatching;
