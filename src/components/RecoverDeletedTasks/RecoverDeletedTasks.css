@@ -87,8 +87,8 @@
   border: 1px solid var(--light-gray-color);
   border-radius: 8px;
   box-sizing: border-box;
-  background-color: var(--white-color);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  background-color: var(--white-color) !important; 
+  box-shadow: var(--border-shadow-small);
 }
 
 /* Task Row Styling */
@@ -122,7 +122,7 @@
   text-decoration: line-through;
 }
 
-/* Task Icons Styling (Adjusted for recover button only) */
+/* Task Icons Styling */
 .task-icons {
   display: flex;
   align-items: center;

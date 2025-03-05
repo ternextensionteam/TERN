@@ -299,7 +299,7 @@
   border: 1px solid var(--light-text-color);
   border-radius: 5px;
   font-size: 14px;
-  color: var(--text-color);
+  color: var(--text-color) !important;
   cursor: pointer;
   background-color: var(--white-color);
   display: flex;
@@ -325,11 +325,10 @@
   justify-content: flex-start !important;
   height: 40px !important;
   position: relative !important;
-  outline: none !important; /* Remove default browser outline */
-  box-shadow: none !important; /* Prevent any default shadow */
+  outline: none !important;
+  box-shadow: none !important;
 }
 
-/* Action Buttons Container */
 .calendar-overlay .action-buttons {
   display: flex;
   justify-content: space-between;

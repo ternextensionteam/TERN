@@ -4,4 +4,5 @@
     overflow-x: hidden;
     scrollbar-width: thin;
     scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+    background-color: var(--background-color);
 }
