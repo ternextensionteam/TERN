@@ -107,29 +107,38 @@ chrome.omnibox.onInputChanged.addListener((text, suggest) => {
   suggest(suggestions);
 });
 
+async function handleIndexPage(request) {
+  console.log("Indexing page:", request.url);
+
+  // Create document object for MiniSearch
+  let pageData = {
+    id: removeAnchorLink(request.url),
+    title: request.title,
+    content: request.content,
+  };
+
+  if (miniSearch.has(pageData.id)) {
+    miniSearch.replace(pageData)
+  }
+  else {
+    miniSearch.add(pageData);
+  }
+
+  // Save updated index to storage
+  await chrome.storage.local.set({ pageIndex: JSON.stringify(miniSearch) });
+}
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  console.log("Received message:", request);
   if (request.action === "indexPage") {
-    console.log("Indexing page:", request.url);
-
-    // Create document object for MiniSearch
-    let pageData = {
-      id: removeAnchorLink(request.url),
-      title: request.title,
-      content: request.content,
-    };
-
-    if (miniSearch.has(pageData.id)) {
-      miniSearch.replace(pageData)
-    }
-    else {
-      miniSearch.add(pageData);
-    }
-
-    // Save updated index to storage
-    chrome.storage.local.set({ pageIndex: JSON.stringify(miniSearch) });
-
-    sendResponse({ success: true });
+    handleIndexPage(request)
+      .then(() => {
+        sendResponse({ success: true });
+      })
+      .catch((error) => {
+        console.error(error);
+        sendResponse({ success: false });
+      });
+    return true;
     return;
   }
 
