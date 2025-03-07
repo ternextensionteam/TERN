@@ -101,7 +101,6 @@ function TaskSection() {
     };
 
     window.addEventListener("unload", handleUnload);
-
     return () => {
       window.removeEventListener("unload", handleUnload);
     };

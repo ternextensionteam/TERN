@@ -114,7 +114,6 @@ function TodoItem({ task, onDelete, onUpdateTask }) {
           left: rect.left + window.scrollX,
         };
         
-        // Toggle overlay: close if open, open if closed
         if (showDueOverlay) {
           setShowDueOverlay(false);
         } else {

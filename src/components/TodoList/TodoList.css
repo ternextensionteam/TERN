@@ -1,8 +1,8 @@
 .scrollable {
-    max-height: 50vh;
-    overflow-y: auto;
+    height: 100%; /* Take full height of its container */
+    overflow-y: auto; /* Scroll vertically when content overflows */
     overflow-x: hidden;
     scrollbar-width: thin;
     scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
-    background-color: var(--background-color);
-}
+    background-color: var(--white-color); /* Matches RecoverDeletedTasks */
+  }
