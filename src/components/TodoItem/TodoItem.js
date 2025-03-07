@@ -21,6 +21,7 @@ function TodoItem({ task, onDelete, onUpdateTask }) {
 
   const bellButtonRef = useRef(null);
   const dueDateRef = useRef(null);
+  const cardRef = useRef(null);
   const longPressTimer = useRef(null);
 
   useEffect(() => {
@@ -79,13 +80,12 @@ function TodoItem({ task, onDelete, onUpdateTask }) {
 
   const handleReminderClick = (e) => {
     e.stopPropagation();
-    const newReminderState = !hasReminder;
-    setHasReminder(newReminderState);
+    setHasReminder(!hasReminder);
     if (typeof onUpdateTask !== "function") {
       console.error(`TodoItem ${task.id} - onUpdateTask is not a function! Current value:`, onUpdateTask);
       return;
     }
-    onUpdateTask(task.id, newText, newDescription, newReminderState, dueDate, isChecked);
+    onUpdateTask(task.id, newText, newDescription, !hasReminder, dueDate, isChecked);
   };
 
   const handleDueDateMouseDown = (e) => {
@@ -97,26 +97,30 @@ function TodoItem({ task, onDelete, onUpdateTask }) {
 
   const handleDelete = (e) => {
     e.stopPropagation();
-  
     setTimeout(() => {
       onDelete(task.id);
     }, 250);
   };
-  
 
   const handleDueDateMouseUp = (e) => {
     e.stopPropagation();
     if (longPressTimer.current) {
       clearTimeout(longPressTimer.current);
       longPressTimer.current = null;
-
       if (dueDateRef.current) {
         const rect = dueDateRef.current.getBoundingClientRect();
-        setOverlayPosition({
+        const newPosition = {
           top: rect.bottom + window.scrollY,
           left: rect.left + window.scrollX,
-        });
-        setShowDueOverlay((prev) => !prev);
+        };
+        
+        // Toggle overlay: close if open, open if closed
+        if (showDueOverlay) {
+          setShowDueOverlay(false);
+        } else {
+          setOverlayPosition(newPosition);
+          setShowDueOverlay(true);
+        }
       }
     }
   };
@@ -201,6 +205,7 @@ function TodoItem({ task, onDelete, onUpdateTask }) {
 
   return (
     <Card
+      ref={cardRef}
       className={`task-card ${isDescriptionVisible || isHovering || isEditingDescription ? "highlighted-border" : "default-border"}`}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => {
@@ -238,8 +243,9 @@ function TodoItem({ task, onDelete, onUpdateTask }) {
                 className="edit-input"
               />
             ) : (
-              <div className={`task-name ${isChecked ? "line-through" : ""}`} 
-              onDoubleClick={() => setIsEditing(true)}
+              <div
+                className={`task-name ${isChecked ? "line-through" : ""}`}
+                onDoubleClick={() => setIsEditing(true)}
               >
                 {newText}
               </div>
@@ -253,7 +259,9 @@ function TodoItem({ task, onDelete, onUpdateTask }) {
                 onSelectPreset={handleDueDateSelect}
                 targetPosition={overlayPosition}
                 onClose={() => setShowDueOverlay(false)}
-                bellButtonRef={dueDateRef}
+                bellButtonRef={bellButtonRef}
+                cardRef={cardRef}
+                targetRef={dueDateRef}
               />
             )}
             <Button

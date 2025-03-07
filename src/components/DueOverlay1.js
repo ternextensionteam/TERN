@@ -5,7 +5,7 @@ import { FaRegClock, FaBellSlash, FaRegCalendarAlt } from "react-icons/fa";
 import "./ReminderOverlay.css";
 import "./CalendarOverlay.css";
 
-function DueOverlay({ onSelectPreset, targetPosition, onClose, bellButtonRef, cardRef, targetRef }) {
+function DueOverlay1({ onSelectPreset, targetPosition, onClose, bellButtonRef }) {
   const overlayRef = useRef(null);
   const [adjustedPosition, setAdjustedPosition] = useState(null);
   const [isCalendarVisible, setIsCalendarVisible] = useState(false);
@@ -18,8 +18,7 @@ function DueOverlay({ onSelectPreset, targetPosition, onClose, bellButtonRef, ca
       if (
         overlayRef.current &&
         !overlayRef.current.contains(event.target) &&
-        !(bellButtonRef?.current && bellButtonRef.current.contains(event.target)) &&
-        !(targetRef?.current && targetRef.current.contains(event.target))
+        !(bellButtonRef?.current && bellButtonRef.current.contains(event.target))
       ) {
         onClose();
       }
@@ -27,14 +26,13 @@ function DueOverlay({ onSelectPreset, targetPosition, onClose, bellButtonRef, ca
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [onClose, bellButtonRef, targetRef]);
+  }, [onClose, bellButtonRef]);
 
   useEffect(() => {
-    if (!targetPosition || !cardRef?.current) return;
+    if (!targetPosition) return;
 
     const { innerWidth, innerHeight } = window;
-    const cardRect = cardRef.current.getBoundingClientRect();
-    let newTop = targetPosition.top;
+    let newTop = targetPosition.top + 10; // 10px offset below target
     let newLeft = targetPosition.left;
     const padding = 20;
 
@@ -61,21 +59,14 @@ function DueOverlay({ onSelectPreset, targetPosition, onClose, bellButtonRef, ca
       newTop = padding;
     }
 
-    newTop -= cardRect.top;
-    newLeft -= cardRect.left;
-
     setAdjustedPosition({ top: newTop, left: newLeft });
-  }, [targetPosition, cardRef]);
+  }, [targetPosition]);
 
   const handleDateSave = () => {
     const [time, period] = selectedTime.split(" ");
     const [hours, minutes] = time.split(":").map(Number);
     const adjustedHours =
-      period === "PM" && hours !== 12
-        ? hours + 12
-        : period === "AM" && hours === 12
-        ? 0
-        : hours;
+      period === "PM" && hours !== 12 ? hours + 12 : period === "AM" && hours === 12 ? 0 : hours;
 
     const savedDate = new Date(selectedDateTime);
     savedDate.setHours(adjustedHours, minutes, 0, 0);
@@ -91,10 +82,11 @@ function DueOverlay({ onSelectPreset, targetPosition, onClose, bellButtonRef, ca
     const times = [];
     for (let hour = 0; hour < 24; hour++) {
       for (let min of [0, 30]) {
-        const formattedTime = new Date(0, 0, 0, hour, min).toLocaleTimeString(
-          [],
-          { hour: "2-digit", minute: "2-digit", hour12: true }
-        );
+        const formattedTime = new Date(0, 0, 0, hour, min).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+        });
         times.push(formattedTime);
       }
     }
@@ -106,25 +98,17 @@ function DueOverlay({ onSelectPreset, targetPosition, onClose, bellButtonRef, ca
     const nextIntervalIndex = times.findIndex((time) => {
       const [hour, minute] = time.split(/:| /);
       const amPm = time.split(" ")[1];
-      const hour24 =
-        amPm === "PM" && hour !== "12"
-          ? +hour + 12
-          : amPm === "AM" && hour === "12"
-          ? 0
-          : +hour;
+      const hour24 = amPm === "PM" && hour !== "12" ? +hour + 12 : amPm === "AM" && hour === "12" ? 0 : +hour;
 
-      return (
-        hour24 > currentHour ||
-        (hour24 === currentHour && +minute > currentMinutes)
-      );
+      return hour24 > currentHour || (hour24 === currentHour && +minute > currentMinutes);
     });
 
     const startIndex = nextIntervalIndex === -1 ? 0 : nextIntervalIndex;
     return [...times.slice(startIndex), ...times.slice(0, startIndex)];
   };
 
-  if (!cardRef?.current || !targetPosition) {
-    console.warn("DueOverlay: Missing cardRef or targetPosition", { cardRef, targetPosition });
+  if (!targetPosition) {
+    console.warn("DueOverlay1: Missing targetPosition", { targetPosition });
     return null;
   }
 
@@ -134,8 +118,8 @@ function DueOverlay({ onSelectPreset, targetPosition, onClose, bellButtonRef, ca
       className="overlay-popup"
       style={{
         position: "absolute",
-        top: adjustedPosition?.top || 0,
-        left: adjustedPosition?.left || 0,
+        top: adjustedPosition?.top || targetPosition.top || 0,
+        left: adjustedPosition?.left || targetPosition.left || 0,
         zIndex: 9999,
         minWidth: isCalendarVisible ? "250px" : "auto",
       }}
@@ -144,17 +128,13 @@ function DueOverlay({ onSelectPreset, targetPosition, onClose, bellButtonRef, ca
         <div className="calendar-overlay">
           <div className="calendar-content">
             <Calendar
-              formatShortWeekday={(locale, date) =>
-                ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"][date.getDay()]
-              }
+              formatShortWeekday={(locale, date) => ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"][date.getDay()]}
               onChange={handleDateChange}
               value={selectedDateTime}
               className="calendar-component"
               locale="en-US"
               minDate={new Date()}
-              tileDisabled={({ date, view }) =>
-                view === "month" && date < new Date().setHours(0, 0, 0, 0)
-              }
+              tileDisabled={({ date, view }) => view === "month" && date < new Date().setHours(0, 0, 0, 0)}
               tileClassName={({ date, view }) => {
                 const currentDate = new Date();
                 currentDate.setHours(0, 0, 0, 0);
@@ -162,13 +142,8 @@ function DueOverlay({ onSelectPreset, targetPosition, onClose, bellButtonRef, ca
               }}
             />
             <div className="dropdown-wrapper">
-              <div
-                className="dropdown-header"
-                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              >
-                <span className={isDropdownOpen ? "" : "selected-time"}>
-                  {selectedTime}
-                </span>
+              <div className="dropdown-header" onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
+                <span className={isDropdownOpen ? "" : "selected-time"}>{selectedTime}</span>
               </div>
               {isDropdownOpen && (
                 <ul className="dropdown-options">
@@ -189,10 +164,7 @@ function DueOverlay({ onSelectPreset, targetPosition, onClose, bellButtonRef, ca
             </div>
           </div>
           <div className="action-buttons">
-            <button
-              className="back-btn"
-              onClick={() => setIsCalendarVisible(false)}
-            >
+            <button className="back-btn" onClick={() => setIsCalendarVisible(false)}>
               Back
             </button>
             <button className="save-btn" onClick={handleDateSave}>
@@ -203,25 +175,9 @@ function DueOverlay({ onSelectPreset, targetPosition, onClose, bellButtonRef, ca
       ) : (
         <div className="overlay-options">
           {[
-            {
-              label: "Later today",
-              time: new Date().setHours(17, 0, 0, 0),
-              icon: <FaRegClock />,
-            },
-            {
-              label: "Tomorrow",
-              time: new Date(
-                new Date().setDate(new Date().getDate() + 1)
-              ).setHours(9, 0, 0, 0),
-              icon: <FaRegClock />,
-            },
-            {
-              label: "Next week",
-              time: new Date(
-                new Date().setDate(new Date().getDate() + 7 - new Date().getDay())
-              ).setHours(9, 0, 0, 0),
-              icon: <FaRegClock />,
-            },
+            { label: "Later today", time: new Date().setHours(17, 0, 0, 0), icon: <FaRegClock /> },
+            { label: "Tomorrow", time: new Date(new Date().setDate(new Date().getDate() + 1)).setHours(9, 0, 0, 0), icon: <FaRegClock /> },
+            { label: "Next week", time: new Date(new Date().setDate(new Date().getDate() + 7 - new Date().getDay())).setHours(9, 0, 0, 0), icon: <FaRegClock /> },
             { label: "Pick a date & time", time: "", icon: <FaRegCalendarAlt /> },
             { label: "No Due Date", time: null },
           ].map((preset) => (
@@ -242,21 +198,15 @@ function DueOverlay({ onSelectPreset, targetPosition, onClose, bellButtonRef, ca
                 <span className="label">{preset.label}</span>
               </div>
               {preset.time && preset.label !== "Pick a date & time" && (
-                <span className="time">
-                  {new Date(preset.time).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    hour12: true,
-                  })}
-                </span>
+                <span className="time">{new Date(preset.time).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true })}</span>
               )}
             </div>
           ))}
         </div>
       )}
     </div>,
-    cardRef.current 
+    document.body
   );
 }
 
-export default DueOverlay;
+export default DueOverlay1;

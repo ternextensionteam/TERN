@@ -3,8 +3,7 @@ import { FaBell, FaBellSlash, FaCalendarAlt } from "react-icons/fa";
 import "../tooltip";
 import "../base.css";
 import "./InputBar.css";
-import { formatDueDate } from "../FormatTime";
-import DueOverlay from "../DueOverlay";
+import DueOverlay1 from "../DueOverlay1"; 
 import "react-datetime-picker/dist/DateTimePicker.css";
 
 function InputBar({ onAddTask }) {
@@ -14,8 +13,9 @@ function InputBar({ onAddTask }) {
   const [description, setDescription] = useState("");
   const [showDueOverlay, setShowDueOverlay] = useState(false);
   const [overlayPosition, setOverlayPosition] = useState({ top: 0, left: 0 });
-  const calendarButtonRef = useRef(null);
+
   const bellButtonRef = useRef(null);
+  const dueDateButtonRef = useRef(null);
   const longPressTimer = useRef(null);
 
   useEffect(() => {
@@ -82,14 +82,20 @@ function InputBar({ onAddTask }) {
     if (longPressTimer.current) {
       clearTimeout(longPressTimer.current);
       longPressTimer.current = null;
-
-      if (calendarButtonRef.current) {
-        const rect = calendarButtonRef.current.getBoundingClientRect();
-        setOverlayPosition({
+      if (dueDateButtonRef.current) {
+        const rect = dueDateButtonRef.current.getBoundingClientRect();
+        const newPosition = {
           top: rect.bottom + window.scrollY,
           left: rect.left + window.scrollX,
-        });
-        setShowDueOverlay((prev) => !prev);
+        };
+        
+        // Toggle overlay: close if open, open if closed
+        if (showDueOverlay) {
+          setShowDueOverlay(false);
+        } else {
+          setOverlayPosition(newPosition);
+          setShowDueOverlay(true);
+        }
       }
     }
   };
@@ -193,7 +199,7 @@ function InputBar({ onAddTask }) {
 
               <div className="due-date-wrapper" style={{ position: "relative" }}>
                 <button
-                  ref={calendarButtonRef}
+                  ref={dueDateButtonRef}
                   className="due-date-display"
                   type="button"
                   onMouseDown={handleDueDateMouseDown}
@@ -202,11 +208,11 @@ function InputBar({ onAddTask }) {
                   {renderCalendarIconWithDate()}
                 </button>
                 {showDueOverlay && (
-                  <DueOverlay
+                  <DueOverlay1
                     onSelectPreset={handleDueDateSelect}
                     targetPosition={overlayPosition}
                     onClose={() => setShowDueOverlay(false)}
-                    calendarButtonRef={calendarButtonRef}
+                    bellButtonRef={bellButtonRef}
                   />
                 )}
               </div>
