@@ -20,6 +20,7 @@
   width: 100%;
   margin: 0;
   padding: 0;
+  height: 800px;
   list-style: none;
   overflow-y: auto; /* Scroll when content overflows */
   overflow-x: hidden;
