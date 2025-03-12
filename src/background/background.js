@@ -21,14 +21,13 @@ setupContextMenuListeners();
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "indexPage") {
-    handleIndexPage(request)
-      .then(() => {
-        sendResponse({ success: true });
-      })
-      .catch((error) => {
-        console.error(error);
-        sendResponse({ success: false });
-      });
+    try {
+      handleIndexPage(request);
+      sendResponse({ success: true });
+    } catch (error) {
+      console.error(error);
+      sendResponse({ success: false });
+    }
     return true;
   }
 
