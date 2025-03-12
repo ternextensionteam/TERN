@@ -56,12 +56,14 @@ async function manageObserver() {
 manageObserver();
 
 // Update recheck observer when the whitelist changes
-chrome.storage.onChanged.addListener((changes, namespace) => {
-  if (namespace === "local" && changes[STORAGE_KEY]) {
-    // Recheck if the current page is whitelisted
-    manageObserver();
-  }
-});
+if (chrome.storage && chrome.storage.onChanged) {
+  chrome.storage.onChanged.addListener((changes, namespace) => {
+    if (namespace === "local" && changes[STORAGE_KEY]) {
+      // Recheck if the current page is whitelisted
+      manageObserver();
+    }
+  });
+}
 
 // Function to send page data
 async function sendPageData() {
