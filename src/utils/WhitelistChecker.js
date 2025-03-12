@@ -23,7 +23,15 @@ function checkStringMatchesList(currentURL, stringMatchesList) {
 }
 
 function checkRegexList(currentURL, regexList) {
-  const match = regexList.some((regex) => new RegExp(regex).test(currentURL));
+  const match = regexList.some((pattern) => {
+    try {
+      const regex = new RegExp(pattern);
+      return regex.test(currentURL);
+    } catch (error) {
+      console.error("Invalid regex pattern:", pattern);
+      return false;
+    }
+  });
   if (match) {
     console.log(currentURL + " matches a regex in the regex list");
   }
@@ -32,23 +40,18 @@ function checkRegexList(currentURL, regexList) {
 
 export const STORAGE_KEY = "whitelistRules";
 
-const defaultRegexList = [
-  "^https://[^/]+.amazon.com/.*$",
-  "^https://atoz.amazon.work/.*$",
-  "^https://quip-amazon.com/.*$",
-  "^https://quip.com/.*$",
-];
-
 export const defaultWhitelistRules = {
   allowedSites: [],
   allowedURLs: [],
   allowedStringMatches: [],
-  allowedRegex: defaultRegexList,
+  allowedRegex: [],
 };
 
 // Utility function to get the whitelist rules from storage
 export async function getWhitelistRules() {
+  console.log('Getting whitelist rules...');
   const result = await chrome.storage.local.get(STORAGE_KEY);
+  console.log('Got whitelist rules:', result[STORAGE_KEY]);
   return result[STORAGE_KEY] || defaultWhitelistRules;
 }
 
