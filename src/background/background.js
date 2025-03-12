@@ -13,9 +13,7 @@ chrome.runtime.onInstalled.addListener(() => {
   initializeStorage();
 });
 
-await loadSearchIndex();
-initializeOmnibox();
-setupContextMenuListeners();
+
 
 
 
@@ -55,3 +53,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 });
 
 addAlarmListeners();
+await loadSearchIndex();
+initializeOmnibox();
+setupContextMenuListeners();
