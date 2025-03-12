@@ -34,7 +34,7 @@ const SettingsSection = () => {
         ? defaultThemeColor
         : newThemeColor;
 
-    document.documentElement.setAttribute("data-theme", newTheme);
+    document.documentElement.setAttribute("data-theme", effectiveTheme);
     document.documentElement.style.setProperty("--primary-color", finalThemeColor);
     document.documentElement.style.setProperty("--hover-color", lightenColorWithOpacity(finalThemeColor, 0.2));
 
@@ -56,13 +56,22 @@ const SettingsSection = () => {
         setTheme(savedTheme);
         setThemeColor(savedThemeColor);
         applyThemeGlobally(savedTheme, savedThemeColor);
-
         setIsLoading(false);
       });
     };
 
     loadSettings();
 
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const handleSystemThemeChange = (e) => {
+      if (theme === "system") {
+        const newEffectiveTheme = e.matches ? "dark" : "light";
+        const defaultThemeColor = newEffectiveTheme === "dark" ? defaultColors.dark : defaultColors.light;
+        applyThemeGlobally("system", themeColor || defaultThemeColor);
+      }
+    };
+
+    mediaQuery.addEventListener("change", handleSystemThemeChange);
     const storageChangeHandler = (changes, area) => {
       if (area === "local" && (changes.theme || changes.themeColor)) {
         loadSettings();
@@ -70,8 +79,12 @@ const SettingsSection = () => {
     };
 
     chrome.storage.onChanged.addListener(storageChangeHandler);
-    return () => chrome.storage.onChanged.removeListener(storageChangeHandler);
-  }, []);
+
+    return () => {
+      mediaQuery.removeEventListener("change", handleSystemThemeChange);
+      chrome.storage.onChanged.removeListener(storageChangeHandler);
+    };
+  }, [theme, themeColor]);
 
   const exportBackup = () => {
     try {
@@ -101,7 +114,7 @@ const SettingsSection = () => {
           chrome.runtime.sendMessage({
             action: "backup_imported",
           });
-    
+          
           const newTheme = data.theme || 'system';
           const newThemeColor = data.themeColor || '#0069b9';
           setTheme(newTheme);
@@ -118,12 +131,12 @@ const SettingsSection = () => {
   };
 
   const applyTheme = (newTheme) => {
+    setTheme(newTheme);
+    
     const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
     const effectiveTheme = newTheme === "system" ? (prefersDark ? "dark" : "light") : newTheme;
     const defaultThemeColor = effectiveTheme === "dark" ? defaultColors.dark : defaultColors.light;
 
-    setTheme(newTheme);
-    // Only use default color if no custom color exists
     const finalThemeColor =
       themeColor === defaultColors.light || themeColor === defaultColors.dark || !themeColor
         ? defaultThemeColor
@@ -172,13 +185,22 @@ const SettingsSection = () => {
       <section className="settings-group">
         <h2>Theme Mode</h2>
         <div className="theme-options">
-          <button className={`btn ${theme === "light" ? "btn-primary" : "btn-outline-primary"}`} onClick={() => applyTheme("light")}>
+          <button 
+            className={`btn ${theme === "light" ? "btn-primary" : "btn-outline-primary"}`} 
+            onClick={() => applyTheme("light")}
+          >
             Light Mode
           </button>
-          <button className={`btn ${theme === "dark" ? "btn-primary" : "btn-outline-primary"}`} onClick={() => applyTheme("dark")}>
+          <button 
+            className={`btn ${theme === "dark" ? "btn-primary" : "btn-outline-primary"}`} 
+            onClick={() => applyTheme("dark")}
+          >
             Dark Mode
           </button>
-          <button className={`btn ${theme === "system" ? "btn-primary" : "btn-outline-primary"}`} onClick={() => applyTheme("system")}>
+          <button 
+            className={`btn ${theme === "system" ? "btn-primary" : "btn-outline-primary"}`} 
+            onClick={() => applyTheme("system")}
+          >
             Follow System
           </button>
         </div>
@@ -187,23 +209,46 @@ const SettingsSection = () => {
       <section className="settings-group">
         <h2>Change Theme Color</h2>
         <div className="theme-color-picker">
-          <input type="color" value={themeColor} onChange={handleThemeColorChange} className="color-picker" />
+          <input 
+            type="color" 
+            value={themeColor} 
+            onChange={handleThemeColorChange} 
+            className="color-picker" 
+          />
           <span className="current-color">{themeColor.toUpperCase()}</span>
-          <Button variant="success" onClick={resetThemeColor} className="recover-btn1">
+          <Button 
+            variant="success" 
+            onClick={resetThemeColor} 
+            className="recover-btn1"
+          >
             <FaRedo />
           </Button>
         </div>
       </section>
+      
       <section className="settings-group">
         <h2>Backups</h2>
         <div className="backup-options">
-          <button className="btn btn-primary" onClick={exportBackup} style={{ marginRight: "10px" }}>
+          <button 
+            className="btn btn-primary" 
+            onClick={exportBackup} 
+            style={{ marginRight: "10px" }}
+          >
             Export Backup
           </button>
-          <button className="btn btn-primary" onClick={handleImportBackupClick}>
+          <button 
+            className="btn btn-primary" 
+            onClick={handleImportBackupClick}
+          >
             Import Backup
           </button>
-          <input type="file" accept=".json" onChange={importBackup} ref={fileInputRef} style={{ display: "none" }} />
+          <input 
+            type="file" 
+            accept=".json" 
+            onChange={importBackup} 
+            ref={fileInputRef} 
+            style={{ display: "none" }} 
+          />
         </div>
       </section>
 

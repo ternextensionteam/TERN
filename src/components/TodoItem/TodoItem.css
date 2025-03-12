@@ -160,7 +160,7 @@
   flex-direction: column;
   margin-top: 10px;
   background-color: var(--background-color) !important;
-  padding: 10px;
+  padding: 0px !important;
   width: 100%;
   border: 1px solid var(--light-gray-color);
   border-radius: 8px;

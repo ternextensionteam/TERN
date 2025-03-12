@@ -1,10 +1,32 @@
-.todo-list.scrollable {
-    width: 100%; 
-    max-width: 1000px; 
-    margin: 0 auto;
-    padding: 0; 
-    list-style: none;
-    max-height: 850px; 
-    overflow-y: auto;
+.task-section {
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: var(--white-color);
+  border-radius: 8px;
+  box-sizing: border-box;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  max-height: 89vh;
+  overflow: hidden;
 }
-  
+
+.task-section .todo-list {
+  flex: 1 1 auto; 
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  height: 800px;
+  list-style: none;
+  overflow-y: auto; 
+  overflow-x: hidden;
+  min-height: 0; 
+}
+
+.recover-button-container {
+  margin-top: 10px; 
+  text-align: center; 
+}

@@ -47,7 +47,6 @@
   box-shadow: var(--border-shadow-small);
 }
 
-
 .indexing-box {
   background: var(--white-color);
   padding: 20px;
@@ -77,12 +76,11 @@
   font-weight: bold;
 }
 
-  .subnav-link.active {
+.subnav-link.active {
   color: var(--primary-color);
   font-weight: bold;
   border-bottom: 3px solid var(--primary-color);
   background-color: transparent;
-  border-bottom: 3px solid var(--primary-color);
 }
 
 .indexing-input-box {
@@ -105,9 +103,9 @@
   background-color: var(--white-color);
   border-radius: 8px;
   overflow-y: auto;
-  max-height: 825px; 
-  max-height: 840px; 
+  max-height: calc(100vh - 300px); /* Adjust this value based on your layout */
   padding: 10px;
+  box-sizing: border-box;
 }
 
 .list-container::-webkit-scrollbar {

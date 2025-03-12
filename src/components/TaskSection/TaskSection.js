@@ -101,14 +101,12 @@ function TaskSection() {
     };
 
     window.addEventListener("unload", handleUnload);
-
     return () => {
       window.removeEventListener("unload", handleUnload);
     };
   }, [tasks, completedTasks]);
 
   const sortedTasks = [...tasks].sort((a, b) => {
-    // Check for overdue tasks first
     const aDueDate = a.dueDate ? new Date(a.dueDate) : null;
     const bDueDate = b.dueDate ? new Date(b.dueDate) : null;
     const isAOverdue = aDueDate && !isNaN(aDueDate.getTime()) && aDueDate < new Date();
