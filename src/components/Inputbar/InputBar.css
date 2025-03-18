@@ -16,7 +16,7 @@
     max-width: 700px;
     background-color: var(--white-color);
     box-shadow: var(--border-shadow-big);
-    padding: 24px;
+    padding: 20px;
     border-radius: 4px;
     box-sizing: border-box;
 }
@@ -40,6 +40,7 @@
     box-sizing: border-box;
     transition: border-color 0.3s ease;
 }
+
 .task-textarea {
     width: 95%;
     font-family: var(--font-family);

@@ -11,15 +11,15 @@
 }
 
 .indexing-upper-container {
-  width: 100%;
-  max-width: 700px;
-  margin: 0 auto;
-  border-radius: 4px;
-  background-color: var(--white-color);
-  box-shadow: var(--border-shadow-big);
-  padding: 20px;
-  margin-bottom: 20px;
-  margin-top: -5px;
+  width: 95% !important;
+  max-width: 700px !important;
+  margin: 0 auto !important;
+  border-radius: 4px !important;
+  background-color: var(--white-color) !important;
+  box-shadow: var(--border-shadow-big) !important;
+  padding: 20px !important;
+  margin-bottom: 20px !important;
+  margin-top: -5px !important;
 }
 
 .nav-tabs {
