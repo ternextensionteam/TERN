@@ -4,6 +4,8 @@
   "main": "index.js",
   "scripts": {
     "test": "jest --passWithNoTests",
+    "test:coverage": "jest --coverage",
+    "test:watch": "jest --watch",
     "build": "webpack --mode production",
     "watch": "webpack --watch"
   },
