@@ -20,7 +20,16 @@ const SCORE_THRESHOLD = 0.5;
  */
 export function getSuggestions(text) {
   let results = miniSearch.search(text, { prefix: true, fuzzy: 0.2 });
-  let filteredResults = results.filter((result) => result.score > SCORE_THRESHOLD).slice(0, 10);
+  let filteredResults = results.filter((result) => result.score > SCORE_THRESHOLD);
+
+
+  // check if results length different from filteredResults length
+  if (results.length !== filteredResults.length) {
+    console.log("results length: ", results.length ,"different from filteredResults length: ", filteredResults.length);
+  }
+
+  filteredResults = filteredResults.slice(0, 10);
+
   removeDuplicates(filteredResults);
   
   let suggestions = filteredResults.map((result) => ({
@@ -54,6 +63,7 @@ export function handleIndexPage(request) {
   } else {
     miniSearch.add(pageData);
   }
+  saveMinisearch();
 }
 
 /**
