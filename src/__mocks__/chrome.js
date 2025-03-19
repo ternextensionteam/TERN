@@ -18,8 +18,16 @@ const chrome = {
       }),
     },
   },
+  tabs: {
+    query: jest.fn().mockResolvedValue([
+      { id: 1, url: "https://example.com" },
+    ]),
+    onActivated: {
+      addListener: jest.fn(), // Mocking onActivated
+      removeListener: jest.fn(),
+    },
+  },
 };
 
 global.chrome = chrome;
-
 export default chrome; 

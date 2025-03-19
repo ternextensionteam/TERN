@@ -40,6 +40,7 @@ function WhitelistIndicator() {
 
   return (
     <span
+      data-testid="whitelist-indicator"
       style={{
         display: "inline-block",
         width: "10px",
