@@ -150,6 +150,7 @@ const RecoverDeletedTasks = ({
         onClick={onBack}
         className="back-btn1"
         data-tooltip="Back"
+        aria-label="Back"
         data-tooltip-position="top"
       >
         <IoChevronBackOutline />
