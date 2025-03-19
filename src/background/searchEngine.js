@@ -63,6 +63,7 @@ export function handleIndexPage(request) {
   } else {
     miniSearch.add(pageData);
   }
+  saveMinisearch();
 }
 
 /**
