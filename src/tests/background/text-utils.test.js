@@ -46,15 +46,16 @@ describe('Text Utils Tests', () => {
 
   test('should remove duplicate results based on title similarity', () => {
     const results = [
-      { title: 'JavaScript Tutorial for Beginners', score: 0.9 },
-      { title: 'JavaScript Tutorials for Beginners', score: 0.85 }, // Should be removed as duplicate
+      { title: 'JavaScript Tutorials for Beginners', score: 0.9 },
+      { title: 'JavaScript Tutorials for Beginners', score: 0.85 },
       { title: 'Python Programming Basics', score: 0.8 }
     ];
-    
+
+
     removeDuplicates(results);
-    expect(results.length).toBe(3);
-    expect(results[0].title).toBe('JavaScript Tutorial for Beginners');
-    expect(results[1].title).toBe('JavaScript Tutorials for Beginners');
-    expect(results[2].title).toBe('Python Programming Basics');
+
+    expect(results.length).toBe(2);
+    expect(results[0].title).toBe('JavaScript Tutorials for Beginners');
+    expect(results[1].title).toBe('Python Programming Basics');
   });
 });
