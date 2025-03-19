@@ -1,11 +1,15 @@
+import { FaPersonWalkingDashedLineArrowRight } from "react-icons/fa6";
+import { logToFile } from "../utils/Logger";
+
+
 export function handleAddTaskNotification(request, sender, sendResponse) {
   let task = request.task;
-  console.log("Received new task:", task);
+  logToFile(0, "Service worker recieved new task:", task.text);
   // Schedule notification
   if (task.dueDate && task.hasReminder) {
     const dueTime = new Date(task.dueDate).getTime();
     chrome.alarms.create(`task-${task.id}`, { when: dueTime });
-    console.log(`Alarm set for task ${task.id} at ${task.dueDate}`);
+    logToFile(1,`Alarm set for task ${task.id} at ${task.dueDate}`);
   }
   sendResponse({ success: true });
   return true; // Added return true for async messaging
@@ -19,12 +23,12 @@ export async function handleDeleteTaskNotification(request, sender, sendResponse
   let updatedTasks = tasks.filter((task) => String(task.id) !== String(taskId)); // Remove task
 
   await chrome.storage.local.set({ tasks: updatedTasks });
-  console.log("Task deleted:", taskId);
+  logToFile(2,"Task deleted:", taskId);
 
   // Clear associated alarm (only one alarm per task now)
   chrome.alarms.clear(`task-${taskId}`, (wasCleared) => {
     if (wasCleared) {
-      console.log(`Cleared alarm for deleted task: task-${taskId}`);
+      logToFile(1,`Cleared alarm for deleted task: task-${taskId}`);
     }
   });
 
@@ -33,16 +37,19 @@ export async function handleDeleteTaskNotification(request, sender, sendResponse
 }
 
 export async function handleBackupImported(request, sender, sendResponse) {
+  logToFile(2,"Handling backup import...");
   try {
     const data = await chrome.storage.local.get("tasks");
     let tasks = Array.isArray(data.tasks) ? data.tasks : [];
+    logToFile(1,"Clearing all alarms...");
     await chrome.alarms.clearAll();
     
+    logToFile(1,"Setting new alarms from backup...");
     for (let task of tasks) {
       if (task.dueDate && task.hasReminder) {
         const dueTime = new Date(task.dueDate).getTime();
         chrome.alarms.create(`task-${task.id}`, { when: dueTime });
-        console.log(`Alarm set for task ${task.id} at ${task.dueDate}`);
+        logToFile(0,`Alarm set for task ${task.id} at ${task.dueDate}`);
       }
     }
     
@@ -57,11 +64,12 @@ export async function handleBackupImported(request, sender, sendResponse) {
 export async function handleUpdateTaskNotification(request, sender, sendResponse) {
   try {
     const { taskId, newDueDate, newHasReminder } = request;
+    logToFile(2,"Updating task notification for task:", taskId);
 
     // Clear the old alarm
     await new Promise(resolve => {
       chrome.alarms.clear(`task-${taskId}`, () => {
-        console.log(`Previous alarm for task ${taskId} cleared.`);
+        logToFile(1,`Previous alarm for task ${taskId} cleared.`);
         resolve();
       });
     });
@@ -70,7 +78,7 @@ export async function handleUpdateTaskNotification(request, sender, sendResponse
     if (newDueDate && newHasReminder) {
       const dueTime = new Date(newDueDate).getTime();
       chrome.alarms.create(`task-${taskId}`, { when: dueTime });
-      console.log(`New alarm set for task ${taskId} at ${newDueDate}`);
+      logToFile(1,`New alarm set for task ${taskId} at ${newDueDate}`);
     }
 
     sendResponse({ success: true });
@@ -90,7 +98,7 @@ export async function addAlarmListeners() {
 }
 
 async function handleAlarmEvent(alarm) {
-    console.log("Alarm triggered:", alarm.name);
+    logToFile(2,"Alarm triggered:", alarm.name);
     
     const data = await chrome.storage.local.get("tasks");
     let tasks = Array.isArray(data.tasks) ? data.tasks : [];
@@ -110,7 +118,7 @@ async function handleAlarmEvent(alarm) {
         
         await chrome.notifications.clear(alarm.name);
         const notificationId = await chrome.notifications.create(alarm.name, notificationOptions);
-        console.log("Notification created:", notificationId);
+        logToFile(0,"Notification created:", notificationId);
     }
 }
 
@@ -132,7 +140,7 @@ async function handleNotificationButtonClick(notificationId, _buttonIndex) {
         
         // Save the updated tasks to storage
         await chrome.storage.local.set({ tasks });
-        console.log(
+        logToFile(1,
             "Task snoozed:",
             task.text,
             "New due time:",
@@ -144,6 +152,6 @@ async function handleNotificationButtonClick(notificationId, _buttonIndex) {
         
         // Clear the old notification
         await chrome.notifications.clear(notificationId);
-        console.log("Old notification cleared:", notificationId);
+        logToFile(0,"Old notification cleared:", notificationId);
     }
 }
