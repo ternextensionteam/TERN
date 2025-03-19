@@ -117,6 +117,7 @@ function InputBar({ onAddTask }) {
         type="button"
         onClick={handleReminderClick}
         data-tooltip={hasReminder ? "Reminder on" : "Reminder off"}
+        aria-label={hasReminder ? "Reminder on" : "Reminder off"}
       >
         {hasReminder ? (
           <FaBell className="bell-icon active" />
@@ -204,6 +205,8 @@ function InputBar({ onAddTask }) {
                   type="button"
                   onMouseDown={handleDueDateMouseDown}
                   onMouseUp={handleDueDateMouseUp}
+                  // aria-label="Due date"
+                  data-testid="due-date-button"
                 >
                   {renderCalendarIconWithDate()}
                 </button>
