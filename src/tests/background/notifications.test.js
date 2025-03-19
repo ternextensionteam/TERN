@@ -5,7 +5,9 @@ import {
     handleBackupImported,
     addAlarmListeners
   } from '../../background/notifications';
-  
+
+  jest.mock("../../utils/Logger");
+
   // Mock Chrome API
   global.chrome = {
     storage: {

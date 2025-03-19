@@ -11,6 +11,7 @@ jest.mock("../../background/storageManager");
 jest.mock("../../background/contextMenu");
 jest.mock("../../background/searchEngine");
 jest.mock("../../background/notifications");
+jest.mock("../../utils/Logger");
 
 // Mock Chrome API with complete set of needed mocks
 global.chrome = {
