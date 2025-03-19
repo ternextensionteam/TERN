@@ -2,7 +2,8 @@ import { initializeOmnibox } from "./omnibox";
 import { initializeStorage } from "./storageManager";
 import { createContextMenu, setupContextMenuListeners } from "./contextMenu";
 import { loadSearchIndex, handleIndexPage } from "./searchEngine";
-import { handleAddTaskNotification, handleDeleteTaskNotification, handleUpdateTaskNotification, handleBackupImported, addAlarmListeners } from "./notifications";
+import { handleAddTaskNotification, handleDeleteTaskNotification, 
+         handleUpdateTaskNotification, handleBackupImported, addAlarmListeners } from "./notifications";
 import { logToFile } from "../utils/Logger";
 
 chrome.runtime.onInstalled.addListener(() => {
@@ -57,9 +58,17 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 });
 
 addAlarmListeners();
-await loadSearchIndex();
-initializeOmnibox();
-setupContextMenuListeners();
+// Wrap async operations in an IIFE
+(async function() {
+  try {
+    await loadSearchIndex();
+  } catch (error) {
+    console.error("Error loading search index:", error);
+  }
+  
+  initializeOmnibox();
+  setupContextMenuListeners();
+})();
 
 // Log that the background script has loaded
 logToFile(1, "Background script loaded");
