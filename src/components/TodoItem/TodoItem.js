@@ -148,6 +148,8 @@ function TodoItem({ task, onDelete, onUpdateTask }) {
         variant="link"
         onClick={handleReminderClick}
         className="reminder-btn"
+        data-testid="reminder-button"
+
       >
         {hasReminder ? (
           <FaBell
