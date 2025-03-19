@@ -2,6 +2,19 @@
   padding: 20px;
   max-width: 800px;
   margin-top: -22px;
+  max-height: 89vh; /* Match task-section's height constraint */
+  overflow-y: auto; /* Enable vertical scrolling */
+  overflow-x: hidden;
+}
+
+/* Optional: Add some styling for the scrollbar */
+.settings-section::-webkit-scrollbar {
+  width: 6px;
+}
+
+.settings-section::-webkit-scrollbar-thumb {
+  background-color: var(--light-gray-color);
+  border-radius: 6px;
 }
 
 .settings-group {
