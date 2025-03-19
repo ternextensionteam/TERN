@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Container, Button } from "react-bootstrap";
 import { FaRedo } from "react-icons/fa";
+import LogViewer from "../LogViewer/LogViewer";
 import "../base.css";
 import "./SettingsSection.css";
 
@@ -251,6 +252,12 @@ const SettingsSection = () => {
           />
         </div>
       </section>
+
+      <section className="settings-group">
+        <h2>Logs</h2>
+        <LogViewer />
+      </section>
+
 
       <section className="settings-group">
         <h2>About</h2>

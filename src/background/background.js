@@ -3,6 +3,7 @@ import { initializeStorage } from "./storageManager";
 import { createContextMenu, setupContextMenuListeners } from "./contextMenu";
 import { loadSearchIndex, handleIndexPage } from "./searchEngine";
 import { handleAddTaskNotification, handleDeleteTaskNotification, handleUpdateTaskNotification, handleBackupImported, addAlarmListeners } from "./notifications";
+import { logToFile } from "../utils/Logger";
 
 chrome.runtime.onInstalled.addListener(() => {
   chrome.sidePanel
@@ -12,7 +13,6 @@ chrome.runtime.onInstalled.addListener(() => {
   createContextMenu();
   initializeStorage();
 });
-
 
 
 
@@ -50,9 +50,16 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
     return true; // Required for asynchronous sendResponse
   }
+
+  if (request.action === "log") {
+    logToFile(request.level, request.logEntry);
+  }
 });
 
 addAlarmListeners();
 await loadSearchIndex();
 initializeOmnibox();
 setupContextMenuListeners();
+
+// Log that the background script has loaded
+logToFile(1, "Background script loaded");

@@ -1,0 +1,94 @@
+.log-viewer {
+  margin-top: 20px;
+  border-radius: 5px;
+  background-color: var(--bg-color);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.log-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 5px;
+}
+
+.collapse-toggle {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  text-align: left;
+  padding: 8px;
+  color: var(--text-color) !important;
+  text-decoration: none;
+  border: none;
+}
+
+.collapse-toggle:hover {
+  background-color: var(--hover-color);
+}
+
+.collapse-toggle span {
+  margin-left: 10px;
+  font-weight: 500;
+}
+
+.log-count {
+  margin-left: 10px;
+}
+
+.log-actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  padding: 0 10px;
+}
+
+.log-container {
+  background-color: var(--bg-color-secondary);
+  border-radius: 4px;
+  height: 250px;
+  overflow-y: auto;
+  padding: 10px;
+  font-family: monospace;
+  font-size: 13px;
+  white-space: pre-wrap;
+  word-break: break-all;
+  margin: 0 10px 10px 10px;
+}
+
+.log-container pre {
+  margin: 0;
+  color: var(--text-color);
+}
+
+/* Compact tabs styling */
+.compact-tabs .nav-item {
+  font-size: 0.9rem;
+}
+
+.compact-tabs .nav-link {
+  padding: 6px 10px;
+}
+
+.tab-title {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+/* Add tab styles that match the theme */
+.nav-tabs .nav-link {
+  color: var(--text-color);
+}
+
+.nav-tabs .nav-link.active {
+  color: var(--primary-color);
+  background-color: var(--bg-color);
+  border-color: var(--border-color) var(--border-color) var(--bg-color);
+}
+
+/* Badge styling */
+.badge {
+  margin-left: 5px;
+  font-size: 75%;
+}
