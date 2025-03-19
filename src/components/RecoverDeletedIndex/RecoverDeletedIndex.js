@@ -105,6 +105,8 @@ const RecoverDeletedIndex = ({
         onClick={onBack}
         className="back-btn1"
         data-tooltip="Back"
+        aria-label="Back"
+
       >
         <IoChevronBackOutline />
       </Button>
