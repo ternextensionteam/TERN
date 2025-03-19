@@ -89,6 +89,7 @@ const RecoverDeletedIndex = ({
                   variant="success"
                   onClick={() => onRecover(activeDeletedSection, item)}
                   className="recover-btn"
+                  aria-label="recover"
                   data-tooltip="Recover link"
                   data-tooltip-position="top"
                 >
