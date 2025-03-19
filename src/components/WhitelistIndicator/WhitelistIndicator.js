@@ -31,6 +31,7 @@ function WhitelistIndicator() {
 
     chrome.storage.onChanged.addListener(handleStorageChange);
     chrome.tabs.onActivated.addListener(handleTabChange);
+    chrome.tabs.onUpdated.addListener(handleTabChange);
 
     return () => {
       chrome.storage.onChanged.removeListener(handleStorageChange);
