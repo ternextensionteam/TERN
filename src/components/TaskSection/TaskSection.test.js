@@ -7,6 +7,8 @@ import mockChrome from "../../__mocks__/chrome";
 // Mock the custom hook
 jest.mock("../../hooks/useTodoList/useTodoList");
 
+jest.mock("../../utils/Logger");
+
 describe("TaskSection Component", () => {
   let mockAddTask, mockDeleteTask, mockUpdateTask, mockToggleReminder;
 

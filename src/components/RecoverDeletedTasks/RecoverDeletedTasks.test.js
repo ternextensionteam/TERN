@@ -3,6 +3,8 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import RecoverDeletedTasks from "./RecoverDeletedTasks";
 import "@testing-library/jest-dom";
 
+jest.mock("../../utils/Logger");
+
 describe("RecoverDeletedTasks Component", () => {
   let mockOnRecoverDeleted, mockOnRecoverCompleted, mockOnBack;
 

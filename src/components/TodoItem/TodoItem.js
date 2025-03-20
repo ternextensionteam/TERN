@@ -5,6 +5,7 @@ import "../tooltip";
 import "../base.css";
 import DueOverlay from "../DueOverlay";
 import "./TodoItem.css";
+import { logToMessage } from "../../utils/Logger";
 
 function TodoItem({ task, onDelete, onUpdateTask }) {
   const [isDescriptionVisible, setIsDescriptionVisible] = useState(false);

@@ -2,6 +2,8 @@ import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import TodoList from "./TodoList";
 
+jest.mock("../../utils/Logger");
+
 describe("TodoList Component", () => {
   let mockOnDeleteTask, mockOnToggleReminder, mockOnUpdateTask, sampleTasks;
 
@@ -60,7 +62,6 @@ describe("TodoList Component", () => {
   test("calls onDeleteTask when delete button is clicked", async () => {
     renderTodoList();
     const deleteButtons = screen.getAllByTestId("delete-button");
-    console.log(deleteButtons[0]);
     fireEvent.click(deleteButtons[0]);
 
     await waitFor(() => {

@@ -16,7 +16,7 @@ module.exports = (env, argv) => {
       filename: "[name].bundle.js", // Generates popup.bundle.js and background.bundle.js
     },
     // Add devtool configuration based on environment
-    devtool: isProduction ? 'source-map' : 'eval-source-map',
+    devtool: 'source-map',
     module: {
       rules: [
         {

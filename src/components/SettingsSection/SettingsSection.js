@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { Container, Button } from "react-bootstrap";
 import { FaRedo } from "react-icons/fa";
 import LogViewer from "../LogViewer/LogViewer";
+import { logToMessage } from "../../utils/Logger";
 import "../base.css";
 import "./SettingsSection.css";
 

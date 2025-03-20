@@ -1,6 +1,8 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import RecoverDeletedIndex from "./RecoverDeletedIndex";
+jest.mock("../../utils/Logger");
+
 
 describe("RecoverDeletedIndex Component", () => {
   let mockOnRecover, mockOnBack, mockOnGoToIndexing;

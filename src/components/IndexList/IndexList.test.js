@@ -3,6 +3,8 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import IndexList from "./IndexList";
 import "@testing-library/jest-dom";
 
+jest.mock("../../utils/Logger");
+
 describe("IndexList Component", () => {
   let mockOnDelete;
   let items;

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { isUrlWhitelisted, getWhitelistRules, STORAGE_KEY, defaultWhitelistRules} from '../../utils/WhitelistChecker';
+import { logToMessage } from '../../utils/Logger';
 
 const DELETED_STORAGE_KEY = 'deletedWhitelistRules';
 
@@ -25,7 +26,6 @@ function useIndexMatching() {
     loadRules();
 
     const handleStorageChange = (changes, namespace) => {
-      logToMessage(0,'Storage changed in useIndexMatching:', changes);
       if (namespace === "local") {
         if (changes[STORAGE_KEY]) {
           logToMessage(0,'WhitelistRules changed in useIndexMatching:', changes[STORAGE_KEY].newValue);

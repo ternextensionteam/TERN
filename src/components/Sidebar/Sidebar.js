@@ -7,6 +7,7 @@ import WhitelistIndicator from "../WhitelistIndicator/WhitelistIndicator";
 import TaskSection from "../TaskSection/TaskSection";
 import IndexingSection from "../IndexingSection/IndexingSection";
 import SettingsSection from "../SettingsSection/SettingsSection";
+import { logToMessage } from "../../utils/Logger";
 import "../tooltip";
 import "../base.css";
 import "./Sidebar.css";

@@ -53,7 +53,6 @@ describe("InputBar Component", () => {
   });
 
   test("opens and closes due date overlay when due date button is clicked", async () => {
-    console.log(document.body.innerHTML);
 
     const dueDateButton = screen.getByTestId("due-date-button");
     fireEvent.click(dueDateButton);

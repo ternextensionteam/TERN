@@ -1,6 +1,9 @@
 import * as searchEngineModule from '../../background/searchEngine';
 import MiniSearch from 'minisearch';
 
+jest.mock("../../utils/Logger");
+
+
 // Mock MiniSearch completely
 jest.mock('minisearch');
 

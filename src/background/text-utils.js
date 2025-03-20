@@ -1,3 +1,5 @@
+import { logToFile } from "../utils/Logger";
+
 /**
  * Removes anchor links from URLs
  */

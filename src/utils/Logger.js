@@ -13,6 +13,30 @@ const IS_DEV = process.env.NODE_ENV == "development";
 let writePromise = Promise.resolve(); // Initially resolved promise
 
 /**
+ * Formats content by converting objects to JSON and joining arguments.
+ * Handles circular references safely.
+ * @param {Array} args - Array of values to log
+ * @returns {string} Formatted content as a string
+ */
+const formatLogContent = (args) => {
+    return args.map(arg => {
+        if (typeof arg !== "object" || arg === null) {
+            return arg;
+        }
+        
+        try {
+            return JSON.stringify(arg, null, 2);
+        } catch (error) {
+            // Handle circular references or other JSON stringify errors
+            if (error.message.includes('circular')) {
+                return `[Circular Object: ${arg.constructor ? arg.constructor.name : 'Object'}]`;
+            }
+            return `[Object: stringify failed - ${error.message}]`;
+        }
+    }).join(" ");
+};
+
+/**
  * Formats log entries with timestamp, level, and content.
  * Works like console.log handling multiple arguments and formatting objects.
  * @param {number} level - The log level (0=DEBUG, 1=INFO, 2=CRITICAL)
@@ -20,10 +44,8 @@ let writePromise = Promise.resolve(); // Initially resolved promise
  * @returns {string} Formatted log entry as a string
  */
 const formatLogEntry = (level, args) => {
-    return `[${new Date().toISOString()}] [Level ${level}] ${args.map(arg => 
-        typeof arg === "object" ? JSON.stringify(arg, null, 2) : arg
-    ).join(" ")}`;
-}
+    return `[${new Date().toISOString()}] [Level ${level}] ${formatLogContent(args)}`;
+};
 
 /**
  * Logs a message at the specified level.
@@ -76,10 +98,10 @@ export const logToFile = async (level, ...args) => {
  * @returns {Promise<void>}
  */
 export const logToMessage = async (level, ...args) => {
-    const logEntry = formatLogEntry(level, args);
-    chrome.runtime.sendMessage({ action: "log", level, logEntry });
+    const content = formatLogContent(args) + "message";
+    console.log("sending log message", args);
+    chrome.runtime.sendMessage({ action: "log", level, content });
 }
-
 
 /**
  * Retrieves logs at a specific level.

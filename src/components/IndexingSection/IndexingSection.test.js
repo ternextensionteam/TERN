@@ -5,6 +5,8 @@ import useIndexMatching from "../../hooks/useIndexMatching/useIndexMatching";
 import "@testing-library/jest-dom";
 
 jest.mock("../../hooks/useIndexMatching/useIndexMatching");
+jest.mock("../../utils/Logger");
+
 
 describe("IndexingSection Component", () => {
     beforeEach(() => {

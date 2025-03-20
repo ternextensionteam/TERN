@@ -53,7 +53,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 
   if (request.action === "log") {
-    logToFile(request.level, request.logEntry);
+    logToFile(request.level, request.content);
   }
 });
 

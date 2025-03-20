@@ -153,7 +153,7 @@ describe('Logger', () => {
       expect(chrome.runtime.sendMessage).toHaveBeenCalledWith({
         action: 'log',
         level: 1,
-        logEntry: expect.stringContaining('Message test')
+        content: expect.stringContaining('Message test')
       });
     });
   });
