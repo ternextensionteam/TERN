@@ -182,7 +182,7 @@ const SettingsSection = () => {
   }
 
   return (
-    <Container className="settings-section">
+    <Container className="settings-section" data-testid="settings-section">
       <section className="settings-group">
         <h2>Theme Mode</h2>
         <div className="theme-options">
@@ -215,6 +215,8 @@ const SettingsSection = () => {
             value={themeColor} 
             onChange={handleThemeColorChange} 
             className="color-picker" 
+            data-testid="theme-color-picker"
+
           />
           <span className="current-color">{themeColor.toUpperCase()}</span>
           <Button 
@@ -249,6 +251,7 @@ const SettingsSection = () => {
             onChange={importBackup} 
             ref={fileInputRef} 
             style={{ display: "none" }} 
+            data-testid="file-input"
           />
         </div>
       </section>

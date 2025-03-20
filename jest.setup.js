@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import './src/tests/mocks/chrome';
+import './src/__mocks__/chrome';
 
 const listeners = new Set();
 

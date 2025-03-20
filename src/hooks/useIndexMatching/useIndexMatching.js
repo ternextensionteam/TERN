@@ -7,6 +7,7 @@ const defaultDeletedRules = defaultWhitelistRules;
 
 function useIndexMatching() {
   const [rules, setRules] = useState(defaultWhitelistRules);
+  console.log("defaultWhitelistRules at initialization:", defaultWhitelistRules);
   const [deletedRules, setDeletedRules] = useState(defaultDeletedRules);
 
   // Load rules and deleted rules from storage on mount

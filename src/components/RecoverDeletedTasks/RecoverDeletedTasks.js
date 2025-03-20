@@ -23,9 +23,10 @@ const RecoverDeletedTasks = ({
     completed: { label: "Completed Tasks" }, 
     deleted: { label: "Deleted Tasks" },
   };
+  console.log("RecoverDeletedTasks - received deletedTasks:", deletedTasks);
 
-  console.log(`RecoverDeletedTasks - Deleted Tasks:`, safeDeletedTasks);
-  console.log(`RecoverDeletedTasks - Completed Tasks:`, safeCompletedTasks);
+  // console.log(`RecoverDeletedTasks - Deleted Tasks:`, safeDeletedTasks);
+  // console.log(`RecoverDeletedTasks - Completed Tasks:`, safeCompletedTasks);
 
   const handleRecover = (index) => {
     if (activeSection === "completed") {
@@ -100,6 +101,7 @@ const RecoverDeletedTasks = ({
                 data-tooltip="Recover task"
                 data-tooltip-position="top"
                 aria-label="recover"
+                data-testid={`recover-deleted-task-${index}`}
               >
                 <FaRedo style={{ width: "20px", height: "20px" }} />
               </Button>
@@ -119,7 +121,7 @@ const RecoverDeletedTasks = ({
   };
 
   return (
-    <div className="recover-tasks-container">
+    <div data-testid="recover-deleted-tasks-page" className="recover-tasks-container">
       <h2 className="section-title">{sections[activeSection].label}</h2>
 
       <Nav variant="tabs" activeKey={activeSection} onSelect={setActiveSection}>
@@ -150,6 +152,7 @@ const RecoverDeletedTasks = ({
         onClick={onBack}
         className="back-btn1"
         data-tooltip="Back"
+        aria-label="Back"
         data-tooltip-position="top"
       >
         <IoChevronBackOutline />

@@ -97,6 +97,7 @@ function TodoItem({ task, onDelete, onUpdateTask }) {
 
   const handleDelete = (e) => {
     e.stopPropagation();
+    console.log("Delete clicked, task id:", task.id);
     setTimeout(() => {
       onDelete(task.id);
     }, 250);
@@ -148,6 +149,8 @@ function TodoItem({ task, onDelete, onUpdateTask }) {
         variant="link"
         onClick={handleReminderClick}
         className="reminder-btn"
+        data-testid="reminder-button"
+
       >
         {hasReminder ? (
           <FaBell

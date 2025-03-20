@@ -89,6 +89,7 @@ const RecoverDeletedIndex = ({
                   variant="success"
                   onClick={() => onRecover(activeDeletedSection, item)}
                   className="recover-btn"
+                  aria-label="recover"
                   data-tooltip="Recover link"
                   data-tooltip-position="top"
                 >
@@ -104,6 +105,8 @@ const RecoverDeletedIndex = ({
         onClick={onBack}
         className="back-btn1"
         data-tooltip="Back"
+        aria-label="Back"
+
       >
         <IoChevronBackOutline />
       </Button>
