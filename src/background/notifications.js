@@ -3,13 +3,23 @@ import { logToFile } from "../utils/Logger";
 
 
 export function handleAddTaskNotification(request, sender, sendResponse) {
-  let task = request.task;
-  logToFile(0, "Service worker recieved new task:", task.text);
+  let newTask = request.task;
+  logToFile(0, "Service worker recieved new task:", newTask.text);
+
+  chrome.storage.local.get("tasks", (data) => {
+    let tasks = Array.isArray(data.tasks) ? data.tasks : [];
+    tasks.push(newTask);
+    chrome.storage.local.set({ tasks }, () => {
+      logToFile(1,"Task stored successfully:", newTask);
+    });
+  });
+
+
   // Schedule notification
-  if (task.dueDate && task.hasReminder) {
-    const dueTime = new Date(task.dueDate).getTime();
-    chrome.alarms.create(`task-${task.id}`, { when: dueTime });
-    logToFile(1,`Alarm set for task ${task.id} at ${task.dueDate}`);
+  if (newTask.dueDate && newTask.hasReminder) {
+    const dueTime = new Date(newTask.dueDate).getTime();
+    chrome.alarms.create(`task-${newTask.id}`, { when: dueTime });
+    logToFile(1,`Alarm set for task ${newTask.id} at ${newTask.dueDate}`);
   }
   sendResponse({ success: true });
   return true; // Added return true for async messaging

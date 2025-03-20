@@ -4,23 +4,19 @@ import { logToMessage } from "../../utils/Logger";
 export function useTodoList() {
   const [tasks, setTasks] = useState([]);
   const [tasksLoaded, setTasksLoaded] = useState(false);
-
-  useEffect(() => {
-    if (tasksLoaded) {
-      saveTasks();
-    }
-  }, [tasks, tasksLoaded]);
-
   useEffect(() => {
     loadTasks();
 
     // Listen for storage updates (overdue tasks or snooxe)
     chrome.storage.onChanged.addListener((changes) => {
       if (changes.tasks) {
-        logToMessage(1,"Tasks updated in storage:", changes.tasks.newValue);
-        setTasks(changes.tasks.newValue || []);
+        if (changes.tasks.newValue !== tasks){
+          logToMessage(1,"Tasks updated in storage, syncing tasks");
+          setTasks(changes.tasks.newValue || []);
+        }
       }
     });
+
   }, []);
 
   const addTask = (taskText, hasReminder = false, description = "", dueDate = null, completed = false) => {
@@ -48,16 +44,19 @@ export function useTodoList() {
     logToMessage(2,"useTodoList - Adding task:", newTask);
     setTasks((prevTasks) => [...prevTasks, newTask]);
     //add task and notify background script to create alarms
-    chrome.storage.local.get("tasks", (data) => {
-      let tasks = Array.isArray(data.tasks) ? data.tasks : [];
-      tasks.push(newTask);
-      chrome.storage.local.set({ tasks }, () => {
-        logToMessage(1,"Task stored successfully:", newTask);
-      });
-      chrome.runtime.sendMessage({ action: "addTask", task: newTask }, (response) => {
-        logToMessage(0,"send task add message to background script:", response);
-      });
+    chrome.runtime.sendMessage({ action: "addTask", task: newTask }, (response) => {
+      logToMessage(0,"send task add message to background script:", response);
     });
+    // chrome.storage.local.get("tasks", (data) => {
+    //   let tasks = Array.isArray(data.tasks) ? data.tasks : [];
+    //   tasks.push(newTask);
+    //   chrome.storage.local.set({ tasks }, () => {
+    //     logToMessage(1,"Task stored successfully:", newTask);
+    //   });
+    //   chrome.runtime.sendMessage({ action: "addTask", task: newTask }, (response) => {
+    //     logToMessage(0,"send task add message to background script:", response);
+    //   });
+    // });
 
   };
 
@@ -109,21 +108,21 @@ export function useTodoList() {
     });
   };
 
-  const saveTasks = () => {
-    try {
-      const serializedTasks = tasks.map((task) => ({
-        ...task,
-        hasReminder: task.hasReminder,
-        dueDate: task.dueDate ? task.dueDate : null,
-        completed: task.completed ?? false,
-      }));
-      chrome.storage.local.set({ tasks: serializedTasks }, () => {
-        logToMessage(1,"useTodoList - Tasks saved to Chrome storage:", serializedTasks);
-      });
-    } catch (error) {
-      console.error("useTodoList - Error saving tasks to Chrome storage:", error);
-    }
-  };
+  // const saveTasks = () => {
+  //   try {
+  //     const serializedTasks = tasks.map((task) => ({
+  //       ...task,
+  //       hasReminder: task.hasReminder,
+  //       dueDate: task.dueDate ? task.dueDate : null,
+  //       completed: task.completed ?? false,
+  //     }));
+  //     chrome.storage.local.set({ tasks: serializedTasks }, () => {
+  //       logToMessage(1,"useTodoList - Tasks saved to Chrome storage:", serializedTasks);
+  //     });
+  //   } catch (error) {
+  //     console.error("useTodoList - Error saving tasks to Chrome storage:", error);
+  //   }
+  // };
 
   const loadTasks = () => {
     try {
@@ -154,5 +153,5 @@ export function useTodoList() {
     }
   };
 
-  return { tasks, addTask, deleteTask, toggleReminder, updateTask, saveTasks, loadTasks, setTasks }; // Added setTasks to return value
+  return { tasks, addTask, deleteTask, toggleReminder, updateTask, loadTasks, setTasks }; // Added setTasks to return value
 }
