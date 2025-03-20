@@ -97,6 +97,7 @@ function TodoItem({ task, onDelete, onUpdateTask }) {
 
   const handleDelete = (e) => {
     e.stopPropagation();
+    console.log("Delete clicked, task id:", task.id);
     setTimeout(() => {
       onDelete(task.id);
     }, 250);

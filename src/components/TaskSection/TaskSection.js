@@ -151,6 +151,7 @@ function TaskSection() {
           className="recover-button"
           data-tooltip="Recover Tasks"
           data-tooltip-position="top"
+          data-testid="recover-button"
         >
           <MdRestore size={24} />
         </Button>

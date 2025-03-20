@@ -5,7 +5,14 @@ const chrome = {
   storage: {
     local: {
       get: jest.fn((keys, callback) => {
-        callback({ selectedText: '' });
+        const result = {};
+        if (keys.includes("deletedTasks")) result.deletedTasks = [{ id: 1, text: "Deleted Task", completed: false }];
+        if (keys.includes("completedTasks")) result.completedTasks = [];
+        if (keys.includes("selectedText")) result.selectedText = '';
+        callback(result);
+      }),
+      set: jest.fn((data, callback) => {
+        if (callback) callback();
       }),
       remove: jest.fn(),
     },
