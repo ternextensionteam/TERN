@@ -73,12 +73,19 @@ export async function handleUpdateTaskNotification(request, sender, sendResponse
         resolve();
       });
     });
+    console.log("old alarm cleared");
 
     // Set a new alarm if the task has a due date and reminders are enabled
     if (newDueDate && newHasReminder) {
       const dueTime = new Date(newDueDate).getTime();
-      chrome.alarms.create(`task-${taskId}`, { when: dueTime });
-      logToFile(1,`New alarm set for task ${taskId} at ${newDueDate}`);
+      if (dueTime > Date.now()) {
+        chrome.alarms.create(`task-${taskId}`, { when: dueTime });
+        logToFile(1, `New alarm set for task ${taskId} at ${newDueDate}`);
+        console.log("new alarm created");
+      } else {
+        logToFile(1, `Task ${taskId} has a due date in the past, skipping alarm creation.`);
+        console.log("due date in past : no alarm set")
+      }
     }
 
     sendResponse({ success: true });
