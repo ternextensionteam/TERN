@@ -7,7 +7,7 @@ import IndexInput from "../IndexInput/IndexInput";
 import IndexList from "../IndexList/IndexList";
 import RecoverDeletedIndex from "../RecoverDeletedIndex/RecoverDeletedIndex";
 import "./IndexingSection.css";
-import  useIndexMatching  from "../../hooks/useIndexMatching/useIndexMatching";
+import useIndexMatching from "../../hooks/useIndexMatching/useIndexMatching";
 
 const IndexingSection = () => {
   const [activeIndexSection, setActiveIndexSection] = useState("allowedSites");

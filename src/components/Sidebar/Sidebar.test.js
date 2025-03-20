@@ -14,7 +14,8 @@ jest.mock("../../utils/WhitelistChecker", () => ({
 }));
 
 jest.mock("../../hooks/useIndexMatching/useIndexMatching", () => ({
-  useIndexMatching: jest.fn(() => ({
+  __esModule: true,
+  default: jest.fn(() => ({
     rules: {
       allowedSites: [],
       allowedURLs: [],
