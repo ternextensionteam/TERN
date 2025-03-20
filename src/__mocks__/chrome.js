@@ -39,6 +39,10 @@ const chrome = {
       addListener: jest.fn(), // Mocking onActivated
       removeListener: jest.fn(),
     },
+    onUpdated: {
+      addListener: jest.fn(), // Mocking onActivated
+      removeListener: jest.fn(),
+    },
   },
 };
 
