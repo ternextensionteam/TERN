@@ -50,11 +50,15 @@ import {
   
   describe('Notification Tests', () => {
     test('should handle adding task notifications', async () => {
+      // Create a future date (1 day ahead)
+      const futureDate = new Date();
+      futureDate.setDate(futureDate.getDate() + 1);
+      
       const request = {
         task: { 
           id: '123', 
           text: 'New Task', 
-          dueDate: new Date().toISOString(),
+          dueDate: futureDate.toISOString(),
           hasReminder: true 
         }
       };
@@ -76,10 +80,13 @@ import {
     });
   
     test('should handle updating task notifications', async () => {
-      const newDate = new Date().toISOString();
+      // Create a future date (1 day ahead)
+      const futureDate = new Date();
+      futureDate.setDate(futureDate.getDate() + 1);
+      
       const request = { 
         taskId: '123',
-        newDueDate: newDate,
+        newDueDate: futureDate.toISOString(),
         newHasReminder: true
       };
       const sendResponse = jest.fn();
