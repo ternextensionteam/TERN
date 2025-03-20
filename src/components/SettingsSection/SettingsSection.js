@@ -181,7 +181,7 @@ const SettingsSection = () => {
   }
 
   return (
-    <Container className="settings-section">
+    <Container className="settings-section" data-testid="settings-section">
       <section className="settings-group">
         <h2>Theme Mode</h2>
         <div className="theme-options">

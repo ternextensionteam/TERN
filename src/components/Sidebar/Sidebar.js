@@ -150,7 +150,8 @@ function Sidebar() {
             <Nav.Link
               active={activeSection === "settings"}
               onClick={() => setActiveSection("settings")}
-            >
+              data-testid="settings-button"
+              >
               <FaCog size={25} />
             </Nav.Link>
           </label>
