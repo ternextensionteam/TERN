@@ -38,9 +38,8 @@ global.chrome = {
             const mockStorageData = {
                 theme: "system",
                 themeColor: "#0069b9",
-                whitelistRules: [] // Ensure whitelistRules is correctly mapped
+                whitelistRules: [] 
             };    
-            // Ensure that when keys is 'whitelistRules', it returns { whitelistRules: [] }
             if (keys === "whitelistRules") {
                 callback({ whitelistRules: mockStorageData.whitelistRules });
             } else {
@@ -119,7 +118,7 @@ describe("Sidebar Component", () => {
     render(<Sidebar />);
 
     const settingsButton = screen.getByTestId("settings-button");
-    expect(settingsButton).toBeInTheDocument(); // Ensure it exists
+    expect(settingsButton).toBeInTheDocument(); 
     fireEvent.click(settingsButton);
 
     // verify that the settings section is now visible

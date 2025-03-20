@@ -14,7 +14,7 @@ describe("SettingsSection Component", () => {
       matches: query.includes("dark"), // Simulate dark mode when the query contains "dark"
       media: query,
       onchange: null,
-      addListener: jest.fn(), // These are deprecated but sometimes used
+      addListener: jest.fn(),
       removeListener: jest.fn(),
       addEventListener: jest.fn(),
       removeEventListener: jest.fn(),
@@ -37,7 +37,6 @@ describe("SettingsSection Component", () => {
   test("renders SettingsSection correctly", async () => {
     render(<SettingsSection />);
     
-    // Modified assertion without jest-dom
     expect(screen.getByText("Theme Mode")).not.toBeNull();
     expect(screen.getByText("Change Theme Color")).not.toBeNull();
     expect(screen.getByText("Backups")).not.toBeNull();
@@ -88,7 +87,6 @@ describe("SettingsSection Component", () => {
     // Create a mock backup file
     const file = new Blob([JSON.stringify({ theme: "dark", themeColor: "#123456" })], { type: "application/json" });
 
-    // Simulate file selection
     fireEvent.change(fileInput, { target: { files: [file] } });
 
     await waitFor(() =>

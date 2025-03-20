@@ -22,7 +22,7 @@ describe("TodoItem Component", () => {
 
   test("hover on bell should show reminder tooltip", async () => {
     render(<TodoItem task={mockTask} onDelete={mockOnDelete} onUpdateTask={mockOnUpdateTask} />);
-    const bellButton = screen.getByRole("button", { name: "" }); // No name, matches your button
+    const bellButton = screen.getByRole("button", { name: "" }); 
     fireEvent.mouseOver(bellButton);
     expect(bellButton.querySelector(".reminder-icon")).toHaveAttribute("data-tooltip", "No Reminder");
   });
@@ -90,7 +90,7 @@ describe("TodoItem Component", () => {
 
   test("click on bell should toggle reminder", async () => {
     render(<TodoItem task={mockTask} onDelete={mockOnDelete} onUpdateTask={mockOnUpdateTask} />);
-    const bellButton = screen.getByRole("button", { name: "" }); // Matches your reminder button
+    const bellButton = screen.getByRole("button", { name: "" });
     fireEvent.click(bellButton);
     expect(mockOnUpdateTask).toHaveBeenCalledWith(
       mockTask.id,

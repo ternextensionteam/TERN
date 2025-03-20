@@ -66,7 +66,6 @@ describe("RecoverDeletedTasks Component", () => {
       />
     );
 
-    // Default tab: "Completed Tasks"
     expect(screen.getByText("Completed Task 1")).toBeInTheDocument();
     expect(screen.queryByText("Deleted Task 1")).not.toBeInTheDocument();
 

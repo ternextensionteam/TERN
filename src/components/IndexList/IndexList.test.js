@@ -26,7 +26,7 @@ describe("IndexList Component", () => {
 
     const deleteButtons = screen.getAllByRole("button", { name: /delete/i });
 
-    fireEvent.click(deleteButtons[0]); // Click the delete button for the first item
+    fireEvent.click(deleteButtons[0]); 
 
     expect(mockOnDelete).toHaveBeenCalledWith(activeIndexSection, "example.com");
   });

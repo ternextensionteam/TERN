@@ -40,10 +40,8 @@ describe("RecoverDeletedIndex Component", () => {
       />
     );
 
-    // Click on the "URLs" tab
     fireEvent.click(screen.getByText("URLs"));
 
-    // Check if the section title updates correctly
     expect(screen.getByText("Deleted URLs")).toBeInTheDocument();
     expect(screen.getByText("test.com")).toBeInTheDocument();
   });
@@ -59,7 +57,6 @@ describe("RecoverDeletedIndex Component", () => {
       />
     );
 
-    // Click the recover button
     fireEvent.click(screen.getByRole("button", { name: "recover" }));
 
     expect(mockOnRecover).toHaveBeenCalledWith("allowedSites", "example.com");
@@ -72,7 +69,7 @@ describe("RecoverDeletedIndex Component", () => {
         onRecover={mockOnRecover}
         onBack={mockOnBack}
         onGoToIndexing={mockOnGoToIndexing}
-        activeItems={{ allowedSites: ["example.com"] }} // "example.com" should not appear
+        activeItems={{ allowedSites: ["example.com"] }}
       />
     );
 

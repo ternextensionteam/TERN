@@ -54,7 +54,7 @@ describe("TodoList Component", () => {
 
     const list = screen.getByTestId("todo-list");
     expect(list).toBeInTheDocument();
-    expect(list.childElementCount).toBe(0); // Should render no tasks
+    expect(list.childElementCount).toBe(0);
   });
 
   test("calls onDeleteTask when delete button is clicked", async () => {
@@ -80,7 +80,7 @@ describe("TodoList Component", () => {
       "Description 1",
       false,
       "2025-03-20T12:00:00.000Z",
-      true // Task should now be marked as completed
+      true
     );
   });
 });

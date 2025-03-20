@@ -34,8 +34,8 @@ describe("InputBar Component", () => {
     fireEvent.click(addButton);
 
     expect(mockOnAddTask).toHaveBeenCalledWith("Test Task", false, "Test Description", null);
-    expect(input.value).toBe(""); // Input should clear after adding
-    expect(textarea.value).toBe(""); // Textarea should clear after adding
+    expect(input.value).toBe(""); 
+    expect(textarea.value).toBe("");
   });
 
   test("does not call onAddTask when input is empty", () => {

@@ -49,10 +49,9 @@ describe("WhitelistIndicator Component", () => {
     let indicator = screen.getByTestId("whitelist-indicator");
     expect(indicator).toHaveStyle("background-color: gray");
 
-    // Simulate a tab change event
     await act(async () => {
       const tabChangeHandler = global.chrome.tabs.onActivated.addListener.mock.calls[0][0];
-      tabChangeHandler(); // Call the mocked event handler
+      tabChangeHandler();
     });
   
     // Wait for the component to update
