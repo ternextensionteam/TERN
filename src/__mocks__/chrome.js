@@ -9,9 +9,11 @@ const chrome = {
         if (keys.includes("deletedTasks")) result.deletedTasks = [{ id: 1, text: "Deleted Task", completed: false }];
         if (keys.includes("completedTasks")) result.completedTasks = [];
         if (keys.includes("selectedText")) result.selectedText = '';
+        chrome.runtime.lastError = null; 
         callback(result);
       }),
       set: jest.fn((data, callback) => {
+        chrome.runtime.lastError = null;
         if (callback) callback();
       }),
       remove: jest.fn(),
@@ -24,6 +26,10 @@ const chrome = {
         listeners.delete(listener);
       }),
     },
+  },
+  runtime: {
+    sendMessage: jest.fn(),
+    lastError: null, 
   },
   tabs: {
     query: jest.fn().mockResolvedValue([

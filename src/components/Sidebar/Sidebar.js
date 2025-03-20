@@ -121,7 +121,7 @@ function Sidebar() {
 
   return (
     <div ref={sidebarRef} className="sidebar">
-      <Nav variant="tabs" className="mb-2 d-flex" style={{ paddingTop: "10px" }}>
+      <Nav role="navigation" variant="tabs" className="mb-2 d-flex" style={{ paddingTop: "10px" }}>
         <Nav.Item>
           <label data-tooltip="To do" data-tooltip-position="bottom">
             <Nav.Link

@@ -78,7 +78,6 @@ describe("TaskSection Component", () => {
     const deleteButton = await screen.findByTestId("delete-button");
 
     fireEvent.click(deleteButton);
-    console.log("MOCKDELETE TASK CALLS:",mockDeleteTask.mock.calls); 
 
 
     await waitFor(() => {
