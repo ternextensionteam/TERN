@@ -214,6 +214,8 @@ const SettingsSection = () => {
             value={themeColor} 
             onChange={handleThemeColorChange} 
             className="color-picker" 
+            data-testid="theme-color-picker"
+
           />
           <span className="current-color">{themeColor.toUpperCase()}</span>
           <Button 
@@ -248,6 +250,7 @@ const SettingsSection = () => {
             onChange={importBackup} 
             ref={fileInputRef} 
             style={{ display: "none" }} 
+            data-testid="file-input"
           />
         </div>
       </section>
