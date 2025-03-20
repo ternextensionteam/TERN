@@ -111,7 +111,7 @@ const SettingsSection = () => {
       try {
         const data = JSON.parse(e.target.result);
         chrome.storage.local.set(data, () => {
-          console.log("Backup restored.");
+          logToMessage(2,"Backup restored.");
           chrome.runtime.sendMessage({
             action: "backup_imported",
           });

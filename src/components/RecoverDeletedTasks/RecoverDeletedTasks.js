@@ -5,6 +5,7 @@ import { IoChevronBackOutline } from "react-icons/io5";
 import "../tooltip";
 import "../base.css";
 import "./RecoverDeletedTasks.css";
+import { logToMessage } from "../../utils/Logger";
 
 const RecoverDeletedTasks = ({
   deletedTasks = [],
@@ -23,10 +24,7 @@ const RecoverDeletedTasks = ({
     completed: { label: "Completed Tasks" }, 
     deleted: { label: "Deleted Tasks" },
   };
-  console.log("RecoverDeletedTasks - received deletedTasks:", deletedTasks);
-
-  // console.log(`RecoverDeletedTasks - Deleted Tasks:`, safeDeletedTasks);
-  // console.log(`RecoverDeletedTasks - Completed Tasks:`, safeCompletedTasks);
+  logToMessage(0,"RecoverDeletedTasks - received deletedTasks:", deletedTasks);
 
   const handleRecover = (index) => {
     if (activeSection === "completed") {

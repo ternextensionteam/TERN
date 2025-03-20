@@ -1,6 +1,7 @@
 import MiniSearch from "minisearch";
 import { encode } from "he";
 import { removeAnchorLink, removeDuplicates } from "./text-utils.js";
+import { logToFile } from "../utils/Logger.js";
 
 const INDEX_DESCRIPTOR = {
   fields: ["title", "content"], // Fields to index
@@ -25,7 +26,7 @@ export function getSuggestions(text) {
 
   // check if results length different from filteredResults length
   if (results.length !== filteredResults.length) {
-    console.log("results length: ", results.length ,"different from filteredResults length: ", filteredResults.length);
+    logToFile(0,"results length: ", results.length ,"different from filteredResults length: ", filteredResults.length);
   }
 
   filteredResults = filteredResults.slice(0, 10);
@@ -50,7 +51,7 @@ export function getSuggestions(text) {
  * Index a page in the search engine
  */
 export function handleIndexPage(request) {
-  console.log("Indexing page:", request.url);
+  logToFile(2,"Indexing page:", request.url);
 
   let pageData = {
     id: removeAnchorLink(request.url),

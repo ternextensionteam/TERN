@@ -7,15 +7,15 @@ const defaultDeletedRules = defaultWhitelistRules;
 
 function useIndexMatching() {
   const [rules, setRules] = useState(defaultWhitelistRules);
-  console.log("defaultWhitelistRules at initialization:", defaultWhitelistRules);
+  logToMessage(0,"defaultWhitelistRules at initialization:", defaultWhitelistRules);
   const [deletedRules, setDeletedRules] = useState(defaultDeletedRules);
 
   // Load rules and deleted rules from storage on mount
   useEffect(() => {
     const loadRules = async () => {
-      console.log('Loading rules...');
+      logToMessage(0,'Loading rules...');
       const storedRules = await getWhitelistRules();
-      console.log('Loaded rules:', storedRules);
+      logToMessage(0,'Loaded rules:', storedRules);
       setRules(storedRules);
 
       const deletedResult = await chrome.storage.local.get(DELETED_STORAGE_KEY);
@@ -25,10 +25,10 @@ function useIndexMatching() {
     loadRules();
 
     const handleStorageChange = (changes, namespace) => {
-      console.log('Storage changed in useIndexMatching:', changes);
+      logToMessage(0,'Storage changed in useIndexMatching:', changes);
       if (namespace === "local") {
         if (changes[STORAGE_KEY]) {
-          console.log('WhitelistRules changed in useIndexMatching:', changes[STORAGE_KEY].newValue);
+          logToMessage(0,'WhitelistRules changed in useIndexMatching:', changes[STORAGE_KEY].newValue);
           setRules(changes[STORAGE_KEY].newValue);
         }
         if (changes[DELETED_STORAGE_KEY]) {
@@ -46,7 +46,7 @@ function useIndexMatching() {
 
   // Save rules to storage
   const saveRulesToStorage = async (updatedRules) => {
-    console.log('Saving rules to storage:', updatedRules);
+    logToMessage(0,'Saving rules to storage:', updatedRules);
     await chrome.storage.local.set({ [STORAGE_KEY]: updatedRules });
   };
 

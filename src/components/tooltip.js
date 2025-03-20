@@ -12,8 +12,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const tooltipText = target.getAttribute("data-tooltip");
     const position = target.getAttribute("data-tooltip-position") || "top";
 
-    console.log("Tooltip detected for element:", target);
-    console.log("Tooltip text:", tooltipText);
+    logToMessage(0,"Tooltip detected for element:", target);
+    logToMessage(0,"Tooltip text:", tooltipText);
 
     tooltip.textContent = tooltipText;
     tooltip.style.opacity = "0";

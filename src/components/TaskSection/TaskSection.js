@@ -30,14 +30,12 @@ function TaskSection() {
 
   useEffect(() => {
     chrome.storage.local.set({ deletedTasks }, () => {
-      // console.log("TaskSection - Deleted tasks saved:", deletedTasks);
     });
   }, [deletedTasks]);
 
   useEffect(() => {
     const tasksToSave = completedTasks.map(({ hidden, ...task }) => task);
     chrome.storage.local.set({ completedTasks: tasksToSave }, () => {
-      // console.log("TaskSection - Completed tasks saved:", tasksToSave);
     });
   }, [completedTasks]);
 
@@ -90,12 +88,10 @@ function TaskSection() {
         }));
         setCompletedTasks(updatedCompletedTasks);
         chrome.storage.local.set({ completedTasks: updatedCompletedTasks.map(({ hidden, ...task }) => task) }, () => {
-          // console.log("TaskSection - Completed tasks unhidden and saved on closure:", updatedCompletedTasks);
         });
 
         const activeTasks = tasks.filter((task) => !completedTaskIds.has(task.id));
         chrome.storage.local.set({ tasks: activeTasks }, () => {
-          // console.log("TaskSection - Active tasks updated on closure:", activeTasks);
         });
       }
     };

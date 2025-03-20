@@ -1,4 +1,6 @@
 import { getSuggestions } from "./searchEngine.js";
+import { logToFile } from "../utils/Logger.js";
+
 
 export function initializeOmnibox() {
   chrome.omnibox.onInputChanged.addListener((text, suggest) => {
@@ -8,7 +10,7 @@ export function initializeOmnibox() {
   });
 
   chrome.omnibox.onInputEntered.addListener((text) => {
-    console.log(`User input: ${text}`);
+    logToFile(0,`User input: ${text}`);
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       if (tabs && tabs[0]) {
         const tabId = tabs[0].id;

@@ -16,7 +16,7 @@ export function useTodoList() {
     // Listen for storage updates (overdue tasks or snooxe)
     chrome.storage.onChanged.addListener((changes) => {
       if (changes.tasks) {
-        console.log("Tasks updated in storage:", changes.tasks.newValue);
+        logToMessage(1,"Tasks updated in storage:", changes.tasks.newValue);
         setTasks(changes.tasks.newValue || []);
       }
     });
@@ -44,17 +44,17 @@ export function useTodoList() {
       completed,
     };
     
-    console.log("useTodoList - Adding task:", newTask);
+    logToMessage(2,"useTodoList - Adding task:", newTask);
     setTasks((prevTasks) => [...prevTasks, newTask]);
     //add task and notify background script to create alarms
     chrome.storage.local.get("tasks", (data) => {
       let tasks = Array.isArray(data.tasks) ? data.tasks : [];
       tasks.push(newTask);
       chrome.storage.local.set({ tasks }, () => {
-        console.log("Task stored successfully:", newTask);
+        logToMessage(1,"Task stored successfully:", newTask);
       });
       chrome.runtime.sendMessage({ action: "addTask", task: newTask }, (response) => {
-        console.log("Task added:", response);
+        logToMessage(0,"send task add message to background script:", response);
       });
     });
 
@@ -62,16 +62,16 @@ export function useTodoList() {
 
   // Delete a task
   const deleteTask = (taskId) => {
-    console.log("useTodoList - Deleting task:", taskId);
+    logToMessage(2,"useTodoList - Deleting task:", taskId);
     setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
     //notify background script
     chrome.runtime.sendMessage({ action: "deleteTask", taskId }, (response) => {
-      console.log("Task deleted:", response);
+      logToMessage(0,"Notified background script of deleted task:", response);
     });
   };
 
   const toggleReminder = (taskId) => {
-    console.log("useTodoList - Toggling reminder for task:", taskId);
+    logToMessage(0,"useTodoList - Toggling reminder for task:", taskId);
     setTasks((prevTasks) =>
       prevTasks.map((task) =>
         task.id === taskId
@@ -82,7 +82,7 @@ export function useTodoList() {
   };
 
   const updateTask = (taskId, newText, newDescription, newHasReminder, newDueDate, newCompleted) => {
-    console.log("useTodoList - Updating task:", { taskId, newText, newDescription, newHasReminder, newDueDate, newCompleted });
+    logToMessage(2,"useTodoList - Updating task:", { taskId, newText, newDescription, newHasReminder, newDueDate, newCompleted });
     setTasks((prevTasks) =>
       prevTasks.map((task) =>
         task.id === taskId
@@ -104,7 +104,7 @@ export function useTodoList() {
       newDueDate, 
       newHasReminder 
     }, (response) => {
-      console.log("Task update sent to background:", response);
+      logToMessage(0,"Task update sent to background:", response);
     });
   };
 
@@ -117,7 +117,7 @@ export function useTodoList() {
         completed: task.completed ?? false,
       }));
       chrome.storage.local.set({ tasks: serializedTasks }, () => {
-        console.log("useTodoList - Tasks saved to Chrome storage:", serializedTasks);
+        logToMessage(1,"useTodoList - Tasks saved to Chrome storage:", serializedTasks);
       });
     } catch (error) {
       console.error("useTodoList - Error saving tasks to Chrome storage:", error);
@@ -142,8 +142,8 @@ export function useTodoList() {
             };
           });
           const activeTasks = deserializedTasks.filter((task) => !task.completed); 
-          console.log("useTodoList - Loaded all tasks:", deserializedTasks);
-          console.log("useTodoList - Filtered active tasks on load:", activeTasks);
+          logToMessage(1,"useTodoList - Loaded all tasks:", deserializedTasks);
+          logToMessage(0,"useTodoList - Filtered active tasks on load:", activeTasks);
           setTasks(activeTasks);
         }
         setTasksLoaded(true);

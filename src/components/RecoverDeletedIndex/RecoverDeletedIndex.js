@@ -5,6 +5,7 @@ import { IoChevronBackOutline } from "react-icons/io5";
 import "../tooltip";
 import "../base.css";
 import "./RecoverDeletedIndex.css";
+import { logToMessage } from "../../utils/Logger";
 
 const RecoverDeletedIndex = ({
   deletedItems = {},
@@ -30,20 +31,11 @@ const RecoverDeletedIndex = ({
     allowedRegex: { label: "RegEx" },
   };
 
-  console.log(
-    `RecoverDeletedIndex - Raw deletedItems[${activeDeletedSection}]:`,
-    safeDeletedItems[activeDeletedSection]
-  );
-  console.log(
-    `RecoverDeletedIndex - Raw activeItems[${activeDeletedSection}]:`,
-    activeItems[activeDeletedSection]
-  );
-
   const filteredDeletedItems = (
     safeDeletedItems[activeDeletedSection] || []
   ).filter((item) => !(activeItems[activeDeletedSection] || []).includes(item));
 
-  console.log(
+  logToMessage(
     `RecoverDeletedIndex - Filtered deleted items for ${activeDeletedSection}:`,
     filteredDeletedItems
   );
