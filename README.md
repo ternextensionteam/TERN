@@ -23,8 +23,9 @@ Keep your to-do lists and your documentation history all in one place.
 ![Sidebar Screenshot](assets/sidebar.png)
 ### Whitelisting Rules View
 ![WhiteList Rules Screenshot](assets/whitelisting.png)
-### Editing a task
-![Edit Task GIF](assets/edit.gif)
+<h3>Editing a task</h3>
+<img src="assets/edit.gif" alt="Edit Task GIF" width="400"/>
+
 
 ## Installation
 
