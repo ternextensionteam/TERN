@@ -12,6 +12,40 @@ const IS_DEV = process.env.NODE_ENV == "development";
 
 let writePromise = Promise.resolve(); // Initially resolved promise
 
+
+
+/**
+ * Removes logs older than a day from the beginning of the log array.
+ * @param {string[]} logs - Array of log entries
+ * @param {number} maxAgeMs - Maximum age in milliseconds (default: 24 hours)
+ * @returns {string[]} - Updated log array
+ */
+const removeOldLogs = (logs, maxAgeMs = 24 * 60 * 60 * 1000) => {
+    if (!logs || logs.length === 0) return logs;
+    
+    const now = new Date().getTime();
+    let i = 0;
+    
+    while (i < logs.length) {
+        // Extract timestamp directly from the log format [timestamp] [Level X] content
+        const isoString = logs[i].substring(1, 25); // Extract ISO timestamp
+        const logTime = new Date(isoString).getTime();
+        
+        if (now - logTime > maxAgeMs) {
+            i++;
+        } else {
+            break;
+        }
+    }
+    
+    // If i > 0, remove the first i elements from the array
+    if (i > 0) {
+        logs.splice(0, i);
+    }
+   return logs;
+};
+
+
 /**
  * Formats content by converting objects to JSON and joining arguments.
  * Handles circular references safely.
@@ -76,6 +110,11 @@ export const logToFile = async (level, ...args) => {
             const result = await chrome.storage.local.get(LOG_STORAGE_KEY);
             let logs = result[LOG_STORAGE_KEY] || { 0: [], 1: [], 2: [] };
 
+            // Remove logs older than a day for all levels
+            for (let i = 0; i <= 2; i++) {
+                logs[i] = removeOldLogs(logs[i]);
+            }
+
             // Append log to all appropriate levels (from 0 up to and including the specified level)
             for (let i = 0; i <= level; i++) {
                 logs[i].push(logEntry);
@@ -98,7 +137,7 @@ export const logToFile = async (level, ...args) => {
  * @returns {Promise<void>}
  */
 export const logToMessage = async (level, ...args) => {
-    const content = formatLogContent(args) + "message";
+    const content = formatLogContent(args);
     console.log("sending log message", args);
     chrome.runtime.sendMessage({ action: "log", level, content });
 }
