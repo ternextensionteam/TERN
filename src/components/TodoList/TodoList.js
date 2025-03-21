@@ -1,8 +1,19 @@
-import React from "react";
+import React, {useEffect} from "react";
 import TodoItem from "../TodoItem/TodoItem";
 import "./TodoList.css";
 
-function TodoList({ tasks, onDeleteTask, onToggleReminder, onUpdateTask }) {
+function TodoList({ tasks, onDeleteTask, onUpdateTask, onMoveCompletedTasks }) {
+    useEffect(() => {
+      const handleUnload = () => {
+        onMoveCompletedTasks();
+      };
+      onMoveCompletedTasks();
+      window.addEventListener("unload", handleUnload);
+      return () => {
+        onMoveCompletedTasks();
+        window.removeEventListener("unload", handleUnload);
+      };
+    }, []);
   return (
     <ul
       aria-label="To-Do List"
@@ -14,7 +25,6 @@ function TodoList({ tasks, onDeleteTask, onToggleReminder, onUpdateTask }) {
           key={task.id}
           task={task}
           onDelete={onDeleteTask}
-          onToggleReminder={onToggleReminder}
           onUpdateTask={onUpdateTask}
         />
       ))}

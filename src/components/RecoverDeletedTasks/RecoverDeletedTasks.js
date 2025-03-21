@@ -24,13 +24,12 @@ const RecoverDeletedTasks = ({
     completed: { label: "Completed Tasks" }, 
     deleted: { label: "Deleted Tasks" },
   };
-  logToMessage(0,"RecoverDeletedTasks - received deletedTasks:", deletedTasks);
 
-  const handleRecover = (index) => {
+  const handleRecover = (taskId) => {
     if (activeSection === "completed") {
-      onRecoverCompleted(index);
+      onRecoverCompleted(taskId);
     } else {
-      onRecoverDeleted(index);
+      onRecoverDeleted(taskId);
     }
   };
 
@@ -94,7 +93,10 @@ const RecoverDeletedTasks = ({
             <Col xs="auto" className="task-icons">
               <Button
                 variant="link"
-                onClick={() => handleRecover(index)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleRecover(task.id);
+                }}
                 className="recover-btn"
                 data-tooltip="Recover task"
                 data-tooltip-position="top"

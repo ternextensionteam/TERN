@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Button } from "react-bootstrap";
 import { MdRestore } from "react-icons/md";
 import { useTodoList } from "../../hooks/useTodoList/useTodoList";
@@ -11,108 +11,36 @@ import "../RecoverDeletedTasks/RecoverDeletedTasks.css";
 import "./TaskSection.css";
 
 function TaskSection() {
-  const { tasks, addTask, deleteTask, toggleReminder, updateTask } = useTodoList();
-
-  const [deletedTasks, setDeletedTasks] = useState([]);
-  const [completedTasks, setCompletedTasks] = useState([]);
+  const {  tasks, deletedTasks ,completedTasks, addTask, deleteTask, updateTask, moveCompletedTasks, recoverDeletedTask, recoverCompletedTask} = useTodoList();
   const [showRecoverPage, setShowRecoverPage] = useState(false);
+  const [sortField, setSortField] = useState('due');
 
-  useEffect(() => {
-    chrome.storage.local.get(["deletedTasks", "completedTasks"], (result) => {
-      setDeletedTasks(result.deletedTasks || []);
-      const loadedCompletedTasks = (result.completedTasks || []).map((task) => ({
-        ...task,
-        hidden: false,
-      }));
-      setCompletedTasks(loadedCompletedTasks);
-    });
-  }, []);
-
-  useEffect(() => {
-    chrome.storage.local.set({ deletedTasks }, () => {
-    });
-  }, [deletedTasks]);
-
-  useEffect(() => {
-    const tasksToSave = completedTasks.map(({ hidden, ...task }) => task);
-    chrome.storage.local.set({ completedTasks: tasksToSave }, () => {
-    });
-  }, [completedTasks]);
-
-  const handleDeleteTask = (taskId) => {
-    const taskToDelete = tasks.find((task) => task.id === taskId);
-    if (taskToDelete) {
-      deleteTask(taskId);
-      setDeletedTasks((prev) => [taskToDelete, ...prev]);
-    }
-  };
-
-  const handleUpdateTask = (taskId, text, description, hasReminder, dueDate, completed) => {
-    const taskToUpdate = tasks.find((task) => task.id === taskId);
-    if (taskToUpdate) {
-      updateTask(taskId, text, description, hasReminder, dueDate, completed);
-      if (completed && !taskToUpdate.completed) {
-        const hiddenTaskCopy = {
-          ...taskToUpdate,
-          completed: true,
-          hidden: true,
-        };
-        setCompletedTasks((prev) => [hiddenTaskCopy, ...prev]);
+  const sortedTasks = useMemo(() => {
+    const tasksCopy = [...tasks];
+  
+    return tasksCopy.sort((a, b) => {
+      try {
+        if (sortField === 'completed') {
+          return a.completed - b.completed;
+        }
+        if (sortField === 'due') {
+          return new Date(a.due) - new Date(b.due);
+        }
+  
+        if (sortField === 'created') {
+          return new Date(a.id) - new Date(b.id);
+        }
+  
+        if (sortField === 'text') {
+          return a.text.localeCompare(b.text);
+        }
+        return 0; // fallback: no sort
+      } catch (error) {
+        console.error("Error sorting tasks:", error);
+        return 0; // fallback: no sort
       }
-    }
-  };
-
-  const handleRecoverDeleted = (index) => {
-    const taskToRecover = deletedTasks[index];
-    if (taskToRecover) {
-      addTask(taskToRecover.text, taskToRecover.hasReminder, taskToRecover.description, taskToRecover.dueDate);
-      setDeletedTasks((prev) => prev.filter((_, i) => i !== index));
-    }
-  };
-
-  const handleRecoverCompleted = (index) => {
-    const taskToRemove = completedTasks[index];
-    if (taskToRemove) {
-      addTask(taskToRemove.text, taskToRemove.hasReminder, taskToRemove.description, taskToRemove.dueDate);
-      setCompletedTasks((prev) => prev.filter((_, i) => i !== index));
-    }
-  };
-
-  useEffect(() => {
-    const handleUnload = () => {
-      const completedTaskIds = new Set(completedTasks.map((task) => task.id));
-      if (completedTaskIds.size > 0) {
-        const updatedCompletedTasks = completedTasks.map((task) => ({
-          ...task,
-          hidden: false,
-        }));
-        setCompletedTasks(updatedCompletedTasks);
-        chrome.storage.local.set({ completedTasks: updatedCompletedTasks.map(({ hidden, ...task }) => task) }, () => {
-        });
-
-        const activeTasks = tasks.filter((task) => !completedTaskIds.has(task.id));
-        chrome.storage.local.set({ tasks: activeTasks }, () => {
-        });
-      }
-    };
-
-    window.addEventListener("unload", handleUnload);
-    return () => {
-      window.removeEventListener("unload", handleUnload);
-    };
-  }, [tasks, completedTasks]);
-
-  const sortedTasks = [...tasks].sort((a, b) => {
-    const aDueDate = a.dueDate ? new Date(a.dueDate) : null;
-    const bDueDate = b.dueDate ? new Date(b.dueDate) : null;
-    const isAOverdue = aDueDate && !isNaN(aDueDate.getTime()) && aDueDate < new Date();
-    const isBOverdue = bDueDate && !isNaN(bDueDate.getTime()) && bDueDate < new Date();
-
-    if (isAOverdue && !isBOverdue) return -1;
-    if (!isAOverdue && isBOverdue) return 1;
-    if (isAOverdue && isBOverdue) return 0;
-    return 0;
-  });
+    });
+  }, [tasks, sortField]);
 
   const handleOpenRecoverPage = (e) => {
     e.target.blur();
@@ -125,8 +53,8 @@ function TaskSection() {
       <RecoverDeletedTasks
         deletedTasks={deletedTasks}
         completedTasks={completedTasks}
-        onRecoverDeleted={handleRecoverDeleted}
-        onRecoverCompleted={handleRecoverCompleted}
+        onRecoverDeleted={recoverDeletedTask}
+        onRecoverCompleted={recoverCompletedTask}
         onBack={() => setShowRecoverPage(false)}
       />
     );
@@ -137,9 +65,9 @@ function TaskSection() {
       <InputBar onAddTask={addTask} />
       <TodoList
         tasks={sortedTasks}
-        onDeleteTask={handleDeleteTask}
-        onToggleReminder={toggleReminder}
-        onUpdateTask={handleUpdateTask}
+        onDeleteTask={deleteTask}
+        onUpdateTask={updateTask}
+        onMoveCompletedTasks={moveCompletedTasks}
       />
       <div className="recover-button-container">
         <Button
