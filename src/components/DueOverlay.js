@@ -68,7 +68,10 @@ function DueOverlay({ onSelectPreset, targetPosition, onClose, bellButtonRef, ca
   }, [targetPosition, cardRef]);
 
   const handleDateSave = () => {
-    const [time, period] = selectedTime.split(" ");
+    const timeParts = selectedTime.trim().split(/\s+/);
+    const time = timeParts[0];
+
+    const period = timeParts[timeParts.length - 1].toUpperCase();
     const [hours, minutes] = time.split(":").map(Number);
     const adjustedHours =
       period === "PM" && hours !== 12
