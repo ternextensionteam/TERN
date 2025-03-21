@@ -18,30 +18,13 @@ Keep your to-do lists and your documentation history all in one place.
 ## Badges
 <!-- TODO: badges section -->
 
-<h2>Visuals</h2>
-
-<div style="display: flex; gap: 16px; height: 1000px; align-items: stretch;">
-
-  <!-- Left column: two stacked landscape images -->
-  <div style="flex: 1; display: flex; flex-direction: column; gap: 16px;">
-    <div style="flex: 1; display: flex; flex-direction: column;">
-      <h3 style="margin: 0 0 8px;">Sidebar View</h3>
-      <img src="assets/sidebar.png" alt="Sidebar Screenshot" style="width: 100%; height: 100%; object-fit: contain;">
-    </div>
-    <div style="flex: 1; display: flex; flex-direction: column;">
-      <h3 style="margin: 0 0 8px;">Whitelisting Rules View</h3>
-      <img src="assets/whitelisting.png" alt="WhiteList Rules Screenshot" style="width: 100%; height: 100%; object-fit: contain;">
-    </div>
-  </div>
-
-  <!-- Right column: portrait gif -->
-  <div style="flex: 1; display: flex; flex-direction: column;">
-    <h3 style="margin: 0 0 8px;">Editing a task</h3>
-    <img src="assets/edit.gif" alt="Edit Task GIF" style="width: 100%; height: 100%; object-fit: contain;">
-  </div>
-
-</div>
-
+## Visuals
+<h3>Sidebar view</h3>
+<img src="assets/sidebar.png" alt="Sidebar Screenshot" width="height 200"/>
+<h3>Whitelisting rules view</h3>
+<img src="assets/whitelisting.png" alt="WhiteList Rules Screenshot" width="height 200"/>
+<h3>Editing a task</h3>
+<img src="assets/edit.gif" alt="Edit Task GIF" width="height 200"/>
 
 
 ## Installation
