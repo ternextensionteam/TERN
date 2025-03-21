@@ -137,7 +137,7 @@ export async function handleUpdateTaskNotification(request, sender, sendResponse
     });
 
     // Set a new alarm if the task has a due date and reminders are enabled
-    if (dueDate && hasReminder) {
+    if (dueDate && hasReminder && !completed) {
       const dueTime = new Date(dueDate).getTime();
       if (dueTime > Date.now()) {
         chrome.alarms.create(`task-${taskId}`, { when: dueTime });
