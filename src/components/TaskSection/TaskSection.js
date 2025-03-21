@@ -24,7 +24,7 @@ function TaskSection() {
           return a.completed - b.completed;
         }
         if (sortField === 'due') {
-          return new Date(a.due) - new Date(b.due);
+          return new Date(a.dueDate) - new Date(b.dueDate);
         }
   
         if (sortField === 'created') {
