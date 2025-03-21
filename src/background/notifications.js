@@ -46,6 +46,15 @@ export async function handleDeleteTaskNotification(request, sender, sendResponse
     
     // Find the task to be deleted
     const taskToDelete = tasks.find(task => String(task.id) === String(taskId));
+
+
+    // Clear associated alarm (only one alarm per task now)
+    chrome.alarms.clear(`task-${taskId}`, (wasCleared) => {
+      if (wasCleared) {
+        logToFile(1,`Cleared alarm for deleted task: task-${taskId}`);
+      }
+    });
+
     
     if (taskToDelete) {
       // Remove task from active tasks
