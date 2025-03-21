@@ -112,13 +112,13 @@ const SettingsSection = () => {
       try {
         const data = JSON.parse(e.target.result);
         chrome.storage.local.set(data, () => {
-          logToMessage(2,"Backup restored.");
+          logToMessage(2, "Backup restored.");
           chrome.runtime.sendMessage({
             action: "backup_imported",
           });
-          
-          const newTheme = data.theme || 'system';
-          const newThemeColor = data.themeColor || '#0069b9';
+
+          const newTheme = data.theme || "system";
+          const newThemeColor = data.themeColor || "#0069b9";
           setTheme(newTheme);
           setThemeColor(newThemeColor);
           applyThemeGlobally(newTheme, newThemeColor);
@@ -134,7 +134,7 @@ const SettingsSection = () => {
 
   const applyTheme = (newTheme) => {
     setTheme(newTheme);
-    
+
     const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
     const effectiveTheme = newTheme === "system" ? (prefersDark ? "dark" : "light") : newTheme;
     const defaultThemeColor = effectiveTheme === "dark" ? defaultColors.dark : defaultColors.light;
@@ -187,20 +187,20 @@ const SettingsSection = () => {
       <section className="settings-group">
         <h2>Theme Mode</h2>
         <div className="theme-options">
-          <button 
-            className={`btn ${theme === "light" ? "btn-primary" : "btn-outline-primary"}`} 
+          <button
+            className={`btn ${theme === "light" ? "btn-primary" : "btn-outline-primary"}`}
             onClick={() => applyTheme("light")}
           >
             Light Mode
           </button>
-          <button 
-            className={`btn ${theme === "dark" ? "btn-primary" : "btn-outline-primary"}`} 
+          <button
+            className={`btn ${theme === "dark" ? "btn-primary" : "btn-outline-primary"}`}
             onClick={() => applyTheme("dark")}
           >
             Dark Mode
           </button>
-          <button 
-            className={`btn ${theme === "system" ? "btn-primary" : "btn-outline-primary"}`} 
+          <button
+            className={`btn ${theme === "system" ? "btn-primary" : "btn-outline-primary"}`}
             onClick={() => applyTheme("system")}
           >
             Follow System
@@ -211,47 +211,39 @@ const SettingsSection = () => {
       <section className="settings-group">
         <h2>Change Theme Color</h2>
         <div className="theme-color-picker">
-          <input 
-            type="color" 
-            value={themeColor} 
-            onChange={handleThemeColorChange} 
-            className="color-picker" 
+          <input
+            type="color"
+            value={themeColor}
+            onChange={handleThemeColorChange}
+            className="color-picker"
             data-testid="theme-color-picker"
-
           />
           <span className="current-color">{themeColor.toUpperCase()}</span>
-          <Button 
-            variant="success" 
-            onClick={resetThemeColor} 
-            className="recover-btn1"
-          >
+          <Button variant="success" onClick={resetThemeColor} className="recover-btn1">
             <FaRedo />
           </Button>
         </div>
       </section>
-      
+
       <section className="settings-group">
         <h2>Backups</h2>
         <div className="backup-options">
-          <button 
-            className="btn btn-primary" 
-            onClick={exportBackup} 
+          <button
+            className="btn btn-primary"
+            onClick={exportBackup}
             style={{ marginRight: "10px" }}
           >
             Export Backup
           </button>
-          <button 
-            className="btn btn-primary" 
-            onClick={handleImportBackupClick}
-          >
+          <button className="btn btn-primary" onClick={handleImportBackupClick}>
             Import Backup
           </button>
-          <input 
-            type="file" 
-            accept=".json" 
-            onChange={importBackup} 
-            ref={fileInputRef} 
-            style={{ display: "none" }} 
+          <input
+            type="file"
+            accept=".json"
+            onChange={importBackup}
+            ref={fileInputRef}
+            style={{ display: "none" }}
             data-testid="file-input"
           />
         </div>
@@ -262,13 +254,59 @@ const SettingsSection = () => {
         <LogViewer />
       </section>
 
-
       <section className="settings-group">
-        <h2>About</h2>
+        <h2>Extension Guide</h2>
         <div className="about-content">
-          <p>Version: </p>
-          <p>Created by: </p>
-          <p>Date: 2025</p>
+          <section>
+            <h2>Tern Chrome Extension - v1.0.0</h2>
+            <h6>Usage</h6>
+            <ul>
+              <li>Click the icon to open the sidebar.</li>
+              <li><strong>Add</strong> tasks & descriptions via the input field.</li>
+              <li><strong>Delete</strong> tasks with the trash icon.</li>
+              <li><strong>Mark complete</strong> by ticking the checkbox.</li>
+              <li>
+                <strong>Set due date</strong> via the calendar icon or "no due date" text.
+              </li>
+              <li>
+                <strong>Toggle alarm</strong> using the bell icon (Chrome alarms with 1h snooze).
+              </li>
+              <li>
+                <strong>Recover</strong> deleted/completed  with the recovery icon.
+              </li>
+            </ul>
+
+            <h6>Task Features</h6>
+            <ul>
+              <li>Descriptions are hidden by default; view on hover/focus.</li>
+              <li>Edit titles/descriptions by double-clicking.</li>
+            </ul>
+
+            <h6>Quick Add</h6>
+            <ul>
+              <li>
+                Right-click any page to “Add site to whitelist” in the Indexing tab.
+              </li>
+              <li>
+                Highlight text, then right-click “Add task” to prefill the title.
+              </li>
+            </ul>
+
+            <h6>Indexing & Whitelisting</h6>
+            <ul>
+              <li><strong>Sites:</strong> Entire domain.</li>
+              <li><strong>URLs:</strong> Exact match.</li>
+              <li><strong>String Matches:</strong> Contains specific string.</li>
+              <li><strong>Regex Rules:</strong> Advanced matching.</li>
+              <li><strong>Indicator:</strong> 🟢 Green if the URL matches a rule, ⚪ Grey otherwise.</li>
+            </ul>
+
+            <h6>Support & Contributing</h6>
+            <p>
+              Contact us at <a href="mailto:ternextensionteam@gmail.com">ternextensionteam@gmail.com</a>.<br />
+              Contributions are locked to SH05 team members.
+            </p>
+          </section>
         </div>
       </section>
     </Container>
