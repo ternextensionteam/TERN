@@ -20,11 +20,11 @@ Keep your to-do lists and your documentation history all in one place.
 
 ## Visuals
 <h3>Sidebar view</h3>
-<img src="assets/sidebar.png" alt="Sidebar Screenshot" width="height 200"/>
+<img src="assets/sidebar.png" alt="Sidebar Screenshot" height="200"/>
 <h3>Whitelisting rules view</h3>
-<img src="assets/whitelisting.png" alt="WhiteList Rules Screenshot" width="height 200"/>
+<img src="assets/whitelisting.png" alt="WhiteList Rules Screenshot" height="200"/>
 <h3>Editing a task</h3>
-<img src="assets/edit.gif" alt="Edit Task GIF" width="height 200"/>
+<img src="assets/edit.gif" alt="Edit Task GIF" height="200"/>
 
 
 ## Installation
