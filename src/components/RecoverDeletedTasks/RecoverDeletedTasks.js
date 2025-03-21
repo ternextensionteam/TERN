@@ -21,16 +21,18 @@ const RecoverDeletedTasks = ({
   const currentItems = activeSection === "completed" ? safeCompletedTasks : safeDeletedTasks;
 
   const sections = {
-    completed: { label: "Completed Tasks" }, 
+    completed: { label: "Completed Tasks" },
     deleted: { label: "Deleted Tasks" },
   };
 
   const handleRecover = (taskId) => {
-    if (activeSection === "completed") {
-      onRecoverCompleted(taskId);
-    } else {
-      onRecoverDeleted(taskId);
-    }
+    setTimeout(() => {
+      if (activeSection === "completed") {
+        onRecoverCompleted(taskId);
+      } else {
+        onRecoverDeleted(taskId);
+      }
+    }, 500);
   };
 
   const formatDateTime = (date) => {
@@ -55,8 +57,13 @@ const RecoverDeletedTasks = ({
     const renderDueDate = () => (
       <div
         ref={dueDateRef}
-        className={`due-date-text ${!task.dueDate ? "no-due-date" : new Date(task.dueDate) < new Date() ? "overdue" : "due-date-set"}`}
-        data-tooltip="Due Date"
+        className={`due-date-text ${
+          !task.dueDate
+            ? "no-due-date"
+            : new Date(task.dueDate) < new Date()
+            ? "overdue"
+            : "due-date-set"
+        }`}
         data-tooltip-position="top"
       >
         {formatDateTime(task.dueDate)}
@@ -65,7 +72,9 @@ const RecoverDeletedTasks = ({
 
     return (
       <Card
-        className={`task-card ${isDescriptionVisible || isHovering ? "highlighted-border" : "default-border"}`}
+      className={`task-card ${
+        isDescriptionVisible || isHovering ? "highlighted-border" : "default-border"
+      }`}
         onMouseEnter={() => setIsHovering(true)}
         onMouseLeave={() => setIsHovering(false)}
         onClick={(e) => {
@@ -81,7 +90,7 @@ const RecoverDeletedTasks = ({
                 checked={task.completed ?? false}
                 className="custom-checkbox"
                 style={{ transform: "scale(1.5)", marginRight: "7px" }}
-                disabled // Non-functional in recovery view
+                disabled
               />
             </Col>
             <Col className="task-content">
@@ -130,6 +139,8 @@ const RecoverDeletedTasks = ({
             <Nav.Link
               eventKey={key}
               className={`subnav-link ${activeSection === key ? "active" : ""}`}
+              data-tooltip={sections[key].label}
+              data-tooltip-position="top"
             >
               {sections[key].label}
             </Nav.Link>
@@ -139,7 +150,9 @@ const RecoverDeletedTasks = ({
 
       <div className="recover-card-container">
         {currentItems.length === 0 ? (
-          <p className="empty-message">No {sections[activeSection].label.toLowerCase()} to recover.</p>
+          <p className="empty-message">
+            No {sections[activeSection].label.toLowerCase()} to recover.
+          </p>        
         ) : (
           currentItems.map((task, index) => (
             <RecoverTaskItem task={task} index={index} key={index} />
