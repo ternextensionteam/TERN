@@ -123,6 +123,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 });
 
 addAlarmListeners();
+setupContextMenuListeners();
 // Wrap async operations in an IIFE
 (async function() {
   try {
@@ -132,7 +133,6 @@ addAlarmListeners();
   }
   
   initializeOmnibox();
-  setupContextMenuListeners();
   // Log that the background script has loaded
   logToFile(1, "Background script loaded");
 })();

@@ -19,14 +19,17 @@ export function createContextMenu() {
  * Setup context menu handlers
  */
 export function setupContextMenuListeners() {
-  chrome.contextMenus.onClicked.addListener(async (info, tab) => {
+  chrome.contextMenus.onClicked.addListener((info, tab) => {
     if (info.menuItemId === "addToHawk") {
-      try {
-        await chrome.storage.local.set({ selectedText: info.selectionText });
-        await chrome.sidePanel.open({ windowId: tab.windowId });
-      } catch (error) {
-        console.error("Error handling context menu click:", error);
-      }
+      // Open the side panel immediately to maintain connection to user gesture
+      chrome.sidePanel.open({ windowId: tab.windowId })
+        .then(() => {
+          // Store the selected text after opening the panel
+          return chrome.storage.local.set({ selectedText: info.selectionText });
+        })
+        .catch(error => {
+          console.error("Error handling context menu click:", error);
+        });
     }
 
     if (info.menuItemId === "addToIndex") {
@@ -34,17 +37,15 @@ export function setupContextMenuListeners() {
         const currentURL = tab.url;
         const currentHostname = new URL(currentURL).hostname;
 
-        const result = await chrome.storage.local.get('whitelistRules');
-        const whitelistRules = result.whitelistRules || { allowedSites: [], allowedURLs: [], allowedStringMatches: [], allowedRegex: [] };
-        
-        if (!whitelistRules.allowedSites.includes(currentHostname)) {
-          whitelistRules.allowedSites.push(currentHostname);
-          await chrome.storage.local.set({ whitelistRules });
-          chrome.runtime.sendMessage({ 
-            action: 'updateIndexList',
-            items: whitelistRules.allowedSites
-          });
-        }
+        chrome.storage.local.get('whitelistRules').then(result => {
+          const whitelistRules = result.whitelistRules || { allowedSites: [], allowedURLs: [], allowedStringMatches: [], allowedRegex: [] };
+          
+          if (!whitelistRules.allowedSites.includes(currentHostname)) {
+            whitelistRules.allowedSites.push(currentHostname);
+            chrome.storage.local.set({ whitelistRules }).then(() => {
+            });
+          }
+        });
       } catch (error) {
         console.error("Error adding URL to index:", error);
       }
