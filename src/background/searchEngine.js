@@ -26,7 +26,7 @@ const SCORE_THRESHOLD = 0.5;
  * Get search suggestions based on input text
  */
 export function getSuggestions(text) {
-  let results = miniSearch.search(text, { prefix: true, fuzzy: 0.2 });
+  let results = miniSearch.search(text);
   let filteredResults = results.filter((result) => result.score > SCORE_THRESHOLD);
 
 
