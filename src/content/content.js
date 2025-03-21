@@ -77,7 +77,7 @@ async function sendPageData() {
   const isWhitelisted = await isUrlWhitelisted(currentURL);
 
   if (isWhitelisted) {
-    const pageContent = document.body.innerText;
+    const pageContent = document.body.innerText.replace("\n"," ");;
     chrome.runtime.sendMessage({
       action: "indexPage",
       url: currentURL,
