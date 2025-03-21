@@ -77,7 +77,7 @@ describe("RecoverDeletedTasks Component", () => {
     expect(screen.queryByText("Completed Task 1")).not.toBeInTheDocument();
   });
 
-  test("calls onRecoverCompleted when recovering a completed task", () => {
+  test("calls onRecoverCompleted when recovering a completed task", async () => {
     render(
       <RecoverDeletedTasks
         deletedTasks={[]}
@@ -89,10 +89,12 @@ describe("RecoverDeletedTasks Component", () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: /recover/i }));
-    expect(mockOnRecoverCompleted).toHaveBeenCalledWith(1742560079755);
+    await waitFor(() => {
+      expect(mockOnRecoverCompleted).toHaveBeenCalledWith(1742560079755);
+    }, { timeout: 1000 });
   });
 
-  test("calls onRecoverDeleted when recovering a deleted task", () => {
+  test("calls onRecoverDeleted when recovering a deleted task", async () => {
     render(
       <RecoverDeletedTasks
         deletedTasks={[{id:1742560079755, text: "Deleted Task 1", completed: false }]}
@@ -105,7 +107,9 @@ describe("RecoverDeletedTasks Component", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /Deleted Tasks/i }));
     fireEvent.click(screen.getByRole("button", { name: /recover/i }));
-    expect(mockOnRecoverDeleted).toHaveBeenCalledWith(1742560079755);
+    await waitFor(() => {
+      expect(mockOnRecoverDeleted).toHaveBeenCalledWith(1742560079755);
+    }, { timeout: 1000 });
   });
 
   test("calls onBack when back button is clicked", () => {

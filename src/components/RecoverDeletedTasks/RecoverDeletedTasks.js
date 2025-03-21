@@ -28,9 +28,9 @@ const RecoverDeletedTasks = ({
   const handleRecover = (taskId) => {
     setTimeout(() => {
       if (activeSection === "completed") {
-        onRecoverCompleted(index);
+        onRecoverCompleted(taskId);
       } else {
-        onRecoverDeleted(index);
+        onRecoverDeleted(taskId);
       }
     }, 500);
   };
