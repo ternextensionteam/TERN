@@ -74,7 +74,7 @@ describe('Search Engine Tests', () => {
     // Verify results
     expect(suggestions.length).toBe(2);
     expect(suggestions[0].content).toBe('https://example.com/page1');
-    expect(miniSearchMock.search).toHaveBeenCalledWith('example', { prefix: true, fuzzy: 0.2 });
+    expect(miniSearchMock.search).toHaveBeenCalledWith('example');
   });
   
   test('should replace existing pages', () => {
