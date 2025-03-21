@@ -1,3 +1,5 @@
+import { logToFile } from "../utils/Logger";
+
 /**
  * Removes anchor links from URLs
  */
@@ -36,7 +38,7 @@ export function removeDuplicates(results) {
         jaccardSimilarityTexts(results[i].title, results[j].title) >
         JACCARD_THRESHOLD
       ) {
-        console.log("Removing duplicate:", results[j].title, "to similar to", results[i].title);
+        logToFile(0,"Removing duplicate:", results[j].title, "to similar to", results[i].title);
         results.splice(j, 1);
         j--;
       }

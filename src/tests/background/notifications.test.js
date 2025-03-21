@@ -1,3 +1,4 @@
+import { computeHeadingLevel } from '@testing-library/react';
 import { 
     handleAddTaskNotification, 
     handleDeleteTaskNotification, 
@@ -12,7 +13,7 @@ import {
   global.chrome = {
     storage: {
       local: {
-        get: jest.fn(),
+        get: jest.fn(() => Promise.resolve()),
         set: jest.fn(() => Promise.resolve())
       }
     },
@@ -44,7 +45,20 @@ import {
           { id: '123', text: 'Test Task', dueDate: new Date().toISOString(), hasReminder: true }
         ]});
       }
-      return Promise.resolve({});
+      if (key === "deletedTasks") {
+        return Promise.resolve({ tasks: [
+          { id: '123', text: 'Test Task', dueDate: new Date().toISOString(), hasReminder: true }
+        ]});
+      }
+      else{
+        return Promise.resolve(({ 
+        tasks: [
+          { id: '123', text: 'Test Task', dueDate: new Date().toISOString(), hasReminder: true }
+        ],
+        deletedTasks: [
+          { id: '123', text: 'Test Task', dueDate: new Date().toISOString(), hasReminder: true }
+        ]}));
+      }
     });
   });
   
@@ -54,17 +68,17 @@ import {
       const futureDate = new Date();
       futureDate.setDate(futureDate.getDate() + 1);
       
-      const request = {
-        task: { 
+      const task = { 
           id: '123', 
           text: 'New Task', 
+          describtion: 'New Task Description',
+          hasReminder: true ,
           dueDate: futureDate.toISOString(),
-          hasReminder: true 
-        }
-      };
+          completed: false
+        };
       const sendResponse = jest.fn();
       
-      await handleAddTaskNotification(request, {}, sendResponse);
+      await handleAddTaskNotification(task, {}, sendResponse);
       expect(chrome.alarms.create).toHaveBeenCalled();
       expect(sendResponse).toHaveBeenCalledWith({ success: true });
     });
@@ -84,11 +98,14 @@ import {
       const futureDate = new Date();
       futureDate.setDate(futureDate.getDate() + 1);
       
-      const request = { 
-        taskId: '123',
-        newDueDate: futureDate.toISOString(),
-        newHasReminder: true
-      };
+      const request = {task : { 
+        id: '123', 
+        text: 'New Task', 
+        describtion: 'New Task Description',
+        hasReminder: true ,
+        dueDate: futureDate.toISOString(),
+        completed: false
+      }};
       const sendResponse = jest.fn();
       
       await handleUpdateTaskNotification(request, {}, sendResponse);

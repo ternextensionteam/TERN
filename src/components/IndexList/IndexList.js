@@ -2,11 +2,12 @@ import React from 'react';
 import { Card, Row, Col, Button } from "react-bootstrap";
 import { FaTrashAlt } from "react-icons/fa";
 import './IndexList.css';
+import { logToMessage } from "../../utils/Logger";
 
 const IndexList = ({ items = [], onDelete, activeIndexSection}) => {
   const handleDelete = (e, item) => {
     e.stopPropagation();
-    console.log(`IndexList - Delete clicked for item ${item}`);
+    logToMessage(0, `IndexList - Delete clicked for rule: ${item}`);
     onDelete(activeIndexSection, item);
   };
 

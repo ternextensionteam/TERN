@@ -7,6 +7,7 @@ import WhitelistIndicator from "../WhitelistIndicator/WhitelistIndicator";
 import TaskSection from "../TaskSection/TaskSection";
 import IndexingSection from "../IndexingSection/IndexingSection";
 import SettingsSection from "../SettingsSection/SettingsSection";
+import { logToMessage } from "../../utils/Logger";
 import "../tooltip";
 import "../base.css";
 import "./Sidebar.css";
@@ -65,7 +66,7 @@ function Sidebar() {
     };
 
     const applyDefaultSettings = () => {
-      console.log('Applying default settings');
+      logToMessage(0,'Applying default settings');
       document.documentElement.setAttribute('data-theme', 'system');
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');

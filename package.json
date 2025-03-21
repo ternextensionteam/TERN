@@ -6,8 +6,10 @@
     "test": "jest --passWithNoTests",
     "test:coverage": "jest --coverage",
     "test:watch": "jest --watch",
-    "build": "webpack --mode production",
-    "watch": "webpack --watch"
+    "build": "webpack --mode=production",
+    "watch": "webpack --watch",
+    "dev": "webpack --mode=development",
+    "dev:watch": "webpack --watch --mode=development"
   },
   "keywords": [],
   "author": "",

@@ -1,6 +1,8 @@
 import { isUrlWhitelisted, STORAGE_KEY } from "../utils/WhitelistChecker.js";
+import { logToMessage } from "../utils/Logger.js";
 
-console.log("Content script loaded.");
+
+logToMessage(0,`[Content Script] Loaded on page: ${window.location.href}`);
 
 // Debounce delay (in milliseconds)
 const DEBOUNCE_DELAY = 10000;
@@ -23,13 +25,13 @@ async function manageObserver() {
   const isWhitelisted = await isUrlWhitelisted(currentURL);
 
   if (isWhitelisted) {
-    console.log("Page is whitelisted. Starting observer...");
+    logToMessage(0,`[Content Script] Page is whitelisted: ${currentURL}`);
     // If not already observing, set up the observer
     if (!observer) {
-      console.log("Setting up observer...");
+      logToMessage(0,`[Content Script] Setting up observer for: ${currentURL}`);
       observer = new MutationObserver(
         debounce(async () => {
-          console.log("DOM mutated, re-indexing...");
+          logToMessage(0,`[Content Script] DOM mutated, re-indexing: ${currentURL}`);
           await sendPageData();
         }, DEBOUNCE_DELAY)
       );
@@ -44,7 +46,7 @@ async function manageObserver() {
       await sendPageData();
     }
   } else {
-    console.log("Page is not whitelisted. Stopping observer...");
+    logToMessage(0,`[Content Script] Page is not whitelisted: ${currentURL}`);
     // Disconnect observer if it exists
     if (observer) {
       observer.disconnect();
@@ -67,10 +69,11 @@ if (chrome.storage && chrome.storage.onChanged) {
 
 // Function to send page data
 async function sendPageData() {
-  console.log("Sending page data...");
   const currentURL = window.location.href;
   const currentTitle = document.title;
-
+  
+  logToMessage(0,`[Content Script] Sending page data from: ${currentURL}`);
+  
   const isWhitelisted = await isUrlWhitelisted(currentURL);
 
   if (isWhitelisted) {

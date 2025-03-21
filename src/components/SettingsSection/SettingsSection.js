@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { Container, Button } from "react-bootstrap";
 import { FaRedo } from "react-icons/fa";
 import LogViewer from "../LogViewer/LogViewer";
+import { logToMessage } from "../../utils/Logger";
 import "../base.css";
 import "./SettingsSection.css";
 
@@ -111,7 +112,7 @@ const SettingsSection = () => {
       try {
         const data = JSON.parse(e.target.result);
         chrome.storage.local.set(data, () => {
-          console.log("Backup restored.");
+          logToMessage(2,"Backup restored.");
           chrome.runtime.sendMessage({
             action: "backup_imported",
           });

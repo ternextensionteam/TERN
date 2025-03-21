@@ -5,6 +5,7 @@ import "../tooltip";
 import "../base.css";
 import DueOverlay from "../DueOverlay";
 import "./TodoItem.css";
+import { logToMessage } from "../../utils/Logger";
 
 function TodoItem({ task, onDelete, onUpdateTask }) {
   const [isDescriptionVisible, setIsDescriptionVisible] = useState(false);
@@ -34,7 +35,7 @@ function TodoItem({ task, onDelete, onUpdateTask }) {
     }
     const taskCompleted = task.completed ?? false;
     if (isChecked !== taskCompleted) {
-      console.log(`TodoItem ${task.id} - Setting isChecked to: ${taskCompleted}`);
+      logToMessage(0,`TodoItem ${task.id} - Setting isChecked to: ${taskCompleted}`);
       setIsChecked(taskCompleted);
     }
   }, [task]);
@@ -97,7 +98,7 @@ function TodoItem({ task, onDelete, onUpdateTask }) {
 
   const handleDelete = (e) => {
     e.stopPropagation();
-    console.log("Delete clicked, task id:", task.id);
+    logToMessage(0,"Delete clicked, task id:", task.id);
     setTimeout(() => {
       onDelete(task.id);
     }, 250);

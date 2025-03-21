@@ -7,8 +7,10 @@ import mockChrome from "../../__mocks__/chrome";
 // Mock the custom hook
 jest.mock("../../hooks/useTodoList/useTodoList");
 
+jest.mock("../../utils/Logger");
+
 describe("TaskSection Component", () => {
-  let mockAddTask, mockDeleteTask, mockUpdateTask, mockToggleReminder;
+  let mockAddTask, mockDeleteTask, mockUpdateTask, mockToggleReminder, mockMoveCompletedTasks;
 
   beforeEach(() => {
     // Reset mock functions
@@ -16,6 +18,7 @@ describe("TaskSection Component", () => {
     mockDeleteTask = jest.fn();
     mockUpdateTask = jest.fn();
     mockToggleReminder = jest.fn();
+    mockMoveCompletedTasks = jest.fn();
 
     useTodoList.mockReturnValue({
       tasks: [{ id: 1, text: "Test Task", completed: false }],
@@ -23,6 +26,7 @@ describe("TaskSection Component", () => {
       deleteTask: mockDeleteTask,
       updateTask: mockUpdateTask,
       toggleReminder: mockToggleReminder,
+      moveCompletedTasks: mockMoveCompletedTasks,
     });
 
     // Mock storage
@@ -51,12 +55,12 @@ describe("TaskSection Component", () => {
     expect(screen.getByTestId("task-section")).toBeInTheDocument();
   });
 
-  test("loads deleted and completed tasks from storage", async () => {
+  test("loads selectedText from storage", async () => {
     render(<TaskSection />);
   
     await waitFor(() => {
       expect(global.chrome.storage.local.get).toHaveBeenCalledWith(
-        ["deletedTasks", "completedTasks"],
+        ["selectedText"],
         expect.any(Function)
       );
     });
@@ -72,24 +76,16 @@ describe("TaskSection Component", () => {
     expect(mockAddTask).toHaveBeenCalledWith("New Task", false, "", null);
   });
 
-  test("deletes a task and adds it to deletedTasks", async () => {
+  test("deletes a task", async () => {
     render(<TaskSection />);
-
+  
     const deleteButton = await screen.findByTestId("delete-button");
-
     fireEvent.click(deleteButton);
-
-
+  
+    // Wait for the setTimeout to complete
     await waitFor(() => {
-        expect(chrome.storage.local.set).toHaveBeenCalledWith(
-          expect.objectContaining({
-            deletedTasks: expect.arrayContaining([
-              expect.objectContaining({ id: 1, text: "Test Task", completed: false }),
-            ]),
-          }),
-          expect.any(Function)
-        );
-      });
+      expect(mockDeleteTask).toHaveBeenCalledWith(1);
+    }, { timeout: 1000 }); // Give it enough time
   });
 
   test("opens the recover page when clicking the recover button", async () => {

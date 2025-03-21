@@ -10,6 +10,9 @@ global.chrome = {
   }
 };
 
+jest.mock("../../utils/Logger");
+
+
 // Reset mocks between tests
 beforeEach(() => {
   jest.clearAllMocks();

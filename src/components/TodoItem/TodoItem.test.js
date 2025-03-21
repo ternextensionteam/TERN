@@ -14,6 +14,9 @@ const mockTask = {
 const mockOnDelete = jest.fn();
 const mockOnUpdateTask = jest.fn();
 
+jest.mock("../../utils/Logger");
+
+
 describe("TodoItem Component", () => {
   beforeEach(() => {
     mockOnDelete.mockClear();

@@ -1,39 +1,87 @@
-import { FaPersonWalkingDashedLineArrowRight } from "react-icons/fa6";
 import { logToFile } from "../utils/Logger";
 
+// Task format
+// id: dateTime.now() dateTime object (serialized to string in chrome local storage),
+// text: String,
+// description: String,
+// hasReminder: Boolean,
+// dueDate: dateTime object (serialized to string in chrome local storage),
+// completed: Boolean
 
-export function handleAddTaskNotification(request, sender, sendResponse) {
-  let task = request.task;
-  logToFile(0, "Service worker recieved new task:", task.text);
+export function handleAddTaskNotification(task, sender, sendResponse) {
+  let newTask = task;
+  logToFile(0, "Service worker recieved new task:", newTask.text);
+
+  chrome.storage.local.get("tasks", (data) => {
+    let tasks = Array.isArray(data.tasks) ? data.tasks : [];
+    tasks.push(newTask);
+    chrome.storage.local.set({ tasks }, () => {
+      logToFile(1,"Task stored successfully:", newTask);
+    });
+  });
+
   // Schedule notification
-  if (task.dueDate && task.hasReminder) {
-    const dueTime = new Date(task.dueDate).getTime();
-    chrome.alarms.create(`task-${task.id}`, { when: dueTime });
-    logToFile(1,`Alarm set for task ${task.id} at ${task.dueDate}`);
+  if (newTask.dueDate && newTask.hasReminder) {
+    const dueTime = new Date(newTask.dueDate).getTime();
+    chrome.alarms.create(`task-${newTask.id}`, { when: dueTime });
+    logToFile(1,`Alarm set for task ${newTask.id} at ${newTask.dueDate}`);
   }
   sendResponse({ success: true });
   return true; // Added return true for async messaging
 }
 
 export async function handleDeleteTaskNotification(request, sender, sendResponse) {
-  const taskId = request.taskId;
-
-  let JSONtasks = await chrome.storage.local.get("tasks");
-  let tasks = Array.isArray(JSONtasks.tasks) ? JSONtasks.tasks : [];
-  let updatedTasks = tasks.filter((task) => String(task.id) !== String(taskId)); // Remove task
-
-  await chrome.storage.local.set({ tasks: updatedTasks });
-  logToFile(2,"Task deleted:", taskId);
-
-  // Clear associated alarm (only one alarm per task now)
-  chrome.alarms.clear(`task-${taskId}`, (wasCleared) => {
-    if (wasCleared) {
-      logToFile(1,`Cleared alarm for deleted task: task-${taskId}`);
+  try {
+    const taskId = request.taskId;
+    
+    if (!taskId) {
+      logToFile(2, "Delete task error: Missing taskId");
+      sendResponse({ success: false, error: "Missing taskId" });
+      return true;
     }
-  });
 
-  sendResponse({ success: true });
-  return true; // Added return true for async messaging
+    let storage = await chrome.storage.local.get(["tasks", "deletedTasks"]);
+    let tasks = Array.isArray(storage.tasks) ? storage.tasks : [];
+    let deletedTasks = Array.isArray(storage.deletedTasks) ? storage.deletedTasks : [];
+    
+    // Find the task to be deleted
+    const taskToDelete = tasks.find(task => String(task.id) === String(taskId));
+
+
+    // Clear associated alarm (only one alarm per task now)
+    chrome.alarms.clear(`task-${taskId}`, (wasCleared) => {
+      if (wasCleared) {
+        logToFile(1,`Cleared alarm for deleted task: task-${taskId}`);
+      }
+    });
+
+    
+    if (taskToDelete) {
+      // Remove task from active tasks
+      let updatedTasks = tasks.filter(task => String(task.id) !== String(taskId));
+      
+      // Add to deletedTasks array
+      deletedTasks.push(taskToDelete);
+      
+      // Update both arrays in storage
+      await chrome.storage.local.set({ 
+        tasks: updatedTasks,
+        deletedTasks: deletedTasks
+      });
+      
+      logToFile(2, "Task moved to deleted tasks:", taskId);
+      sendResponse({ success: true });
+    } else {
+      logToFile(2, "Delete task error: Task not found with ID:", taskId);
+      sendResponse({ success: false, error: "Task not found" });
+    }
+  } catch (error) {
+    console.error("Error in handleDeleteTaskNotification:", error);
+    logToFile(2, "Delete task error:", error.message);
+    sendResponse({ success: false, error: error.message });
+  }
+  
+  return true; // Required for async messaging
 }
 
 export async function handleBackupImported(request, sender, sendResponse) {
@@ -63,8 +111,22 @@ export async function handleBackupImported(request, sender, sendResponse) {
 
 export async function handleUpdateTaskNotification(request, sender, sendResponse) {
   try {
-    const { taskId, newDueDate, newHasReminder } = request;
+    const updatedTask = request.task;
+    const {id: taskId, text, description, hasReminder, dueDate, completed} = updatedTask;
+    
+    let JSONtasks = await chrome.storage.local.get("tasks");
     logToFile(2,"Updating task notification for task:", taskId);
+
+    await chrome.storage.local.set({ tasks: JSONtasks.tasks.map((task) => {
+      if (String(task.id) === String(taskId)) {
+        task.text = text;
+        task.description = description;
+        task.hasReminder = hasReminder;
+        task.dueDate = dueDate;
+        task.completed = completed;
+      }
+      return task;
+    }) });
 
     // Clear the old alarm
     await new Promise(resolve => {
@@ -73,18 +135,15 @@ export async function handleUpdateTaskNotification(request, sender, sendResponse
         resolve();
       });
     });
-    console.log("old alarm cleared");
 
     // Set a new alarm if the task has a due date and reminders are enabled
-    if (newDueDate && newHasReminder) {
-      const dueTime = new Date(newDueDate).getTime();
+    if (dueDate && hasReminder) {
+      const dueTime = new Date(dueDate).getTime();
       if (dueTime > Date.now()) {
         chrome.alarms.create(`task-${taskId}`, { when: dueTime });
-        logToFile(1, `New alarm set for task ${taskId} at ${newDueDate}`);
-        console.log("new alarm created");
+        logToFile(1, `New alarm set for task ${taskId} at ${dueDate}`);
       } else {
         logToFile(1, `Task ${taskId} has a due date in the past, skipping alarm creation.`);
-        console.log("due date in past : no alarm set")
       }
     }
 

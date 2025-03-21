@@ -5,6 +5,7 @@ import { IoChevronBackOutline } from "react-icons/io5";
 import "../tooltip";
 import "../base.css";
 import "./RecoverDeletedTasks.css";
+import { logToMessage } from "../../utils/Logger";
 
 const RecoverDeletedTasks = ({
   deletedTasks = [],
@@ -23,16 +24,12 @@ const RecoverDeletedTasks = ({
     completed: { label: "Completed Tasks" }, 
     deleted: { label: "Deleted Tasks" },
   };
-  console.log("RecoverDeletedTasks - received deletedTasks:", deletedTasks);
 
-  // console.log(`RecoverDeletedTasks - Deleted Tasks:`, safeDeletedTasks);
-  // console.log(`RecoverDeletedTasks - Completed Tasks:`, safeCompletedTasks);
-
-  const handleRecover = (index) => {
+  const handleRecover = (taskId) => {
     if (activeSection === "completed") {
-      onRecoverCompleted(index);
+      onRecoverCompleted(taskId);
     } else {
-      onRecoverDeleted(index);
+      onRecoverDeleted(taskId);
     }
   };
 
@@ -96,7 +93,10 @@ const RecoverDeletedTasks = ({
             <Col xs="auto" className="task-icons">
               <Button
                 variant="link"
-                onClick={() => handleRecover(index)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleRecover(task.id);
+                }}
                 className="recover-btn"
                 data-tooltip="Recover task"
                 data-tooltip-position="top"

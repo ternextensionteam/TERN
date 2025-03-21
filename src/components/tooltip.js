@@ -1,4 +1,5 @@
 import "./base.css";
+import { logToMessage } from "../utils/Logger";
 
 document.addEventListener("DOMContentLoaded", function () {
   const tooltip = document.createElement("div");
@@ -11,9 +12,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const positionTooltip = (target) => {
     const tooltipText = target.getAttribute("data-tooltip");
     const position = target.getAttribute("data-tooltip-position") || "top";
-
-    console.log("Tooltip detected for element:", target);
-    console.log("Tooltip text:", tooltipText);
 
     tooltip.textContent = tooltipText;
     tooltip.style.opacity = "0";

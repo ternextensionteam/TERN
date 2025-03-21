@@ -1,5 +1,8 @@
 import { initializeOmnibox } from '../../background/omnibox';
 
+jest.mock("../../utils/Logger");
+
+
 // Mock Chrome API
 global.chrome = {
   omnibox: {

@@ -1,5 +1,8 @@
 import { initializeStorage } from '../../background/storageManager';
 
+jest.mock("../../utils/Logger");
+
+
 // Mock Chrome API
 global.chrome = {
   storage: {
