@@ -5,11 +5,12 @@ import TodoList from "./TodoList";
 jest.mock("../../utils/Logger");
 
 describe("TodoList Component", () => {
-  let mockOnDeleteTask, mockOnToggleReminder, mockOnUpdateTask, sampleTasks;
+  let mockOnDeleteTask, mockOnToggleReminder, mockOnUpdateTask, sampleTasks, mockOnMoveCompletedTasks;
 
   beforeEach(() => {
     mockOnDeleteTask = jest.fn();
     mockOnUpdateTask = jest.fn();
+    mockOnMoveCompletedTasks = jest.fn();
 
     sampleTasks = [
       {
@@ -38,6 +39,7 @@ describe("TodoList Component", () => {
         onDeleteTask={mockOnDeleteTask}
         onToggleReminder={mockOnToggleReminder}
         onUpdateTask={mockOnUpdateTask}
+        onMoveCompletedTasks={mockOnMoveCompletedTasks}
       />
     );
   };

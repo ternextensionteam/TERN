@@ -81,7 +81,7 @@ describe("RecoverDeletedTasks Component", () => {
     render(
       <RecoverDeletedTasks
         deletedTasks={[]}
-        completedTasks={[{ text: "Completed Task 1", completed: true }]}
+        completedTasks={[{id:1742560079755, text: "Completed Task 1", completed: true }]}
         onRecoverDeleted={mockOnRecoverDeleted}
         onRecoverCompleted={mockOnRecoverCompleted}
         onBack={mockOnBack}
@@ -89,13 +89,13 @@ describe("RecoverDeletedTasks Component", () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: /recover/i }));
-    expect(mockOnRecoverCompleted).toHaveBeenCalledWith(0);
+    expect(mockOnRecoverCompleted).toHaveBeenCalledWith(1742560079755);
   });
 
   test("calls onRecoverDeleted when recovering a deleted task", () => {
     render(
       <RecoverDeletedTasks
-        deletedTasks={[{ text: "Deleted Task 1", completed: false }]}
+        deletedTasks={[{id:1742560079755, text: "Deleted Task 1", completed: false }]}
         completedTasks={[]}
         onRecoverDeleted={mockOnRecoverDeleted}
         onRecoverCompleted={mockOnRecoverCompleted}
@@ -105,7 +105,7 @@ describe("RecoverDeletedTasks Component", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /Deleted Tasks/i }));
     fireEvent.click(screen.getByRole("button", { name: /recover/i }));
-    expect(mockOnRecoverDeleted).toHaveBeenCalledWith(0);
+    expect(mockOnRecoverDeleted).toHaveBeenCalledWith(1742560079755);
   });
 
   test("calls onBack when back button is clicked", () => {

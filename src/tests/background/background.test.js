@@ -136,13 +136,13 @@ describe('Background Integration Tests', () => {
     const sendResponse = jest.fn();
     
     const result = await global.messageListener(request, sender, sendResponse);
-    
+    const task = request.task;
     // Should return true to indicate async response
     expect(result).toBe(true);
     
     // Check if the handler was called with the right parameters
     expect(notifications.handleAddTaskNotification).toHaveBeenCalledWith(
-      request,
+      task,
       sender,
       sendResponse
     );
