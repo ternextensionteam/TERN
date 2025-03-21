@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "HAWK 2 - Page Indexer and Productivity tool",
+  "name": "TERN",
   "version": "1.0",
-  "description": "A React Chrome Extension",
+  "description": "Page Indexer and Productivity tool",
   "omnibox": { "keyword": "@i\t" },
   "permissions": [
     "activeTab",
