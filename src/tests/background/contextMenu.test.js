@@ -4,6 +4,7 @@ import { createContextMenu, setupContextMenuListeners } from '../../background/c
 global.chrome = {
   contextMenus: {
     create: jest.fn(),
+    removeAll: jest.fn(callback => callback()), // Execute the callback immediately
     onClicked: { addListener: jest.fn() }
   },
   sidePanel: {
@@ -22,12 +23,25 @@ beforeEach(() => {
 });
 
 describe('Context Menu Tests', () => {
-  test('should create context menu item', () => {
+  test('should remove existing context menu items before creating new ones', () => {
     createContextMenu();
+    expect(chrome.contextMenus.removeAll).toHaveBeenCalled();
+  });
+  
+  test('should create context menu items after removing existing ones', () => {
+    createContextMenu();
+    
+    // Verify menu items are created
     expect(chrome.contextMenus.create).toHaveBeenCalledWith({
-      id: "addToHawk",
+      id: "addTask",
       title: "Add Task",
       contexts: ["selection"]
+    });
+    
+    expect(chrome.contextMenus.create).toHaveBeenCalledWith({
+      id: "addToIndex",
+      title: "Add to Index",
+      contexts: ["page"]
     });
   });
 
