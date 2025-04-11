@@ -2,16 +2,20 @@
  * Create context menu item
  */
 export function createContextMenu() {
-  chrome.contextMenus.create({
-    id: "addToHawk",
-    title: "Add Task",
-    contexts: ["selection"],
-  });
+  // First remove all existing context menu items
+  chrome.contextMenus.removeAll(() => {
+    // Then create the menu items
+    chrome.contextMenus.create({
+      id: "addTask",
+      title: "Add Task",
+      contexts: ["selection"],
+    });
 
-  chrome.contextMenus.create({
-    id: "addToIndex",
-    title: "Add to Index",
-    contexts: ["page"],
+    chrome.contextMenus.create({
+      id: "addToIndex",
+      title: "Add to Index",
+      contexts: ["page"],
+    });
   });
 }
 
@@ -20,7 +24,7 @@ export function createContextMenu() {
  */
 export function setupContextMenuListeners() {
   chrome.contextMenus.onClicked.addListener((info, tab) => {
-    if (info.menuItemId === "addToHawk") {
+    if (info.menuItemId === "addTask") {
       // Open the side panel immediately to maintain connection to user gesture
       chrome.sidePanel.open({ windowId: tab.windowId })
         .then(() => {
