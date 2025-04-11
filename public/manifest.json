@@ -13,8 +13,7 @@
     "alarms",
     "tabs",
     "sidePanel",
-    "contextMenus",
-    "idle"
+    "contextMenus"
   ],
   "background": {
     "service_worker": "background.bundle.js"
