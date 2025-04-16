@@ -29,12 +29,11 @@ Keep your to-do lists and your documentation history all in one place.
 
 ## Installation
 
-> **Coming Soon**  
-> This extension will soon be available on the Chrome Web Store (pending approval).
+### Method 1: Install from chrome webstore
+Install here :
+https://chromewebstore.google.com/detail/fjbjdfdmnkbchdedikleeagadagmonbb?utm_source=item-share-cb
 
----
-
-### Method 1: Download Prebuilt Extension
+### Method 2: Download Prebuilt Extension
 
 1. Download the latest ZIP file from the GitHub mirror:  
    https://github.com/paulrtanderson/SH05-mirror/releases
@@ -51,7 +50,7 @@ Keep your to-do lists and your documentation history all in one place.
 
 ---
 
-### Method 2: Build from Source
+### Method 3: Build from Source
 
 1. **Install Node.js and npm** (if not already installed)  
    [Download here](https://nodejs.org/)
